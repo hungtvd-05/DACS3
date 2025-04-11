@@ -1,0 +1,106 @@
+{
+  "project_info": {
+    "project_number": "788846564510",
+    "firebase_url": "https://laptrinhungdung-e1a91-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "laptrinhungdung-e1a91",
+    "storage_bucket": "laptrinhungdung-e1a91.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:788846564510:android:31be6a6114dbf6d6f0578f",
+        "android_client_info": {
+          "package_name": "com.app_computer_ecom.dack"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMPcLWAMeujSSbQgrlSA24cLvhCx0vWGU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:788846564510:android:3628d03f360c015af0578f",
+        "android_client_info": {
+          "package_name": "com.example.firebase2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMPcLWAMeujSSbQgrlSA24cLvhCx0vWGU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:788846564510:android:a695611e0c705f1ef0578f",
+        "android_client_info": {
+          "package_name": "com.example.firebaseapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMPcLWAMeujSSbQgrlSA24cLvhCx0vWGU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:788846564510:android:af88cd6dae815d9df0578f",
+        "android_client_info": {
+          "package_name": "com.example.giuaki"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMPcLWAMeujSSbQgrlSA24cLvhCx0vWGU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:788846564510:android:11cbc203767f411ef0578f",
+        "android_client_info": {
+          "package_name": "com.example.noteappgk"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMPcLWAMeujSSbQgrlSA24cLvhCx0vWGU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
