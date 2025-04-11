@@ -3,6 +3,7 @@ package com.app_computer_ecom.dack.screen.admin
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
@@ -38,6 +39,15 @@ fun BannerScreen(navController: NavHostController, modifier: Modifier = Modifier
 
     var banners by remember {
         mutableStateOf(emptyList<BannerModel>())
+    }
+
+    BackHandler(enabled = true) {
+        navController.navigate("admin/01") {
+            popUpTo(navController.graph.startDestinationId) {
+                inclusive = false
+            }
+            launchSingleTop = true
+        }
     }
 
     LaunchedEffect(Unit) {

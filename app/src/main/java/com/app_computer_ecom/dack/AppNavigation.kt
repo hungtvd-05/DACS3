@@ -74,9 +74,6 @@ fun AppNavigation(authViewModel: AuthViewModel, modifier: Modifier = Modifier) {
         composable("category") {
             CategoryScreen(navController)
         }
-        composable("addCategory") {
-            AddCategoryScreen(navController)
-        }
         composable("product") {
 
         }
