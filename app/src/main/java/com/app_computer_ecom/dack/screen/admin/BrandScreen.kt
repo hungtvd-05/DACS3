@@ -31,7 +31,6 @@ import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
@@ -39,6 +38,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -57,14 +57,14 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.app_computer_ecom.dack.R
 import com.app_computer_ecom.dack.components.admin.HeaderViewMenu
+import com.app_computer_ecom.dack.model.BrandModel
 import com.app_computer_ecom.dack.model.CategoryModel
-import com.app_computer_ecom.dack.repository.CategoryRepository
-import com.app_computer_ecom.dack.repository.impl.CategoryRepositoryImpl
+import com.app_computer_ecom.dack.repository.BrandRepository
+import com.app_computer_ecom.dack.repository.impl.BrandRepositoryImpl
 import com.app_computer_ecom.dack.viewmodel.ImageCloudinary
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -72,9 +72,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifier) {
-
-    val categoryRepository: CategoryRepository = remember { CategoryRepositoryImpl() }
+fun BrandScreen(navController: NavHostController, modifier: Modifier = Modifier) {
+    val brandRepository: BrandRepository = remember { BrandRepositoryImpl() }
     val context = LocalContext.current
     BackHandler(enabled = true) {
         navController.navigate("admin/01") {
@@ -85,11 +84,11 @@ fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifi
         }
     }
 
-    var categoryList by remember { mutableStateOf(emptyList<CategoryModel>()) }
+    var brandList by remember { mutableStateOf(emptyList<BrandModel>()) }
 
-    var categoryId = remember { mutableStateOf("") }
-    var categoryName = remember { mutableStateOf("") }
-    var categoryIsEnable = remember { mutableStateOf(true) }
+    var brandId = remember { mutableStateOf("") }
+    var brandName = remember { mutableStateOf("") }
+    var brandIsEnable = remember { mutableStateOf(true) }
     var imageUrl by remember { mutableStateOf<String?>(null) }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     var bitmap = remember { mutableStateOf<Bitmap?>(null) }
@@ -102,7 +101,7 @@ fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifi
     }
 
     LaunchedEffect(Unit) {
-        categoryList = categoryRepository.getCategories()
+        brandList = brandRepository.getBrands()
     }
 
     imageUri?.let {
@@ -115,23 +114,23 @@ fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifi
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         HeaderViewMenu(
-            title = "Category",
+            title = "Danh sách thương hiệu",
             onBackClick = { navController.navigate("admin/01") },
             onAddClick = {
                 imageUri = null
                 imageUrl = null
-                categoryName.value = ""
-                categoryIsEnable.value = true
-                categoryId.value = ""
+                brandName.value = ""
+                brandIsEnable.value = true
+                brandId.value = ""
                 isUpdate.value = false
             },
             isUploading = false
         )
-        Spacer(modifier = Modifier.height(10.dp))
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         Box(
             modifier = Modifier.fillMaxWidth(),
@@ -171,17 +170,17 @@ fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifi
                                 .background(Color.LightGray),
                             contentAlignment = Alignment.Center,
                         ) {
-                            Text("Image")
+                            Text("Chọn ảnh")
                         }
                     }
                 }
                 Column {
                     OutlinedTextField(
-                        value = categoryName.value,
-                        onValueChange = { categoryName.value = it },
+                        value = brandName.value,
+                        onValueChange = { brandName.value = it },
                         label = {
                             Text(
-                                text = "Enter category's name",
+                                text = "Nhập tên thương hiệu",
                                 fontSize = 12.sp
                             )
                         },
@@ -197,11 +196,11 @@ fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifi
                             modifier = Modifier.weight(1f),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(text = "Show category:")
+                            Text(text = "Hiển thị:")
                             Switch(
-                                checked = categoryIsEnable.value,
+                                checked = brandIsEnable.value,
                                 onCheckedChange = {
-                                    categoryIsEnable.value = it
+                                    brandIsEnable.value = it
                                 },
                                 modifier = Modifier
                             )
@@ -209,8 +208,8 @@ fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifi
 
                         if (isUpdate.value) {
                             Button(onClick = {
-                                if (TextUtils.isEmpty(categoryName.value.toString())) {
-                                    Toast.makeText(context, "Please enter category's name", Toast.LENGTH_SHORT).show()
+                                if (TextUtils.isEmpty(brandName.value.toString())) {
+                                    Toast.makeText(context, "Bạn chưa nhập tên thương hiệu!!!", Toast.LENGTH_SHORT).show()
                                 } else {
                                     isUploading.value = true
                                     CoroutineScope(Dispatchers.IO).launch {
@@ -219,34 +218,34 @@ fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifi
                                                 val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
                                                 val result = ImageCloudinary.uploadImage(context, bitmap)
                                                 result.onSuccess { url ->
-                                                    categoryRepository.updateCategory(CategoryModel(
-                                                        id = categoryId.value,
-                                                        name = categoryName.value,
+                                                    brandRepository.updateBrand(BrandModel(
+                                                        id = brandId.value,
+                                                        name = brandName.value,
                                                         imageUrl = url,
-                                                        enable = categoryIsEnable.value
+                                                        enable = brandIsEnable.value
                                                     ))
                                                 }.onFailure { exception ->
-                                                    Log.e("Cloudinary", "Upload failed for one image: ${exception.message}")
+                                                    Log.e("Cloudinary", "Không thể tải ảnh: ${exception.message}")
                                                 }
                                             } else {
-                                                categoryRepository.updateCategory(CategoryModel(
-                                                    id = categoryId.value,
-                                                    name = categoryName.value,
+                                                brandRepository.updateBrand(BrandModel(
+                                                    id = brandId.value,
+                                                    name = brandName.value,
                                                     imageUrl = imageUrl.toString(),
-                                                    enable = categoryIsEnable.value
+                                                    enable = brandIsEnable.value
                                                 ))
                                             }
 
                                             withContext(Dispatchers.Main) {
-                                                categoryList = categoryRepository.getCategories()
+                                                brandList = brandRepository.getBrands()
                                                 imageUri = null
                                                 imageUrl = null
-                                                categoryName.value = ""
-                                                categoryIsEnable.value = true
-                                                Toast.makeText(context, "Add success", Toast.LENGTH_SHORT).show()
+                                                brandName.value = ""
+                                                brandIsEnable.value = true
+                                                Toast.makeText(context, "Cập nhật thành công", Toast.LENGTH_SHORT).show()
                                                 isUploading.value = false
                                                 isUpdate.value = false
-                                                categoryId.value = ""
+                                                brandId.value = ""
                                             }
                                         } catch (e: Exception) {
                                             withContext(Dispatchers.Main) {
@@ -256,14 +255,14 @@ fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifi
                                     }
                                 }
                             }) {
-                                Text(text = "Update")
+                                Text(text = "Cập nhật")
                             }
                         } else {
                             Button(onClick = {
-                                if (TextUtils.isEmpty(categoryName.value.toString())) {
-                                    Toast.makeText(context, "Please enter category's name", Toast.LENGTH_SHORT).show()
+                                if (TextUtils.isEmpty(brandName.value.toString())) {
+                                    Toast.makeText(context, "Bạn chưa nhập tên thương hiệu!!!", Toast.LENGTH_SHORT).show()
                                 } else if (bitmap.value == null) {
-                                    Toast.makeText(context, "Please select an image", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, "Chọn ảnh thương hiệu", Toast.LENGTH_SHORT).show()
                                 } else {
                                     isUploading.value = true
                                     CoroutineScope(Dispatchers.IO).launch {
@@ -271,22 +270,22 @@ fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifi
                                             val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
                                             val result = ImageCloudinary.uploadImage(context, bitmap)
                                             result.onSuccess { url ->
-                                                categoryRepository.addCategory(CategoryModel(
-                                                    name = categoryName.value,
+                                                brandRepository.addBrand(BrandModel(
+                                                    name = brandName.value,
                                                     imageUrl = url,
                                                     enable = true
                                                 ))
                                             }.onFailure { exception ->
-                                                Log.e("Cloudinary", "Upload failed for one image: ${exception.message}")
+                                                Log.e("Cloudinary", "Không thể tải ảnh: ${exception.message}")
                                             }
 
                                             withContext(Dispatchers.Main) {
-                                                categoryList = categoryRepository.getCategories()
+                                                brandList = brandRepository.getBrands()
                                                 imageUri = null
                                                 imageUrl = null
-                                                categoryName.value = ""
-                                                categoryIsEnable.value = true
-                                                Toast.makeText(context, "Add success", Toast.LENGTH_SHORT).show()
+                                                brandName.value = ""
+                                                brandIsEnable.value = true
+                                                Toast.makeText(context, "Thêm thương hiệu thành công", Toast.LENGTH_SHORT).show()
                                                 isUploading.value = false
                                             }
                                         } catch (e: Exception) {
@@ -297,13 +296,12 @@ fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifi
                                     }
                                 }
                             }) {
-                                Text(text = "Add")
+                                Text(text = "Thêm")
                             }
                         }
                     }
                 }
             }
-
             if (isUploading.value) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(48.dp),
@@ -319,14 +317,14 @@ fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifi
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(top = 8.dp, start = 8.dp, end = 8.dp)
         ) {
-            items(categoryList.size) { index ->
-                categoryItem(
-                    category = categoryList[index],
+            items(brandList.size) { index ->
+                brandItem(
+                    brand = brandList[index],
                     onClickShowHidden = {
                         CoroutineScope(Dispatchers.IO).launch {
                             try {
-                                categoryRepository.updateCategory(categoryList[index].copy(enable = !categoryList[index].enable))
-                                categoryList = categoryRepository.getCategories()
+                                brandRepository.updateBrand(brandList[index].copy(enable = !brandList[index].enable))
+                                brandList = brandRepository.getBrands()
                             } catch (e: Exception) {
 
                             }
@@ -335,19 +333,19 @@ fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifi
                     onDeleteClick = {
                         CoroutineScope(Dispatchers.IO).launch {
                             try {
-                                categoryRepository.deleteCategory(categoryList[index])
-                                ImageCloudinary.deleteImage(categoryList[index].imageUrl)
-                                categoryList = categoryRepository.getCategories()
+                                brandRepository.deleteBrand(brandList[index])
+                                ImageCloudinary.deleteImage(brandList[index].imageUrl)
+                                brandList = brandRepository.getBrands()
                             } catch (e: Exception) {
                                 Log.e("BannerScreen", "Delete failed: ${e.message}")
                             }
                         }
                     },
                     onClickItem = {
-                        categoryId.value = categoryList[index].id
-                        categoryName.value = categoryList[index].name
-                        categoryIsEnable.value = categoryList[index].enable
-                        imageUrl = categoryList[index].imageUrl
+                        brandId.value = brandList[index].id
+                        brandName.value = brandList[index].name
+                        brandIsEnable.value = brandList[index].enable
+                        imageUrl = brandList[index].imageUrl
                         imageUri = null
                         isUpdate.value = true
                     }
@@ -357,8 +355,9 @@ fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifi
     }
 }
 
+
 @Composable
-fun categoryItem(category: CategoryModel, onClickShowHidden: () -> Unit, onDeleteClick: () -> Unit, onClickItem: () -> Unit) {
+fun brandItem(brand: BrandModel, onClickShowHidden: () -> Unit, onDeleteClick: () -> Unit, onClickItem: () -> Unit) {
     Card(
         onClick = {
             onClickItem()
@@ -367,21 +366,21 @@ fun categoryItem(category: CategoryModel, onClickShowHidden: () -> Unit, onDelet
         elevation = CardDefaults.cardElevation(4.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
 
-    ) {
+        ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxSize()
         ) {
             AsyncImage(
-                model = category.imageUrl,
+                model = brand.imageUrl,
                 contentDescription = null,
                 modifier = Modifier
                     .size(100.dp),
                 contentScale = ContentScale.Crop
             )
             Text(
-                text = category.name,
+                text = brand.name,
                 modifier = Modifier.padding(top = 8.dp).padding(horizontal = 8.dp),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -391,7 +390,7 @@ fun categoryItem(category: CategoryModel, onClickShowHidden: () -> Unit, onDelet
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = { onClickShowHidden() }) {
-                    Icon(painter = painterResource(id = if (category.enable) R.drawable.eye_svgrepo_com else R.drawable.eye_slash_svgrepo_com),
+                    Icon(painter = painterResource(id = if (brand.enable) R.drawable.eye_svgrepo_com else R.drawable.eye_slash_svgrepo_com),
                         contentDescription = "",
                         modifier = Modifier
                             .size(30.dp),

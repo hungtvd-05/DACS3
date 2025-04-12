@@ -6,7 +6,7 @@ interface CategoryRepository {
     suspend fun getCategories(): List<CategoryModel>
     suspend fun getCategorybyName(): CategoryModel
     suspend fun getCategorybyId(): CategoryModel
-    suspend fun getCategorybyIsEnable(): CategoryModel
+    suspend fun getCategorybyIsEnable(): List<CategoryModel>
     suspend fun addCategory(category: CategoryModel)
     suspend fun updateCategory(category: CategoryModel)
     suspend fun deleteCategory(category: CategoryModel)

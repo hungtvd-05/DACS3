@@ -29,29 +29,35 @@ object ImageCloudinary {
 
     suspend fun uploadImage(context: Context, btm: Bitmap): Result<String> =
         withContext(Dispatchers.IO) {
-
             return@withContext try {
-                val file = File(context.cacheDir, "temp_image_${System.currentTimeMillis()}.jpg")
+                // Kiểm tra kênh alpha
+                Log.d("uploadImage", "Bitmap config: ${btm.config}, hasAlpha: ${btm.hasAlpha()}")
+
+                val fileExtension = if (btm.hasAlpha()) "png" else "jpg"
+                val compressFormat = if (btm.hasAlpha()) Bitmap.CompressFormat.PNG else Bitmap.CompressFormat.JPEG
+                val file = File(context.cacheDir, "temp_image_${System.currentTimeMillis()}.$fileExtension")
                 val outputStream = FileOutputStream(file)
-                btm.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                btm.compress(compressFormat, 100, outputStream)
                 outputStream.flush()
                 outputStream.close()
+                Log.d("uploadImage", "Temp file saved at: ${file.absolutePath}")
 
                 val options = HashMap<String, Any>()
-                options["resource_type"] = "auto"
+                options["resource_type"] = "image"
                 options["folder"] = "test"
+                options["format"] = if (btm.hasAlpha()) "png" else "jpg" // Đảm bảo PNG nếu có alpha
 
                 val uploadResult = Config().uploader().upload(file.absolutePath, options)
                 val imageUrl = uploadResult["secure_url"] as String
 
                 file.delete()
 
+                Log.d("uploadImage", "Uploaded image URL: $imageUrl")
                 Result.success(imageUrl)
             } catch (e: Exception) {
-                Log.e("uploadImage", "Error uploading image", e)
+                Log.e("uploadImage", "Error uploading image: ${e.message}", e)
                 Result.failure(e)
             }
-
         }
 
     suspend fun deleteImage(path: String?) {

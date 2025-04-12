@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -39,10 +40,6 @@ import com.tbuonomo.viewpagerdotsindicator.compose.type.ShiftIndicatorType
 
 @Composable
 fun BannerView(modifier: Modifier = Modifier) {
-    var bannerList by remember {
-        mutableStateOf<List<String>>(emptyList())
-    }
-
     val bannerRepository: BannerRepository = remember { BannerRepositoryImpl() }
     var banners by remember {
         mutableStateOf(emptyList<BannerModel>())
@@ -58,13 +55,18 @@ fun BannerView(modifier: Modifier = Modifier) {
         val pagerState = rememberPagerState(0) {
             banners.size
         }
-        HorizontalPager(state = pagerState, pageSpacing = 24.dp) {
+        HorizontalPager(
+            state = pagerState,
+            pageSpacing = 24.dp,
+        ) {
             AsyncImage(
                 model = banners[it].imageUrl,
                 contentDescription = "Banner",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(16.dp))
+                    .height(100.dp)
+                    .clip(RoundedCornerShape(16.dp)),
+                contentScale = ContentScale.Crop
             )
         }
 
@@ -81,28 +83,4 @@ fun BannerView(modifier: Modifier = Modifier) {
         )
     }
 }
-
-//@Composable
-//fun DotsIndicator(
-//    totalDots: Int,
-//    selectedIndex: Int,
-//    selectedColor: Color = MaterialTheme.colorScheme.primary,
-//    unSelectedColor: Color = Color.LightGray,
-//    dotSize: Dp = 8.dp
-//) {
-//    Row(
-//        modifier = Modifier.wrapContentWidth(),
-//        horizontalArrangement = Arrangement.Center
-//    ) {
-//        for (i in 0 until totalDots) {
-//            Box(
-//                modifier = Modifier
-//                    .padding(horizontal = 3.dp)
-//                    .size(dotSize)
-//                    .clip(CircleShape)
-//                    .background(if (i == selectedIndex) selectedColor else unSelectedColor)
-//            )
-//        }
-//    }
-//}
 

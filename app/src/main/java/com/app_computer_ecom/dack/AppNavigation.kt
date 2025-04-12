@@ -18,9 +18,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.app_computer_ecom.dack.screen.admin.CategoryScreen
-import com.app_computer_ecom.dack.screen.admin.AddCategoryScreen
 import com.app_computer_ecom.dack.screen.admin.BannerScreen
 import com.app_computer_ecom.dack.screen.admin.AdminScreen
+import com.app_computer_ecom.dack.screen.admin.BrandScreen
+import com.app_computer_ecom.dack.screen.admin.ProductScreen
 import com.app_computer_ecom.dack.screen.started.AuthScreen
 import com.app_computer_ecom.dack.screen.user.HomeScreen
 import com.app_computer_ecom.dack.screen.started.LoginScreen
@@ -74,8 +75,11 @@ fun AppNavigation(authViewModel: AuthViewModel, modifier: Modifier = Modifier) {
         composable("category") {
             CategoryScreen(navController)
         }
+        composable("brand") {
+            BrandScreen(navController)
+        }
         composable("product") {
-
+            ProductScreen(navController)
         }
     }
 

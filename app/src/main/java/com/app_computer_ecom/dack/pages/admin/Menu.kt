@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
@@ -36,6 +37,7 @@ fun Menu(modifier: Modifier = Modifier, authViewModel: AuthViewModel, navControl
     val itemMenus = listOf(
         NavItem("Product", Icons.Default.DateRange),
         NavItem("Category", Icons.Default.Menu),
+        NavItem("Brand", Icons.Default.LocationOn),
         NavItem("Banner", Icons.Default.Person),
         NavItem("Policy", Icons.Default.Person),
         NavItem("Review", Icons.Default.Person),
@@ -73,10 +75,11 @@ fun ItemMenu(navItem: NavItem, navController: NavHostController, index: Int) {
             when (index) {
                 0 -> navController.navigate("product")
                 1 -> navController.navigate("category")
-                2 -> navController.navigate("banner")
-                3 -> navController.navigate("policy")
-                4 -> navController.navigate("review")
-                5 -> navController.navigate("user")
+                2 -> navController.navigate("brand")
+                3 -> navController.navigate("banner")
+                4 -> navController.navigate("policy")
+                5 -> navController.navigate("review")
+                6 -> navController.navigate("user")
             }
         }
     ) {

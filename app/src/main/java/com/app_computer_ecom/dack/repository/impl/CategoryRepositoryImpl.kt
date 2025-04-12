@@ -36,8 +36,20 @@ class CategoryRepositoryImpl : CategoryRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getCategorybyIsEnable(): CategoryModel {
-        TODO("Not yet implemented")
+    override suspend fun getCategorybyIsEnable(): List<CategoryModel> {
+        return try {
+            val querySnapshot = dbCategory.whereEqualTo("enable", true).get().await()
+            if (querySnapshot.isEmpty) {
+                Log.d("BannerRepositoryImpl", "No banners found")
+                emptyList()
+            } else {
+                querySnapshot.documents.mapNotNull { document ->
+                    document.toObject(CategoryModel::class.java)?.copy(id = document.id)
+                }
+            }
+        } catch (e: Exception) {
+            emptyList()
+        }
     }
 
     override suspend fun addCategory(category: CategoryModel) {
