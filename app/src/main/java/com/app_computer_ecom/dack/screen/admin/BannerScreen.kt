@@ -8,6 +8,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -17,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.app_computer_ecom.dack.components.ImagePreviewItem
 import com.app_computer_ecom.dack.components.admin.HeaderViewMenu
@@ -122,7 +125,8 @@ fun BannerScreen(navController: NavHostController, modifier: Modifier = Modifier
                             }
                         }
                     },
-                    isEnable = banners[index].enable
+                    isEnable = banners[index].enable,
+                    modifier = Modifier.fillMaxWidth().height(120.dp)
                 )
             }
         }

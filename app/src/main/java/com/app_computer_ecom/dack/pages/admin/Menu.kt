@@ -73,7 +73,7 @@ fun ItemMenu(navItem: NavItem, navController: NavHostController, index: Int) {
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         onClick = {
             when (index) {
-                0 -> navController.navigate("product")
+                0 -> navController.navigate("admin/product")
                 1 -> navController.navigate("category")
                 2 -> navController.navigate("brand")
                 3 -> navController.navigate("banner")

@@ -26,7 +26,8 @@ fun ImagePreviewItem(
     uri: String,
     onClick: () -> Unit,
     onClickShowHidden: () -> Unit,
-    isEnable: Boolean
+    isEnable: Boolean,
+    modifier: Modifier = Modifier
 ) {
 
     Box(
@@ -37,9 +38,7 @@ fun ImagePreviewItem(
         AsyncImage(
             model = uri,
             contentDescription = "",
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp),
+            modifier = modifier,
             contentScale = ContentScale.Crop
         )
 

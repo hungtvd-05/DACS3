@@ -1,6 +1,7 @@
 package com.app_computer_ecom.dack
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,11 +18,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.app_computer_ecom.dack.screen.admin.AddProductScreen
 import com.app_computer_ecom.dack.screen.admin.CategoryScreen
 import com.app_computer_ecom.dack.screen.admin.BannerScreen
 import com.app_computer_ecom.dack.screen.admin.AdminScreen
 import com.app_computer_ecom.dack.screen.admin.BrandScreen
 import com.app_computer_ecom.dack.screen.admin.ProductScreen
+import com.app_computer_ecom.dack.screen.admin.UpdateProductScreen
 import com.app_computer_ecom.dack.screen.started.AuthScreen
 import com.app_computer_ecom.dack.screen.user.HomeScreen
 import com.app_computer_ecom.dack.screen.started.LoginScreen
@@ -78,8 +81,16 @@ fun AppNavigation(authViewModel: AuthViewModel, modifier: Modifier = Modifier) {
         composable("brand") {
             BrandScreen(navController)
         }
-        composable("product") {
+        composable("admin/product") {
             ProductScreen(navController)
+        }
+        composable("admin/addproduct") {
+            AddProductScreen(navController)
+        }
+        composable("admin/editproduct/{productId}") {
+            var productId = it.arguments?.getString("productId").toString()
+            Log.d("productId", "productId: $productId")
+            UpdateProductScreen(navController, productId)
         }
     }
 

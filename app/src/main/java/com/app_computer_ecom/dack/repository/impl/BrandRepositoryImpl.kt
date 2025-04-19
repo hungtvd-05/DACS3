@@ -32,7 +32,7 @@ class BrandRepositoryImpl: BrandRepository {
 
     override suspend fun getBrandByIsEnable(isEnable: Boolean): List<BrandModel> {
         return try {
-            val querySnapshot = dbBrand.whereEqualTo("enable", true).get().await()
+            val querySnapshot = dbBrand.whereEqualTo("show", true).get().await()
             if (querySnapshot.isEmpty) {
                 emptyList()
             } else {
