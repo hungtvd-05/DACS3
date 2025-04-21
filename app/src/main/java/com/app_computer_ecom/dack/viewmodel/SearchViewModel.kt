@@ -9,10 +9,8 @@ import kotlinx.coroutines.launch
 
 class SearchViewModel(private val searchHistoryDao: SearchHistoryDao) : ViewModel() {
 
-    // Lấy danh sách lịch sử tìm kiếm
     val searchHistory: Flow<List<SearchHistory>> = searchHistoryDao.getAllSearchHistory()
 
-    // Thêm một từ khóa tìm kiếm mới
     fun addSearchQuery(query: String) {
         if (query.isNotBlank()) {
             viewModelScope.launch {
@@ -23,21 +21,29 @@ class SearchViewModel(private val searchHistoryDao: SearchHistoryDao) : ViewMode
         }
     }
 
-    // Xóa một mục lịch sử
+    fun addSearchQueryWithLimit(query: String) {
+        if (query.isNotBlank()) {
+            viewModelScope.launch {
+                searchHistoryDao.insertWithLimit(
+                    SearchHistory(query = query, timestamp = System.currentTimeMillis())
+                )
+            }
+        }
+    }
+
+
     fun deleteSearch(id: Int) {
         viewModelScope.launch {
             searchHistoryDao.deleteById(id)
         }
     }
 
-    // Xóa toàn bộ lịch sử
     fun clearSearchHistory() {
         viewModelScope.launch {
             searchHistoryDao.deleteAll()
         }
     }
 
-    // Lấy gợi ý tìm kiếm
     fun getSearchSuggestions(query: String): Flow<List<SearchHistory>> {
         return searchHistoryDao.getSearchSuggestions(query)
     }

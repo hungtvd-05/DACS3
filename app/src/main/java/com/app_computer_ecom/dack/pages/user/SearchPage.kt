@@ -59,11 +59,16 @@ fun SearchPage(
             onSearchQueryChange = { searchQuery = it },
             onBack = onBack,
             onSearch = {
-                viewModel.addSearchQuery(searchQuery.text)
+                viewModel.addSearchQueryWithLimit(searchQuery.text)
             }
+
         )
         Spacer(modifier = Modifier.height(16.dp))
-        SearchItemList(searchHistory)
+        SearchItemList(
+            searchHistory,
+            onClearSearchHistory = {
+                viewModel.clearSearchHistory()
+            })
     }
 }
 
@@ -72,8 +77,9 @@ fun SearchBar(
     searchQuery: TextFieldValue,
     onSearchQueryChange: (TextFieldValue) -> Unit,
     onBack: () -> Unit,
-    onSearch: () -> Unit
-) {
+    onSearch: () -> Unit,
+
+    ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -124,7 +130,8 @@ fun SearchBar(
 
 @Composable
 fun SearchItemList(
-    searchHistory: List<SearchHistory>
+    searchHistory: List<SearchHistory>,
+    onClearSearchHistory: () -> Unit
 ) {
 
     LazyColumn(
@@ -132,6 +139,27 @@ fun SearchItemList(
     ) {
         items(searchHistory) { item ->
             SearchItem(text = item.query)
+        }
+        item {
+            if (searchHistory.isNotEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp)
+                        .clickable {
+                            onClearSearchHistory()
+                        }) {
+                    Text(
+                        text = "Clear search history",
+                        fontSize = 12.sp,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(start = 16.dp),
+                        color = Color.Gray
+                    )
+
+                }
+            }
         }
     }
 }
