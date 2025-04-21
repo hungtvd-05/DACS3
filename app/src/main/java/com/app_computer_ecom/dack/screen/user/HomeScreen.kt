@@ -74,24 +74,37 @@ fun HomeScreen(
                 })
         },
         topBar = {
-            TopBar(
-                onSearchClick = { selectedIndex = 4 },
-                onCartClick = { selectedIndex = 2 }
-            )
+            if (selectedIndex != 4) {
+                TopBar(
+                    onSearchClick = { selectedIndex = 4 },
+                    onCartClick = { selectedIndex = 2 }
+                )
+            }
         }
     ) {
-        ContentScreen(authViewModel, modifier = modifier.padding(it), selectedIndex)
+        ContentScreen(
+            authViewModel,
+            modifier = modifier.padding(it),
+            selectedIndex,
+            onIndexSelect = { index ->
+                selectedIndex = index
+            })
     }
 }
 
 @Composable
-fun ContentScreen(authViewModel: AuthViewModel, modifier: Modifier = Modifier, selectedIndex: Int) {
+fun ContentScreen(
+    authViewModel: AuthViewModel,
+    modifier: Modifier = Modifier,
+    selectedIndex: Int,
+    onIndexSelect: (Int) -> Unit
+) {
     when (selectedIndex) {
         0 -> HomePage(authViewModel = authViewModel, modifier)
         1 -> FavoritePage(modifier)
         2 -> CartPage(modifier)
         3 -> ProfilePage(authViewModel = authViewModel, modifier)
-        4 -> SearchPage(modifier)
+        4 -> SearchPage(modifier, onBack = { onIndexSelect(0) })
     }
 }
 
