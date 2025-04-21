@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -68,6 +69,13 @@ dependencies {
     implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.android)
     implementation(libs.ktor.client.cio)
+
+    implementation(libs.google.accompanist.flowlayout)
+
+//    Room SQLite
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
 
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
