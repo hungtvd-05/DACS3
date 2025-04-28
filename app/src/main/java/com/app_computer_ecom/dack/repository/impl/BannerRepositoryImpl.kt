@@ -32,7 +32,7 @@ class BannerRepositoryImpl : BannerRepository {
 
     override suspend fun getBannerByEnable(): List<BannerModel> {
         return try {
-            val querySnapshot = dbBanner.whereEqualTo("show", true).get().await()
+            val querySnapshot = dbBanner.whereEqualTo("enable", true).get().await()
             if (querySnapshot.isEmpty) {
                 Log.d("BannerRepositoryImpl", "No banners found")
                 emptyList()

@@ -37,7 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.app_computer_ecom.dack.pages.user.CartPage
 import com.app_computer_ecom.dack.pages.user.FavoritePage
 import com.app_computer_ecom.dack.pages.user.HomePage
@@ -50,7 +49,6 @@ import com.app_computer_ecom.dack.viewmodel.AuthViewModel
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    navController: NavHostController,
     authViewModel: AuthViewModel
 ) {
     val navItems = listOf(
@@ -73,14 +71,14 @@ fun HomeScreen(
                     selectedIndex = index
                 })
         },
-        topBar = {
-            if (selectedIndex != 4) {
-                TopBar(
-                    onSearchClick = { selectedIndex = 4 },
-                    onCartClick = { selectedIndex = 2 }
-                )
-            }
-        }
+//        topBar = {
+//            if (selectedIndex != 4) {
+//                TopBar(
+//                    onSearchClick = { selectedIndex = 4 },
+//                    onCartClick = { selectedIndex = 2 }
+//                )
+//            }
+//        }
     ) {
         ContentScreen(
             authViewModel,

@@ -38,7 +38,7 @@ class CategoryRepositoryImpl : CategoryRepository {
 
     override suspend fun getCategorybyIsEnable(): List<CategoryModel> {
         return try {
-            val querySnapshot = dbCategory.whereEqualTo("show", true).get().await()
+            val querySnapshot = dbCategory.whereEqualTo("enable", true).get().await()
             if (querySnapshot.isEmpty) {
                 Log.d("BannerRepositoryImpl", "No banners found")
                 emptyList()

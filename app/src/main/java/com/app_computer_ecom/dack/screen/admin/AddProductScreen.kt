@@ -249,7 +249,7 @@ fun AddProductScreen(navController: NavHostController) {
                     OutlinedTextField(
                         value = item.price.toString(),
                         onValueChange = { newValue ->
-                            productPrices[index] = item.copy(price = newValue.toIntOrNull() ?: 0)
+                            productPrices[index] = item.copy(price = newValue.toDoubleOrNull() ?: 0.0)
                         },
                         placeholder = { Text(
                             "Giá",

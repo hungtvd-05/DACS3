@@ -1,9 +1,11 @@
 package com.app_computer_ecom.dack.repository.impl
 
+import android.util.Log
 import com.app_computer_ecom.dack.GlobalDatabase
 import com.app_computer_ecom.dack.model.ProductModel
 import com.app_computer_ecom.dack.repository.ProductRepository
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await
 
 class ProductRepositoryImpl: ProductRepository {
@@ -47,6 +49,52 @@ class ProductRepositoryImpl: ProductRepository {
             }
         } catch (e: Exception) {
             null
+        }
+    }
+
+    override suspend fun getProductsByCreatedAt(): List<ProductModel> {
+        return try {
+            val querySnapshot = dbProduct.orderBy("createdAt", Query.Direction.DESCENDING).limit(20).get().await()
+            if (querySnapshot.isEmpty) {
+                emptyList()
+            } else {
+                querySnapshot.documents.mapNotNull { document ->
+                    document.toObject(ProductModel::class.java)?.copy(id = document.id)?.takeIf { it.show }
+                }
+            }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    override suspend fun getProductsByCategoryIdAndBrandId(
+        categoryIds: List<String>,
+        brandIds: List<String>,
+        minPrice: Double,
+        maxPrice: Double
+    ): List<ProductModel> {
+        return try {
+            val querySnapshot = dbProduct.orderBy("createdAt", Query.Direction.DESCENDING).get().await()
+            if (querySnapshot.isEmpty) {
+                emptyList()
+            } else {
+                querySnapshot.documents.mapNotNull { document ->
+                    document.toObject(ProductModel::class.java)?.copy(id = document.id)?.takeIf {
+                        it.show
+                    }.takeIf {
+                        categoryIds.isEmpty() || categoryIds.contains(it?.categoryId)
+                    }.takeIf {
+                        brandIds.isEmpty() || brandIds.contains(it?.brandId)
+                    }?.takeIf {
+                        it.prices?.any { priceInfo ->
+                            val price = (priceInfo.price as? Number)?.toDouble() ?: 0.0
+                            price in minPrice..maxPrice
+                        } ?: false
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            emptyList()
         }
     }
 
