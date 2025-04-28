@@ -41,7 +41,6 @@ import com.app_computer_ecom.dack.pages.user.CartPage
 import com.app_computer_ecom.dack.pages.user.FavoritePage
 import com.app_computer_ecom.dack.pages.user.HomePage
 import com.app_computer_ecom.dack.pages.user.ProfilePage
-import com.app_computer_ecom.dack.pages.user.SearchPage
 import com.app_computer_ecom.dack.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -102,7 +101,6 @@ fun ContentScreen(
         1 -> FavoritePage(modifier)
         2 -> CartPage(modifier)
         3 -> ProfilePage(authViewModel = authViewModel, modifier)
-        4 -> SearchPage(modifier, onBack = { onIndexSelect(0) })
     }
 }
 
