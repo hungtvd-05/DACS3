@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -92,7 +93,11 @@ fun AddProductScreen(navController: NavHostController) {
     var productDescription = remember { mutableStateOf("") }
     var productPrices = remember { mutableStateListOf<PriceInfo>() }
     var productImages = remember { mutableStateOf<MutableList<ImageInfo>>(mutableListOf()) }
-    var imageUris by rememberSaveable(stateSaver = UriListSaver()) { mutableStateOf<List<Uri>>(emptyList()) }
+    var imageUris by rememberSaveable(stateSaver = UriListSaver()) {
+        mutableStateOf<List<Uri>>(
+            emptyList()
+        )
+    }
 
 
     if (productPrices.isEmpty()) {
@@ -120,7 +125,9 @@ fun AddProductScreen(navController: NavHostController) {
             isUploading = false
         )
         LazyColumn(
-            modifier = Modifier.fillMaxWidth().padding(16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
         ) {
             item {
                 OutlinedTextField(
@@ -225,76 +232,97 @@ fun AddProductScreen(navController: NavHostController) {
                 }
             }
 
+
             itemsIndexed(productPrices) { index, item ->
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
                 ) {
-                    OutlinedTextField(
-                        value = item.type,
-                        onValueChange = { newValue ->
-                            productPrices[index] = item.copy(type = newValue)
-                        },
-                        placeholder = { Text(
-                            "Nhãn " + (index + 1),
-                            fontSize = 12.sp
-                        ) },
-                        textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
-                        singleLine = true,
-                        modifier = Modifier
-                            .weight(2f)
-                            .padding(end = 4.dp)
-                    )
-
-                    OutlinedTextField(
-                        value = item.price.toString(),
-                        onValueChange = { newValue ->
-                            productPrices[index] = item.copy(price = newValue.toDoubleOrNull() ?: 0.0)
-                        },
-                        placeholder = { Text(
-                            "Giá",
-                            fontSize = 12.sp
-                        ) },
-                        textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number
-                        ),
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(end = 4.dp)
-                    )
-
-                    OutlinedTextField(
-                        value = item.quantity.toString(),
-                        onValueChange = { newValue ->
-                            productPrices[index] = item.copy(quantity = newValue.toIntOrNull() ?: 0)
-                        },
-                        placeholder = { Text(
-                            "Số lượng",
-                            fontSize = 12.sp
-                        ) },
-                        textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number
-                        ),
-                        modifier = Modifier
-                            .weight(1f)
-                    )
-
-                    IconButton(
-                        onClick = {
-                            if (productPrices.size > 1) productPrices.remove(item)
-                        }
+                    Row(
+                        modifier = Modifier.padding(bottom = 4.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "delete",
-                            tint = Color.Red
+                        OutlinedTextField(
+                            value = item.type,
+                            onValueChange = { newValue ->
+                                productPrices[index] = item.copy(type = newValue)
+                            },
+                            placeholder = {
+                                Text(
+                                    "Nhãn " + (index + 1),
+                                    fontSize = 12.sp
+                                )
+                            },
+                            textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
+                            singleLine = true,
+                            modifier = Modifier
+                                .weight(2f)
                         )
+
+                        Spacer(modifier = Modifier.width(4.dp))
+
+                        OutlinedTextField(
+                            value = item.quantity.toString(),
+                            onValueChange = { newValue ->
+                                productPrices[index] =
+                                    item.copy(quantity = newValue.toIntOrNull() ?: 0)
+                            },
+                            placeholder = {
+                                Text(
+                                    "Số lượng",
+                                    fontSize = 12.sp
+                                )
+                            },
+                            textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number
+                            ),
+                            modifier = Modifier
+                                .weight(1f)
+
+                        )
+
+                        IconButton(
+                            onClick = {
+                                if (productPrices.size > 1) productPrices.remove(item)
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "delete",
+                                tint = Color.Red,
+                            )
+                        }
+                    }
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        OutlinedTextField(
+                            value = item.price.toString(),
+                            onValueChange = { newValue ->
+                                productPrices[index] =
+                                    item.copy(price = newValue.toDoubleOrNull() ?: 0.0)
+                            },
+                            placeholder = {
+                                Text(
+                                    "Giá",
+                                    fontSize = 12.sp
+                                )
+                            },
+                            textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number
+                            ),
+                            modifier = Modifier
+                                .weight(1f)
+
+                        )
+                        Spacer(modifier = Modifier.width(48.dp))
                     }
                 }
+
 
             }
 
@@ -354,19 +382,40 @@ fun AddProductScreen(navController: NavHostController) {
                     onClick = {
                         when {
                             TextUtils.isEmpty(productName.value.toString()) -> {
-                                Toast.makeText(context, "Bạn chưa nhập tên sản phẩm", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "Bạn chưa nhập tên sản phẩm",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
+
                             TextUtils.isEmpty(productBrand.value.toString()) -> {
-                                Toast.makeText(context, "Bạn chưa chọn thương hiệu", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "Bạn chưa chọn thương hiệu",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
+
                             TextUtils.isEmpty(productCategory.value.toString()) -> {
-                                Toast.makeText(context, "Bạn chưa chọn danh mục", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "Bạn chưa chọn danh mục",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
+
                             productImages.value.isEmpty() -> {
-                                Toast.makeText(context, "Bạn chưa chọn ảnh", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Bạn chưa chọn ảnh", Toast.LENGTH_SHORT)
+                                    .show()
                             }
+
                             productPrices.any { it.type.isEmpty() } -> {
-                                Toast.makeText(context, "Có giá sản phẩm chưa nhập loại", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "Có giá sản phẩm chưa nhập loại",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
 
                             else -> {
@@ -374,10 +423,15 @@ fun AddProductScreen(navController: NavHostController) {
                                 CoroutineScope(Dispatchers.IO).launch {
                                     try {
                                         productImages.value.forEachIndexed { index, imageInfo ->
-                                            val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUris[index])
-                                            val result = ImageCloudinary.uploadImage(context, bitmap)
+                                            val bitmap = MediaStore.Images.Media.getBitmap(
+                                                context.contentResolver,
+                                                imageUris[index]
+                                            )
+                                            val result =
+                                                ImageCloudinary.uploadImage(context, bitmap)
                                             result.onSuccess { url ->
-                                                productImages.value[index] = imageInfo.copy(imageUrl = url)
+                                                productImages.value[index] =
+                                                    imageInfo.copy(imageUrl = url)
                                             }
                                         }
 
@@ -423,19 +477,22 @@ fun CategoryDropDownFun(
     onCategorySelected: (String) -> Unit,
 ) {
     var dropControl by remember { mutableStateOf(false) }
-    var selectedCategory = categoryList.find { it.id == selectedCategoryId }?.name ?: "Chọn danh mục"
+    var selectedCategory =
+        categoryList.find { it.id == selectedCategoryId }?.name ?: "Chọn danh mục"
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        OutlinedCard(modifier = Modifier.padding(horizontal = 8.dp),
+        OutlinedCard(
+            modifier = Modifier.padding(horizontal = 8.dp),
             onClick = {
                 if (categoryList.isNotEmpty()) {
                     dropControl = true
                 }
             }
         ) {
-            Row(horizontalArrangement = Arrangement.Center,
+            Row(
+                horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .wrapContentWidth()
@@ -487,14 +544,16 @@ fun BrandDropDownFun(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        OutlinedCard(modifier = Modifier.padding(horizontal = 8.dp),
+        OutlinedCard(
+            modifier = Modifier.padding(horizontal = 8.dp),
             onClick = {
                 if (brandList.isNotEmpty()) {
                     dropControl = true
                 }
             }
         ) {
-            Row(horizontalArrangement = Arrangement.Center,
+            Row(
+                horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .wrapContentWidth()
