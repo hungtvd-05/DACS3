@@ -80,7 +80,8 @@ fun HomePage(authViewModel: AuthViewModel, modifier: Modifier = Modifier) {
     }
 
     Column(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
         HeaderView(authViewModel, modifier)
@@ -222,9 +223,11 @@ fun Loading() {
 fun CategoryItem(category: CategoryModel) {
     Card(
         onClick = {
-            GlobalNavigation.navController.navigate("listproduct/categoryId=${category.id}&brandId=")
+            GlobalNavigation.navController.navigate("listproduct/categoryId=${category.id}&brandId=&searchQuery=")
         },
-        modifier = Modifier.padding(5.dp).size(100.dp),
+        modifier = Modifier
+            .padding(5.dp)
+            .size(100.dp),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(4.dp),
         colors = CardDefaults.cardColors(
@@ -257,8 +260,10 @@ fun CategoryItem(category: CategoryModel) {
 @Composable
 fun BrandItem(brand: BrandModel) {
     Card(
-        onClick = {GlobalNavigation.navController.navigate("listproduct/categoryId=&brandId=${brand.id}")},
-        modifier = Modifier.padding(5.dp).size(100.dp),
+        onClick = { GlobalNavigation.navController.navigate("listproduct/categoryId=&brandId=${brand.id}") },
+        modifier = Modifier
+            .padding(5.dp)
+            .size(100.dp),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(4.dp),
         colors = CardDefaults.cardColors(
