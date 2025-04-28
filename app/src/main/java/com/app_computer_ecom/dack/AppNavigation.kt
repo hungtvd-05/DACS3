@@ -1,6 +1,7 @@
 package com.app_computer_ecom.dack
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -50,7 +51,7 @@ fun AppNavigation(authViewModel: AuthViewModel, modifier: Modifier = Modifier) {
         else if (userModel?.role == "user") "home"
         else "loading"
     }
-
+    
 
     NavHost(navController = navController, startDestination = firstPage) {
         composable("auth") {
