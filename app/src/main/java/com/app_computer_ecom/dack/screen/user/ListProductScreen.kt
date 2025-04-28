@@ -57,7 +57,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun ListProductScreen(categoryId: String = "", brandId: String = "") {
+fun ListProductScreen(categoryId: String = "", brandId: String = "", searchQuery: String = "") {
     var products by remember {
         mutableStateOf(emptyList<ProductModel>())
     }
@@ -85,7 +85,10 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "") {
     LaunchedEffect(Unit) {
         selectedCategoryIds = if (categoryId.isNotEmpty()) setOf(categoryId) else emptySet()
         selectedBrandIds = if (brandId.isNotEmpty()) setOf(brandId) else emptySet()
-        products = GlobalRepository.productRepository.getProductsByCategoryIdAndBrandId(selectedCategoryIds.toList(), selectedBrandIds.toList())
+        products = GlobalRepository.productRepository.getProductsByCategoryIdAndBrandId(
+            selectedCategoryIds.toList(),
+            selectedBrandIds.toList()
+        )
         categories = GlobalRepository.categoryRepository.getCategorybyIsEnable()
         brands = GlobalRepository.brandRepository.getBrandByIsEnable()
         isLoading = false
@@ -112,7 +115,9 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "") {
         modifier = Modifier.fillMaxSize()
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -169,13 +174,13 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "") {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.padding(horizontal = 16.dp)
             ) {
-                item(span = { GridItemSpan(2)}) {
+                item(span = { GridItemSpan(2) }) {
                     Spacer(modifier = Modifier.height(1.dp))
                 }
                 items(products.size) {
                     ProductItem(product = products[it])
                 }
-                item(span = { GridItemSpan(2)}) {
+                item(span = { GridItemSpan(2) }) {
                     Spacer(modifier = Modifier.height(10.dp))
                 }
             }
@@ -195,7 +200,7 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "") {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                 ) {
-                    item(span = { GridItemSpan(2)}) {
+                    item(span = { GridItemSpan(2) }) {
                         Text(text = "Thương hiệu")
                     }
                     brands.forEach { brand ->
@@ -217,7 +222,7 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "") {
                             }
                         }
                     }
-                    item(span = { GridItemSpan(2)}) {
+                    item(span = { GridItemSpan(2) }) {
                         Text(text = "Danh mục")
                     }
                     categories.forEach { category ->
@@ -239,15 +244,15 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "") {
                             }
                         }
                     }
-                    item(span = { GridItemSpan(2)}) {
+                    item(span = { GridItemSpan(2) }) {
                         Spacer(
                             modifier = Modifier.height(8.dp)
                         )
                     }
                     item {
                         OutlinedTextField(
-                            value = if (tempMinPrice!=0) tempMinPrice.toString() else "",
-                            onValueChange = {newValue ->
+                            value = if (tempMinPrice != 0) tempMinPrice.toString() else "",
+                            onValueChange = { newValue ->
                                 if (newValue.all { it.isDigit() } || newValue.isEmpty()) {
                                     tempMinPrice = newValue.toIntOrNull() ?: 0
                                 }
@@ -268,7 +273,7 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "") {
                     }
                     item {
                         OutlinedTextField(
-                            value = if (tempMaxPrice!=0) tempMaxPrice.toString() else "",
+                            value = if (tempMaxPrice != 0) tempMaxPrice.toString() else "",
                             onValueChange = { newValue ->
                                 if (newValue.all { it.isDigit() } || newValue.isEmpty()) {
                                     tempMaxPrice = newValue.toIntOrNull() ?: 0
@@ -288,7 +293,7 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "") {
                                 .padding(start = 8.dp)
                         )
                     }
-                    item(span = { GridItemSpan(2)}) {
+                    item(span = { GridItemSpan(2) }) {
                         Spacer(
                             modifier = Modifier.height(8.dp)
                         )
@@ -297,7 +302,10 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "") {
                         Button(
                             onClick = {
                                 if (tempMinPrice != 0 && tempMaxPrice != 0 && tempMinPrice > tempMaxPrice) {
-                                    AppUtil.showToast(context, "Giá tối thiểu phải nhỏ hơn giá tối đa")
+                                    AppUtil.showToast(
+                                        context,
+                                        "Giá tối thiểu phải nhỏ hơn giá tối đa"
+                                    )
                                 } else {
                                     minPrice = tempMinPrice
                                     maxPrice = tempMaxPrice
@@ -309,7 +317,9 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "") {
                                 }
                                 showSheet = false
                             },
-                            modifier = Modifier.fillMaxWidth().padding(end = 8.dp)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(end = 8.dp)
                         ) {
                             Text("Áp dụng")
                         }
@@ -326,7 +336,9 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "") {
                                 }
                                 showSheet = false
                             },
-                            modifier = Modifier.fillMaxWidth().padding(start = 8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 8.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color.Red
                             )
