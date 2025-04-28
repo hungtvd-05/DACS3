@@ -423,19 +423,22 @@ fun CategoryDropDownFun(
     onCategorySelected: (String) -> Unit,
 ) {
     var dropControl by remember { mutableStateOf(false) }
-    var selectedCategory = categoryList.find { it.id == selectedCategoryId }?.name ?: "Chọn danh mục"
+    var selectedCategory =
+        categoryList.find { it.id == selectedCategoryId }?.name ?: "Chọn danh mục"
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        OutlinedCard(modifier = Modifier.padding(horizontal = 8.dp),
+        OutlinedCard(
+            modifier = Modifier.padding(horizontal = 8.dp),
             onClick = {
                 if (categoryList.isNotEmpty()) {
                     dropControl = true
                 }
             }
         ) {
-            Row(horizontalArrangement = Arrangement.Center,
+            Row(
+                horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .wrapContentWidth()
