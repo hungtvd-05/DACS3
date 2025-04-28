@@ -1,7 +1,6 @@
 package com.app_computer_ecom.dack
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,6 +30,7 @@ import com.app_computer_ecom.dack.screen.started.ResetPasswordScreen
 import com.app_computer_ecom.dack.screen.started.SignupScreen
 import com.app_computer_ecom.dack.screen.user.HomeScreen
 import com.app_computer_ecom.dack.screen.user.ListProductScreen
+import com.app_computer_ecom.dack.screen.user.SearchScreen
 import com.app_computer_ecom.dack.viewmodel.AuthViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -49,7 +49,7 @@ fun AppNavigation(authViewModel: AuthViewModel, modifier: Modifier = Modifier) {
         else if (userModel?.role == "user") "home"
         else "loading"
     }
-    
+
 
     NavHost(navController = navController, startDestination = firstPage) {
         composable("auth") {
@@ -97,10 +97,14 @@ fun AppNavigation(authViewModel: AuthViewModel, modifier: Modifier = Modifier) {
             var productId = it.arguments?.getString("productId").toString()
             UpdateProductScreen(navController, productId)
         }
-        composable("listproduct/categoryId={categoryId}&brandId={brandId}") {
+        composable("listproduct/categoryId={categoryId}&brandId={brandId}&searchQuery={searchQuery}") {
             var categoryId = it.arguments?.getString("categoryId").toString()
             var brandId = it.arguments?.getString("brandId").toString()
-            ListProductScreen(categoryId = categoryId, brandId = brandId)
+            var searchQuery = it.arguments?.getString("searchQuery").toString()
+            ListProductScreen(categoryId = categoryId, brandId = brandId, searchQuery = searchQuery)
+        }
+        composable("search") {
+            SearchScreen()
         }
     }
 
