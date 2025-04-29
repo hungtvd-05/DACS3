@@ -8,9 +8,12 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await
 
-class ProductRepositoryImpl: ProductRepository {
+
+class ProductRepositoryImpl : ProductRepository {
+    private var cachedProducts: List<ProductModel>? = null
     var db = GlobalDatabase.database
     val dbProduct: CollectionReference = db.collection("products")
+
 
     override suspend fun addProduct(product: ProductModel) {
         dbProduct.add(product)
@@ -54,12 +57,14 @@ class ProductRepositoryImpl: ProductRepository {
 
     override suspend fun getProductsByCreatedAt(): List<ProductModel> {
         return try {
-            val querySnapshot = dbProduct.orderBy("createdAt", Query.Direction.DESCENDING).limit(20).get().await()
+            val querySnapshot =
+                dbProduct.orderBy("createdAt", Query.Direction.DESCENDING).limit(20).get().await()
             if (querySnapshot.isEmpty) {
                 emptyList()
             } else {
                 querySnapshot.documents.mapNotNull { document ->
-                    document.toObject(ProductModel::class.java)?.copy(id = document.id)?.takeIf { it.show }
+                    document.toObject(ProductModel::class.java)?.copy(id = document.id)
+                        ?.takeIf { it.show }
                 }
             }
         } catch (e: Exception) {
@@ -75,7 +80,9 @@ class ProductRepositoryImpl: ProductRepository {
         limit: Long
     ): List<ProductModel> {
         return try {
-            val querySnapshot = dbProduct.orderBy("createdAt", Query.Direction.DESCENDING).limit(limit).get().await()
+            val querySnapshot =
+                dbProduct.orderBy("createdAt", Query.Direction.DESCENDING).limit(limit).get()
+                    .await()
             if (querySnapshot.isEmpty) {
                 emptyList()
             } else {
@@ -98,5 +105,53 @@ class ProductRepositoryImpl: ProductRepository {
             emptyList()
         }
     }
+
+    override suspend fun getProductsWithFilter(
+        searchQuery: String,
+        categoryIds: List<String>,
+        brandIds: List<String>,
+        minPrice: Int,
+        maxPrice: Int
+    ): List<ProductModel> {
+        return try {
+            loadProductsCacheIfNeeded()
+
+            val trimmedQuery = searchQuery.trim().lowercase()
+
+            val filteredProducts = cachedProducts.orEmpty().filter { product ->
+                product.show &&
+                        (trimmedQuery.isEmpty() || product.name.lowercase()
+                            .contains(trimmedQuery)) &&
+                        (categoryIds.isEmpty() || categoryIds.contains(product.categoryId)) &&
+                        (brandIds.isEmpty() || brandIds.contains(product.brandId)) &&
+                        (product.prices.any { priceInfo ->
+                            val price = (priceInfo.price as? Number)?.toInt() ?: 0
+                            price in minPrice..maxPrice
+                        })
+            }
+
+            Log.d("QUERY", trimmedQuery)
+            Log.d("QUERY_RESULT_SIZE", filteredProducts.size.toString())
+
+            filteredProducts
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    private suspend fun loadProductsCacheIfNeeded() {
+        if (cachedProducts == null) {
+            val querySnapshot = dbProduct
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .get()
+                .await()
+
+            cachedProducts = querySnapshot.documents.mapNotNull { document ->
+                document.toObject(ProductModel::class.java)
+                    ?.copy(id = document.id)
+            }
+        }
+    }
+
 
 }

@@ -7,6 +7,14 @@ interface ProductRepository {
     suspend fun updateProduct(product: ProductModel)
     suspend fun deleteProduct(product: ProductModel)
     suspend fun getProducts(): List<ProductModel>
+    suspend fun getProductsWithFilter(
+        searchQuery: String,
+        categoryIds: List<String> = emptyList<String>(),
+        brandIds: List<String> = emptyList<String>(),
+        minPrice: Int = 0,
+        maxPrice: Int = Int.MAX_VALUE
+    ): List<ProductModel>
+
     suspend fun getProductById(productId: String): ProductModel?
     suspend fun getProductsByCreatedAt(): List<ProductModel>
     suspend fun getProductsByCategoryIdAndBrandId(

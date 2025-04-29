@@ -84,18 +84,23 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "", searchQuery
     LaunchedEffect(Unit) {
         selectedCategoryIds = if (categoryId.isNotEmpty()) setOf(categoryId) else emptySet()
         selectedBrandIds = if (brandId.isNotEmpty()) setOf(brandId) else emptySet()
-        products = GlobalRepository.productRepository.getProductsByCategoryIdAndBrandId(
-            selectedCategoryIds.toList(),
-            selectedBrandIds.toList()
+        products = GlobalRepository.productRepository.getProductsWithFilter(
+            searchQuery = searchQuery,
+            categoryIds = selectedCategoryIds.toList(),
+            brandIds = selectedBrandIds.toList(),
+            minPrice = minPrice.toInt(),
+            maxPrice = if (maxPrice == 0) Int.MAX_VALUE else maxPrice.toInt()
         )
         categories = GlobalRepository.categoryRepository.getCategorybyIsEnable()
         brands = GlobalRepository.brandRepository.getBrandByIsEnable()
         isLoading = false
+
     }
 
-    LaunchedEffect(selectedCategoryIds, selectedBrandIds, minPrice, maxPrice) {
+    LaunchedEffect(selectedCategoryIds, selectedBrandIds, minPrice, maxPrice, searchQuery) {
         isLoading = true
-        products = GlobalRepository.productRepository.getProductsByCategoryIdAndBrandId(
+        products = GlobalRepository.productRepository.getProductsWithFilter(
+            searchQuery = searchQuery,
             categoryIds = selectedCategoryIds.toList(),
             brandIds = selectedBrandIds.toList(),
             minPrice = minPrice.toInt(),
@@ -140,7 +145,7 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "", searchQuery
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "search",
+                        text = if (searchQuery.isNotEmpty()) searchQuery else "Search",
                         style = TextStyle(fontWeight = FontWeight.Bold),
                         fontSize = 20.sp
                     )

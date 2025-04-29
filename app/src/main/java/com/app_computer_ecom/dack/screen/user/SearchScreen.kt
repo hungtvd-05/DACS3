@@ -26,38 +26,59 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app_computer_ecom.dack.GlobalNavigation
-import com.app_computer_ecom.dack.R
 import com.app_computer_ecom.dack.data.entity.SearchHistory
+import com.app_computer_ecom.dack.model.ProductModel
 import com.app_computer_ecom.dack.viewmodel.SearchViewModel
 import com.app_computer_ecom.dack.viewmodel.provideSearchViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 
 @Composable
 fun SearchScreen(viewModel: SearchViewModel = provideSearchViewModel(LocalContext.current)) {
 
     var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
     val searchHistory by viewModel.searchHistory.collectAsState(initial = emptyList())
+    val suggestions by viewModel.suggestions.collectAsState(initial = emptyList())
+    var isLoading by remember { mutableStateOf(false) }
 
 
-    var minPrice by remember { mutableStateOf(0) }
-    var maxPrice by remember { mutableStateOf(0) }
+    LaunchedEffect(searchQuery.text) {
+        if (searchQuery.text.isNotBlank()) {
+            isLoading = true
+            snapshotFlow { searchQuery.text }
+                .debounce(500)
+                .filter { it.isNotBlank() }
+                .distinctUntilChanged()
+                .collectLatest { query ->
+                    viewModel.searchProducts(query)
+                    isLoading = false
+                }
+        } else {
+            viewModel.clearSuggestions()
+            isLoading = false
+        }
+    }
 
-    var tempMinPrice by remember { mutableStateOf(0) }
-    var tempMaxPrice by remember { mutableStateOf(0) }
+
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -70,18 +91,25 @@ fun SearchScreen(viewModel: SearchViewModel = provideSearchViewModel(LocalContex
             },
             onSearch = {
                 viewModel.addSearchQueryWithLimit(searchQuery.text)
-                GlobalNavigation.navController.navigate("listproduct/categoryId=&brandId=&searchQuery=${searchQuery}")
-            }
+                GlobalNavigation.navController.navigate(
+                    "listproduct/categoryId=&brandId=&searchQuery=${
+                        searchQuery.text.trim().lowercase()
+                    }"
+                )
+            },
+            isLoading = isLoading
 
         )
         Spacer(modifier = Modifier.height(16.dp))
         SearchItemList(
-            searchHistory,
+            history = searchHistory,
+            suggestions = suggestions,
             onClearSearchHistory = {
                 viewModel.clearSearchHistory()
-            })
+            }
+        )
 
-        Text("San pham tieu bieu")
+//        Text("San pham tieu bieu")
     }
 
 
@@ -93,10 +121,9 @@ fun SearchBar(
     onSearchQueryChange: (TextFieldValue) -> Unit,
     onBack: () -> Unit,
     onSearch: () -> Unit,
-
-    ) {
-
-    Column() {
+    isLoading: Boolean
+) {
+    Column {
         Spacer(modifier = Modifier.height(32.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -127,6 +154,16 @@ fun SearchBar(
                     .fillMaxHeight(),
                 maxLines = 1,
                 singleLine = true,
+                trailingIcon = {
+                    if (isLoading) {
+                        androidx.compose.material3.CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(16.dp)
+                                .align(Alignment.CenterVertically),
+                            strokeWidth = 2.dp
+                        )
+                    }
+                }
             )
 
             Button(
@@ -136,37 +173,20 @@ fun SearchBar(
                     topEnd = 16.dp,
                     bottomEnd = 16.dp
                 ),
-                onClick = {
-                    onSearch()
-                },
+                onClick = onSearch,
                 modifier = Modifier.fillMaxHeight()
             ) {
                 Icon(Icons.Default.Search, contentDescription = "Search")
             }
-
-            IconButton(
-                onClick = {
-//                    tempSelectedCategoryIds = selectedCategoryIds
-//                    tempSelectedBrandIds = selectedBrandIds
-//                    tempMaxPrice = maxPrice
-//                    tempMinPrice = minPrice
-//                    scope.launch { showSheet = true }
-                }
-            ) {
-                androidx.compose.material.Icon(
-                    painter = painterResource(id = R.drawable.filter_svgrepo_com),
-                    contentDescription = "Add",
-                    modifier = Modifier.size(25.dp)
-                )
-            }
-
         }
     }
 }
 
+
 @Composable
 fun SearchItemList(
-    searchHistory: List<SearchHistory>,
+    history: List<SearchHistory>,
+    suggestions: List<ProductModel>,
     onClearSearchHistory: () -> Unit
 ) {
 
@@ -180,7 +200,7 @@ fun SearchItemList(
     ) {
 
 
-        if (searchHistory.isNotEmpty()) {
+        if (history.isNotEmpty() && suggestions.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -209,31 +229,45 @@ fun SearchItemList(
                 .fillMaxWidth()
         ) {
 
-            items(searchHistory) { item ->
+            items(suggestions) { item ->
+                SearchItem(text = item.name, isHistory = false)
+            }
+
+            items(history) { item ->
                 SearchItem(text = item.query)
             }
 
         }
 
-        if (searchHistory.size > 4) {
-
-        }
     }
 }
 
 @Composable
-fun SearchItem(text: String, isHistory: Boolean = true) {
+fun SearchItem(
+    text: String,
+    isHistory: Boolean = true,
+    viewModel: SearchViewModel = provideSearchViewModel(LocalContext.current)
+) {
     Box(
-
         modifier = Modifier
             .fillMaxWidth()
             .height(46.dp)
-            .clickable { }) {
+            .clickable {
+                viewModel.addSearchQueryWithLimit(text)
+
+                GlobalNavigation.navController.navigate(
+                    "listproduct/categoryId=&brandId=&searchQuery=${text}"
+                )
+            }
+    ) {
         Text(
-            text = text, fontSize = 12.sp,
+            text = text,
+            fontSize = 12.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .align(Alignment.CenterStart)
-                .padding(start = 16.dp),
+                .padding(start = 16.dp, end = 40.dp),
         )
 
         HorizontalDivider(

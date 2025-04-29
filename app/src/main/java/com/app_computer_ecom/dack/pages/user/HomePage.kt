@@ -198,9 +198,6 @@ fun HomePage(authViewModel: AuthViewModel, modifier: Modifier = Modifier) {
                     Text(text = "Xem tất cả")
                 }
             }
-//            item(span = {GridItemSpan(2)}) {
-//                Spacer(modifier = Modifier.height(4.dp))
-//            }
         }
     }
 }
