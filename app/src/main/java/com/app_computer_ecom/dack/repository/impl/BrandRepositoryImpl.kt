@@ -1,8 +1,8 @@
 package com.app_computer_ecom.dack.repository.impl
 
-import android.util.Log
 import com.app_computer_ecom.dack.GlobalDatabase
 import com.app_computer_ecom.dack.model.BrandModel
+import com.app_computer_ecom.dack.model.CategoryModel
 import com.app_computer_ecom.dack.repository.BrandRepository
 import com.google.firebase.firestore.CollectionReference
 import kotlinx.coroutines.tasks.await
@@ -26,8 +26,17 @@ class BrandRepositoryImpl: BrandRepository {
         }
     }
 
-    override suspend fun getBrandById(id: Int): BrandModel? {
-        TODO("Not yet implemented")
+    override suspend fun getBrandById(brandId: String): BrandModel? {
+        return try {
+            val querySnapshot = dbBrand.document(brandId).get().await()
+            if (!querySnapshot.exists()) {
+                null
+            } else {
+                querySnapshot.toObject(BrandModel::class.java)?.copy(id = brandId)
+            }
+        } catch (e: Exception) {
+            null
+        }
     }
 
     override suspend fun getBrandByIsEnable(): List<BrandModel> {
