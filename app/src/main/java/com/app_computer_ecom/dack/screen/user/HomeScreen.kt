@@ -48,7 +48,8 @@ import com.app_computer_ecom.dack.viewmodel.AuthViewModel
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel,
+    indexValue: Int = 0
 ) {
     val navItems = listOf(
         NavItem("Home", Icons.Default.ShoppingCart),
@@ -58,7 +59,7 @@ fun HomeScreen(
     )
 
     var selectedIndex by remember {
-        mutableStateOf(0)
+        mutableStateOf(indexValue)
     }
 
     Scaffold(

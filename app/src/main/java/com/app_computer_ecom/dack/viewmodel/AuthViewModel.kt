@@ -3,11 +3,8 @@ package com.app_computer_ecom.dack.viewmodel
 import android.app.Application
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
@@ -19,11 +16,9 @@ import com.app_computer_ecom.dack.model.UserModel
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -41,10 +36,6 @@ class AuthViewModel(private val application: Application) : AndroidViewModel(app
 
     var userModel by mutableStateOf<UserModel?>(null)
         private set
-
-//    var userM by remember {
-//        mutableStateOf(UserModel)
-//    }
 
     init {
         auth.addAuthStateListener { firebaseAuth ->
@@ -161,7 +152,6 @@ class AuthViewModel(private val application: Application) : AndroidViewModel(app
             val newUser = UserModel(
                 name = firebaseUser.displayName ?: "",
                 username = firebaseUser.email ?: "",
-                avatar = "",
                 email = firebaseUser.email ?: "",
                 role = "user",
                 uid = firebaseUser.uid
@@ -205,7 +195,13 @@ class AuthViewModel(private val application: Application) : AndroidViewModel(app
                 val userId = result.user?.uid ?: throw Exception("Lỗi tạo tài khoản")
 
                 auth.currentUser?.sendEmailVerification()?.await()
-                val userModel = UserModel(name, username, "", email, "user", userId)
+                val userModel = UserModel(
+                    name,
+                    username,
+                    email = email,
+                    role = "user",
+                    uid = userId
+                )
                 firestore.collection("users").document(userId).set(userModel).await()
 
                 auth.signOut()
@@ -242,25 +238,6 @@ class AuthViewModel(private val application: Application) : AndroidViewModel(app
                 userModel = null
             }
         }
-
-//        viewModelScope.launch {
-//            try {
-//                var db: FirebaseFirestore = FirebaseFirestore.getInstance()
-//                db.collection("users")
-//                    .document(currentUser.uid)
-//                    .get()
-//                    .addOnSuccessListener { document ->
-//                        if (document.exists()) {
-//                            var userM = document.toObject(UserModel::class.java)
-//                            if (userM != null) {
-//                                onResult(userM)
-//                            }
-//                        }
-//                    }
-//            } catch (e: Exception) {
-//                onResult(null)
-//            }
-//        }
     }
 
     fun logout() {
@@ -270,5 +247,3 @@ class AuthViewModel(private val application: Application) : AndroidViewModel(app
     }
 
 }
-
-
