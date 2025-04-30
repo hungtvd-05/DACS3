@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -33,16 +34,19 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.app_computer_ecom.dack.AppUtil
 import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.components.ProductItem
 import com.app_computer_ecom.dack.model.BrandModel
@@ -53,6 +57,7 @@ import com.app_computer_ecom.dack.repository.GlobalRepository
 import com.tbuonomo.viewpagerdotsindicator.compose.DotsIndicator
 import com.tbuonomo.viewpagerdotsindicator.compose.model.DotGraphic
 import com.tbuonomo.viewpagerdotsindicator.compose.type.ShiftIndicatorType
+import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -69,12 +74,14 @@ fun ProductDetailsScreen(productId: String) {
         mutableStateOf(emptyList<ProductModel>())
     }
 
+    val scope = rememberCoroutineScope()
+
     val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
 
     var minPrice by remember { mutableStateOf(0) }
     var maxPrice by remember { mutableStateOf(0) }
 
-
+    var context = LocalContext.current
 
     LaunchedEffect(Unit) {
         product = GlobalRepository.productRepository.getProductById(productId)
@@ -83,6 +90,7 @@ fun ProductDetailsScreen(productId: String) {
         ortherProducts = GlobalRepository.productRepository.getProductsByCategoryIdAndBrandId(
             categoryIds = setOf(product!!.categoryId).toList(), limit = 8
         )
+        ortherProducts = ortherProducts.dropWhile { it.id == productId }
         minPrice = product!!.prices.minOf { it.price as Int }
         maxPrice = product!!.prices.maxOf { it.price as Int }
         isLoading = false
@@ -114,7 +122,7 @@ fun ProductDetailsScreen(productId: String) {
                 ) {
                     IconButton(
                         onClick = {
-
+                            GlobalNavigation.navController.navigate("home/2")
                         }
                     ) {
                         Icon(
@@ -125,7 +133,7 @@ fun ProductDetailsScreen(productId: String) {
 
                     IconButton(
                         onClick = {
-                            GlobalNavigation.navController.navigate("home")
+                            GlobalNavigation.navController.navigate("home/0")
                         }
                     ) {
                         Icon(
@@ -144,13 +152,7 @@ fun ProductDetailsScreen(productId: String) {
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 16.dp)
             ) {
-                item(span = { GridItemSpan(2) }) {
-                    Text(
-                        text = product?.name.toString(),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                    )
-                }
+
                 item(span = { GridItemSpan(2) }) {
                     Column(
                     ) {
@@ -166,7 +168,7 @@ fun ProductDetailsScreen(productId: String) {
                                 contentDescription = "Product images",
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(220.dp)
+                                    .heightIn(260.dp)
                                     .clip(RoundedCornerShape(16.dp)),
                                 contentScale = ContentScale.Crop
                             )
@@ -186,6 +188,16 @@ fun ProductDetailsScreen(productId: String) {
                         )
                     }
                 }
+
+                item(span = { GridItemSpan(2) }) {
+                    Text(
+                        text = product?.name.toString(),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+
+                        )
+                }
+
                 item(span = { GridItemSpan(2) }) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -204,7 +216,8 @@ fun ProductDetailsScreen(productId: String) {
                                 selectedPriceInfo!!.price
                             ),
                             fontSize = 18.sp,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(227, 0, 25)
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         IconButton(
@@ -244,8 +257,19 @@ fun ProductDetailsScreen(productId: String) {
                     }
                 }
                 item(span = { GridItemSpan(2) }) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                }
+                item(span = { GridItemSpan(2) }) {
                     Button(
-                        onClick = {}, modifier = Modifier
+                        onClick = {
+                            if (selectedPriceInfo != null) {
+                                scope.launch {
+                                    GlobalRepository.cartRepository.addToCart(context, productId, selectedPriceInfo!!)
+                                }
+                            } else {
+                                AppUtil.showToast(context, "Vui lòng chọn mẫu sản phẩm !!!")
+                            }
+                        }, modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp)
                     ) {

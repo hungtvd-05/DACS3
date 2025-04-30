@@ -47,10 +47,9 @@ fun AppNavigation(authViewModel: AuthViewModel, modifier: Modifier = Modifier) {
     LaunchedEffect(userModel) {
         firstPage = if (user == null) "auth"
         else if (userModel?.role == "admin") "admin/0"
-        else if (userModel?.role == "user") "home"
+        else if (userModel?.role == "user") "home/0"
         else "loading"
     }
-    
 
     NavHost(navController = navController, startDestination = firstPage) {
         composable("auth") {
@@ -65,8 +64,9 @@ fun AppNavigation(authViewModel: AuthViewModel, modifier: Modifier = Modifier) {
         composable("reset") {
             ResetPasswordScreen(modifier, navController)
         }
-        composable("home") {
-            HomeScreen(modifier, authViewModel)
+        composable("home/{indexValue}") {
+            var indexValue = it.arguments?.getString("indexValue")
+            HomeScreen(modifier, authViewModel, indexValue.toString().toInt())
         }
         composable("admin/{indexValue}") {
             var indexValue = it.arguments?.getString("indexValue")

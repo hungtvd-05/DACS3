@@ -10,6 +10,12 @@ android {
     namespace = "com.app_computer_ecom.dack"
     compileSdk = 35
 
+    packaging {
+        resources {
+            excludes += "/META-INF/DEPENDENCIES"
+        }
+    }
+
     defaultConfig {
         applicationId = "com.app_computer_ecom.dack"
         minSdk = 24
@@ -76,6 +82,8 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
+
+    implementation(libs.payos.java)
 
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
