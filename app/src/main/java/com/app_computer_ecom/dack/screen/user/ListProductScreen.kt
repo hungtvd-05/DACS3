@@ -121,7 +121,7 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "", searchQuery
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 15.dp),
+                .padding(top = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {

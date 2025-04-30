@@ -31,7 +31,7 @@ fun HeaderView(authViewModel: AuthViewModel, modifier: Modifier = Modifier) {
 
     Row(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth().padding(top = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

@@ -46,17 +46,36 @@ fun HomeScreen(
 
     Scaffold(
         bottomBar = {
-            BottomBar(
-                navItems = navItems,
-                selectedIndex = selectedIndex,
-                onItemSelected = { index ->
-                    selectedIndex = index
-                })
+            NavigationBar {
+                navItems.forEachIndexed { index, navItem ->
+                    NavigationBarItem(
+                        selected = index == selectedIndex,
+                        onClick = {
+                            selectedIndex = index
+                        },
+                        icon = {
+                            Icon(imageVector = navItem.icon, contentDescription = navItem.label)
+                        },
+                        label = {
+                            Text(
+                                text = navItem.label
+                            )
+                        }
+                    )
+                }
+
+            }
+//            BottomBar(
+//                navItems = navItems,
+//                selectedIndex = selectedIndex,
+//                onItemSelected = { index ->
+//                    selectedIndex = index
+//                })
         }
-    ) {
+    ) { paddingValues ->
         ContentScreen(
             authViewModel,
-            modifier = modifier.padding(it),
+            modifier = modifier.padding(paddingValues),
             selectedIndex,
             onIndexSelect = { index ->
                 selectedIndex = index

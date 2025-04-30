@@ -43,13 +43,17 @@ fun CartPage(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
+            .padding(top = 16.dp)
     ) {
         Text(text = "Giỏ hàng", fontSize = 22.sp, fontWeight = FontWeight.SemiBold)
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         if (isLoading) {
             LoadingScreen()
         } else {
             LazyColumn {
+                item {
+                    Spacer(modifier = Modifier.height(4.dp))
+                }
                 items(cartList, key = { it.id }) { item ->
                     CartItemView(
                         pid = item.pid,

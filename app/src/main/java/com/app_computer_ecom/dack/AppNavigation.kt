@@ -66,7 +66,7 @@ fun AppNavigation(authViewModel: AuthViewModel, modifier: Modifier = Modifier) {
         }
         composable("home/{indexValue}") {
             var indexValue = it.arguments?.getString("indexValue")
-            HomeScreen(modifier, authViewModel, indexValue.toString().toInt())
+            HomeScreen(authViewModel = authViewModel, indexValue = indexValue.toString().toInt())
         }
         composable("admin/{indexValue}") {
             var indexValue = it.arguments?.getString("indexValue")

@@ -126,7 +126,7 @@ fun SearchScreen(
                 }
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             ProductHistoryList(productModels) {
                 viewModel.clearProductHistory()
             }
@@ -160,7 +160,7 @@ fun ProductHistoryList(productModels: List<ProductModel>, onClearProductHistory:
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-        Spacer(modifier = Modifier.height(1.dp))
+//        Spacer(modifier = Modifier.height(1.dp))
 
         productModels.chunked(2).forEach { rowItems ->
             Row(
@@ -197,7 +197,7 @@ fun SearchBar(
     isLoadingSearch: Boolean
 ) {
     Column {
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -265,14 +265,11 @@ fun SearchItemList(
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(max = screenHeight * 0.5f)
     ) {
-
-
         if (history.isNotEmpty() && suggestions.isEmpty()) {
             Box(
                 modifier = Modifier

@@ -122,7 +122,7 @@ fun ProductDetailsScreen(productId: String) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 15.dp),
+                .padding(top = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(onClick = {
