@@ -45,8 +45,8 @@ import androidx.compose.ui.unit.sp
 import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.data.entity.SearchHistory
 import com.app_computer_ecom.dack.model.ProductModel
-import com.app_computer_ecom.dack.viewmodel.SearchViewModel
-import com.app_computer_ecom.dack.viewmodel.provideSearchViewModel
+import com.app_computer_ecom.dack.viewmodel.Search.SearchViewModel
+import com.app_computer_ecom.dack.viewmodel.Search.provideSearchViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
