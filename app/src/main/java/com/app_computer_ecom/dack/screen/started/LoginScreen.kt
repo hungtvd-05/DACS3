@@ -216,9 +216,9 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController, aut
                         Toast.makeText(context, message ?: "Lỗi đăng nhập Google", Toast.LENGTH_SHORT).show()
                     } else {
                         if (authViewModel.userModel?.role == "user") {
-                            navController.navigate("home")
+                            navController.navigate("home/0")
                         } else {
-                            navController.navigate("admin")
+                            navController.navigate("admin/0")
                         }
                     }
                 }

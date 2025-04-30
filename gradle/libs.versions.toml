@@ -31,6 +31,7 @@ credentialsPlayServicesAuth = "1.5.0"
 googleid = "1.1.1"
 materialVersion = "1.7.8"
 navigationCompose = "2.8.9"
+payosJavaVersion = "1.0.3"
 playServicesAuth = "21.3.0"
 ksp = "2.0.21-1.0.27"
 roomCompilerVersion = "2.7.0"
@@ -77,6 +78,7 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 androidx-credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
 androidx-credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentialsPlayServicesAuth" }
 googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
+payos-java = { module = "vn.payos:payos-java", version.ref = "payosJavaVersion" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 ksp = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 

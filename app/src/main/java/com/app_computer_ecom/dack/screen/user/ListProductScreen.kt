@@ -45,12 +45,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app_computer_ecom.dack.AppUtil
 import com.app_computer_ecom.dack.GlobalNavigation
+import com.app_computer_ecom.dack.LoadingScreen
 import com.app_computer_ecom.dack.R
 import com.app_computer_ecom.dack.components.ProductItem
 import com.app_computer_ecom.dack.model.BrandModel
 import com.app_computer_ecom.dack.model.CategoryModel
 import com.app_computer_ecom.dack.model.ProductModel
-import com.app_computer_ecom.dack.pages.user.Loading
 import com.app_computer_ecom.dack.repository.GlobalRepository
 import kotlinx.coroutines.launch
 
@@ -121,7 +121,7 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "", searchQuery
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 20.dp),
+                .padding(top = 15.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -171,7 +171,7 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "", searchQuery
         }
 
         if (isLoading) {
-            Loading()
+            LoadingScreen()
         } else {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),

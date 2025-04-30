@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.app_computer_ecom.dack.LoadingScreen
 import com.app_computer_ecom.dack.components.CartItemView
 import com.app_computer_ecom.dack.model.CartModel
 import com.app_computer_ecom.dack.repository.GlobalRepository
@@ -42,13 +43,11 @@ fun CartPage(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
-            .padding(top = 8.dp)
-//            .verticalScroll(rememberScrollState())
     ) {
         Text(text = "Giỏ hàng", fontSize = 22.sp, fontWeight = FontWeight.SemiBold)
         Spacer(modifier = Modifier.height(16.dp))
         if (isLoading) {
-
+            LoadingScreen()
         } else {
             LazyColumn {
                 items(cartList, key = { it.id }) { item ->

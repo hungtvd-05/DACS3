@@ -1,8 +1,10 @@
 package com.app_computer_ecom.dack.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -39,7 +42,14 @@ import java.text.NumberFormat
 import java.util.Locale
 
 @Composable
-fun CartItemView(pid: String, quantity: Int, selectType: PriceInfo, delete: () -> Unit, increse: () -> Unit, decrese: () -> Unit) {
+fun CartItemView(
+    pid: String,
+    quantity: Int,
+    selectType: PriceInfo,
+    delete: () -> Unit,
+    increse: () -> Unit,
+    decrese: () -> Unit
+) {
     var product by remember { mutableStateOf<ProductModel?>(null) }
     var isLoading by remember { mutableStateOf(true) }
 
@@ -56,19 +66,21 @@ fun CartItemView(pid: String, quantity: Int, selectType: PriceInfo, delete: () -
         elevation = CardDefaults.cardElevation(8.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(140.dp)
+            .height(146.dp)
             .padding(bottom = 8.dp)
     ) {
         if (isLoading) {
 
         } else {
             Row(
-                modifier = Modifier.padding(12.dp)
             ) {
                 AsyncImage(
                     model = product!!.imageUrls.firstOrNull()?.imageUrl,
                     contentDescription = null,
-                    modifier = Modifier.fillMaxHeight(),
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .aspectRatio(1f),
+                    contentScale = ContentScale.Crop,
                     error = painterResource(id = R.drawable.image_broken_svgrepo_com),
                     placeholder = painterResource(id = R.drawable.loading_svgrepo_com)
                 )
@@ -78,15 +90,32 @@ fun CartItemView(pid: String, quantity: Int, selectType: PriceInfo, delete: () -
                     Text(
                         text = product!!.name,
                         fontWeight = FontWeight.SemiBold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        maxLines = 2,
+                        minLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        fontSize = 10.sp,
+                        lineHeight = 12.sp
+
                     )
-                    Text(
-                        text = selectType.type,
-                        fontWeight = FontWeight.SemiBold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Row(
+                        modifier = Modifier
+                            .background(Color(233, 233, 233))
+                            .padding(horizontal = 4.dp)
+                    ) {
+                        Text(
+                            text = selectType.type,
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            fontSize = 10.sp, lineHeight = 12.sp
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
                     Row {
                         Column {
                             Text(

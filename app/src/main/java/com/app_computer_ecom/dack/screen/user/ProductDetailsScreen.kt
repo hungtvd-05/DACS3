@@ -1,5 +1,6 @@
 package com.app_computer_ecom.dack.screen.user
 
+import DatabaseProvider
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -47,7 +49,9 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.app_computer_ecom.dack.AppUtil
 import com.app_computer_ecom.dack.GlobalNavigation
+import com.app_computer_ecom.dack.LoadingScreen
 import com.app_computer_ecom.dack.components.ProductItem
+import com.app_computer_ecom.dack.data.entity.ProductHistory
 import com.app_computer_ecom.dack.model.BrandModel
 import com.app_computer_ecom.dack.model.CategoryModel
 import com.app_computer_ecom.dack.model.PriceInfo
@@ -80,7 +84,11 @@ fun ProductDetailsScreen(productId: String) {
     var minPrice by remember { mutableStateOf(0) }
     var maxPrice by remember { mutableStateOf(0) }
 
+
     var context = LocalContext.current
+    val productHistoryDao = DatabaseProvider.getDatabase(context).productHistoryDao()
+
+
 
     LaunchedEffect(Unit) {
         product = GlobalRepository.productRepository.getProductById(productId)
@@ -93,55 +101,68 @@ fun ProductDetailsScreen(productId: String) {
         minPrice = product!!.prices.minOf { it.price as Int }
         maxPrice = product!!.prices.maxOf { it.price as Int }
         isLoading = false
+
+
     }
 
-    if (isLoading) {
+    LaunchedEffect(productId) {
+        scope.launch {
+            productHistoryDao.insertIfNotExists(
+                ProductHistory(
+                    productId = productId,
+                    timestamp = System.currentTimeMillis()
+                )
+            )
+        }
+    }
 
-    } else {
-        Column(
-            modifier = Modifier.fillMaxSize()
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 15.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
+            IconButton(onClick = {
+                GlobalNavigation.navController.popBackStack()
+            }) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back"
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 20.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(end = 4.dp)
             ) {
-                IconButton(onClick = {
-                    GlobalNavigation.navController.popBackStack()
-                }) {
+                IconButton(
+                    onClick = {
+                        GlobalNavigation.navController.navigate("home/2")
+                    }
+                ) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back"
+                        imageVector = Icons.Default.ShoppingCart,
+                        contentDescription = "ShoppingCart"
                     )
                 }
-                Spacer(modifier = Modifier.weight(1f))
-                Row(
-                    modifier = Modifier.padding(end = 4.dp)
-                ) {
-                    IconButton(
-                        onClick = {
-                            GlobalNavigation.navController.navigate("home/2")
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ShoppingCart,
-                            contentDescription = "ShoppingCart"
-                        )
-                    }
 
-                    IconButton(
-                        onClick = {
-                            GlobalNavigation.navController.navigate("home/0")
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Home,
-                            contentDescription = "Home"
-                        )
+                IconButton(
+                    onClick = {
+                        GlobalNavigation.navController.navigate("home/0")
                     }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Home,
+                        contentDescription = "Home"
+                    )
                 }
             }
+        }
+        if (isLoading) {
+            LoadingScreen()
+        } else {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -151,13 +172,7 @@ fun ProductDetailsScreen(productId: String) {
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 16.dp)
             ) {
-                item(span = { GridItemSpan(2) }) {
-                    Text(
-                        text = product?.name.toString(),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                    )
-                }
+
                 item(span = { GridItemSpan(2) }) {
                     Column(
                     ) {
@@ -173,7 +188,7 @@ fun ProductDetailsScreen(productId: String) {
                                 contentDescription = "Product images",
                                 modifier = Modifier
                                     .fillMaxWidth()
-//                                    .height(220.dp)
+                                    .heightIn(260.dp)
                                     .clip(RoundedCornerShape(16.dp)),
                                 contentScale = ContentScale.Crop
                             )
@@ -193,6 +208,16 @@ fun ProductDetailsScreen(productId: String) {
                         )
                     }
                 }
+
+                item(span = { GridItemSpan(2) }) {
+                    Text(
+                        text = product?.name.toString(),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+
+                        )
+                }
+
                 item(span = { GridItemSpan(2) }) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -211,7 +236,8 @@ fun ProductDetailsScreen(productId: String) {
                                 selectedPriceInfo!!.price
                             ),
                             fontSize = 18.sp,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(227, 0, 25)
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         IconButton(
@@ -258,7 +284,11 @@ fun ProductDetailsScreen(productId: String) {
                         onClick = {
                             if (selectedPriceInfo != null) {
                                 scope.launch {
-                                    GlobalRepository.cartRepository.addToCart(context, productId, selectedPriceInfo!!)
+                                    GlobalRepository.cartRepository.addToCart(
+                                        context,
+                                        productId,
+                                        selectedPriceInfo!!
+                                    )
                                 }
                             } else {
                                 AppUtil.showToast(context, "Vui lòng chọn mẫu sản phẩm !!!")

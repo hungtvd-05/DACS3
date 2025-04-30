@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun HeaderViewMenu(title: String, onBackClick: () -> Unit, onAddClick: () -> Unit, isUploading: Boolean) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

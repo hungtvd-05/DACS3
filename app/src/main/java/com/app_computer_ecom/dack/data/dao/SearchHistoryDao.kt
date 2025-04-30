@@ -30,12 +30,18 @@ interface SearchHistoryDao {
     @Query("DELETE FROM search_history WHERE id IN (SELECT id FROM search_history ORDER BY timestamp ASC LIMIT 1)")
     suspend fun deleteOldest()
 
+    @Query("SELECT * FROM search_history WHERE `query` = :query")
+    suspend fun getSearchHistoryByQuery(query: String): List<SearchHistory>
+
     @Transaction
     suspend fun insertWithLimit(search: SearchHistory, maxEntries: Int = 10) {
-        insert(search)
-        val count = getHistoryCount()
-        if (count > maxEntries) {
-            deleteOldest()
+        val existingHistory = getSearchHistoryByQuery(search.query)
+        if (existingHistory.isNullOrEmpty()) {
+            insert(search)
+            val count = getHistoryCount()
+            if (count > maxEntries) {
+                deleteOldest()
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.app_computer_ecom.dack.screen.user
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -43,75 +45,146 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app_computer_ecom.dack.GlobalNavigation
+import com.app_computer_ecom.dack.components.ProductItem
 import com.app_computer_ecom.dack.data.entity.SearchHistory
 import com.app_computer_ecom.dack.model.ProductModel
-import com.app_computer_ecom.dack.viewmodel.SearchViewModel
-import com.app_computer_ecom.dack.viewmodel.provideSearchViewModel
+import com.app_computer_ecom.dack.repository.GlobalRepository
+import com.app_computer_ecom.dack.viewmodel.Search.SearchViewModel
+import com.app_computer_ecom.dack.viewmodel.Search.provideSearchViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 
 @Composable
-fun SearchScreen(viewModel: SearchViewModel = provideSearchViewModel(LocalContext.current)) {
+fun SearchScreen(
+    viewModel: SearchViewModel = provideSearchViewModel(LocalContext.current)
+) {
 
     var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
     val searchHistory by viewModel.searchHistory.collectAsState(initial = emptyList())
     val suggestions by viewModel.suggestions.collectAsState(initial = emptyList())
-    var isLoading by remember { mutableStateOf(false) }
+    val productHistory by viewModel.productHistory.collectAsState(initial = emptyList())
+    var isLoadingSearch by remember { mutableStateOf(false) }
 
+    var productModels by remember { mutableStateOf<List<ProductModel>>(emptyList()) }
 
     LaunchedEffect(searchQuery.text) {
         if (searchQuery.text.isNotBlank()) {
-            isLoading = true
+            isLoadingSearch = true
             snapshotFlow { searchQuery.text }
                 .debounce(500)
                 .filter { it.isNotBlank() }
                 .distinctUntilChanged()
                 .collectLatest { query ->
                     viewModel.searchProducts(query)
-                    isLoading = false
+                    isLoadingSearch = false
                 }
         } else {
             viewModel.clearSuggestions()
-            isLoading = false
+            isLoadingSearch = false
         }
     }
 
-
-
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        SearchBar(
-            searchQuery = searchQuery,
-            onSearchQueryChange = { searchQuery = it },
-            onBack = {
-                GlobalNavigation.navController.popBackStack()
-            },
-            onSearch = {
-                viewModel.addSearchQueryWithLimit(searchQuery.text)
-                GlobalNavigation.navController.navigate(
-                    "listproduct/categoryId=&brandId=&searchQuery=${
-                        searchQuery.text.trim().lowercase()
-                    }"
-                )
-            },
-            isLoading = isLoading
-
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        SearchItemList(
-            history = searchHistory,
-            suggestions = suggestions,
-            onClearSearchHistory = {
-                viewModel.clearSearchHistory()
-            }
-        )
-
-//        Text("San pham tieu bieu")
+    LaunchedEffect(productHistory) {
+        val result = productHistory.mapNotNull {
+            GlobalRepository.productRepository.getProductById(it.productId)
+        }
+        productModels = result
     }
 
+
+
+
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        item {
+            SearchBar(
+                searchQuery = searchQuery,
+                onSearchQueryChange = { searchQuery = it },
+                onBack = {
+                    GlobalNavigation.navController.popBackStack()
+                },
+                onSearch = {
+                    viewModel.addSearchQueryWithLimit(searchQuery.text)
+                    GlobalNavigation.navController.navigate(
+                        "listproduct/categoryId=&brandId=&searchQuery=${
+                            searchQuery.text.trim().lowercase()
+                        }"
+                    )
+                },
+                isLoadingSearch = isLoadingSearch
+
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            SearchItemList(
+                history = searchHistory,
+                suggestions = suggestions,
+                onClearSearchHistory = {
+                    viewModel.clearSearchHistory()
+                }
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+            ProductHistoryList(productModels) {
+                viewModel.clearProductHistory()
+            }
+        }
+
+
+    }
+
+
+}
+
+@Composable
+fun ProductHistoryList(productModels: List<ProductModel>, onClearProductHistory: () -> Unit) {
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(text = "Sản phẩm đã xem", modifier = Modifier.padding(start = 16.dp))
+        TextButton(onClick = {
+            onClearProductHistory()
+        }) {
+            Text(text = "Xoá lịch sử xem", color = Color.Red, fontSize = 10.sp)
+        }
+    }
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
+    ) {
+        Spacer(modifier = Modifier.height(1.dp))
+
+        productModels.chunked(2).forEach { rowItems ->
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                rowItems.forEach { product ->
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                    ) {
+                        ProductItem(product)
+                    }
+                }
+
+                if (rowItems.size < 2) {
+                    // nếu chỉ có 1 item, chèn spacer cho cột còn lại
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+    }
 
 }
 
@@ -121,7 +194,7 @@ fun SearchBar(
     onSearchQueryChange: (TextFieldValue) -> Unit,
     onBack: () -> Unit,
     onSearch: () -> Unit,
-    isLoading: Boolean
+    isLoadingSearch: Boolean
 ) {
     Column {
         Spacer(modifier = Modifier.height(32.dp))
@@ -155,7 +228,7 @@ fun SearchBar(
                 maxLines = 1,
                 singleLine = true,
                 trailingIcon = {
-                    if (isLoading) {
+                    if (isLoadingSearch) {
                         androidx.compose.material3.CircularProgressIndicator(
                             modifier = Modifier
                                 .size(16.dp)
@@ -209,7 +282,7 @@ fun SearchItemList(
                         onClearSearchHistory()
                     }) {
                 Text(
-                    text = "Clear search history",
+                    text = "Xoá lịch sử tìm kiếm",
                     fontSize = 12.sp,
                     modifier = Modifier
                         .align(Alignment.Center)
