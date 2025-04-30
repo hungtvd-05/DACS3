@@ -14,9 +14,9 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Checkbox
-import androidx.compose.material.Icon
-import androidx.compose.material.OutlinedTextField
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -88,8 +88,8 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "", searchQuery
             searchQuery = searchQuery,
             categoryIds = selectedCategoryIds.toList(),
             brandIds = selectedBrandIds.toList(),
-            minPrice = minPrice.toDouble(),
-            maxPrice = if (maxPrice == 0) Double.MAX_VALUE else maxPrice.toDouble()
+            minPrice = minPrice.toInt(),
+            maxPrice = if (maxPrice == 0) Int.MAX_VALUE else maxPrice.toInt()
         )
         categories = GlobalRepository.categoryRepository.getCategorybyIsEnable()
         brands = GlobalRepository.brandRepository.getBrandByIsEnable()
@@ -103,8 +103,8 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "", searchQuery
             searchQuery = searchQuery,
             categoryIds = selectedCategoryIds.toList(),
             brandIds = selectedBrandIds.toList(),
-            minPrice = minPrice.toDouble(),
-            maxPrice = if (maxPrice == 0) Double.MAX_VALUE else maxPrice.toDouble()
+            minPrice = minPrice.toInt(),
+            maxPrice = if (maxPrice == 0) Int.MAX_VALUE else maxPrice.toInt()
         )
         isLoading = false
     }
@@ -158,7 +158,8 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "", searchQuery
                         tempMaxPrice = maxPrice
                         tempMinPrice = minPrice
                         scope.launch { showSheet = true }
-                    }
+                    },
+                    modifier = Modifier.padding(end = 4.dp)
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.filter_svgrepo_com),

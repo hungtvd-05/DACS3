@@ -5,7 +5,7 @@ import com.app_computer_ecom.dack.model.CategoryModel
 interface CategoryRepository {
     suspend fun getCategories(): List<CategoryModel>
     suspend fun getCategorybyName(): CategoryModel
-    suspend fun getCategorybyId(): CategoryModel
+    suspend fun getCategorybyId(categoryId: String): CategoryModel?
     suspend fun getCategorybyIsEnable(): List<CategoryModel>
     suspend fun addCategory(category: CategoryModel)
     suspend fun updateCategory(category: CategoryModel)

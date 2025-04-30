@@ -1,11 +1,10 @@
 package com.app_computer_ecom.dack
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -104,6 +103,10 @@ fun AppNavigation(authViewModel: AuthViewModel, modifier: Modifier = Modifier) {
             var brandId = it.arguments?.getString("brandId").toString()
             var searchQuery = it.arguments?.getString("searchQuery").toString()
             ListProductScreen(categoryId = categoryId, brandId = brandId, searchQuery = searchQuery)
+        }
+        composable("product-details/productId={productId}") {
+            var productId = it.arguments?.getString("productId").toString()
+            ProductDetailsScreen(productId = productId)
         }
         composable("search") {
             SearchScreen()

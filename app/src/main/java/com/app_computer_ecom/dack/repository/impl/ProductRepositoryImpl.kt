@@ -75,12 +75,14 @@ class ProductRepositoryImpl : ProductRepository {
     override suspend fun getProductsByCategoryIdAndBrandId(
         categoryIds: List<String>,
         brandIds: List<String>,
-        minPrice: Double,
-        maxPrice: Double
+        minPrice: Int,
+        maxPrice: Int,
+        limit: Long
     ): List<ProductModel> {
         return try {
             val querySnapshot =
-                dbProduct.orderBy("createdAt", Query.Direction.DESCENDING).get().await()
+                dbProduct.orderBy("createdAt", Query.Direction.DESCENDING).limit(limit).get()
+                    .await()
             if (querySnapshot.isEmpty) {
                 emptyList()
             } else {
@@ -92,10 +94,10 @@ class ProductRepositoryImpl : ProductRepository {
                     }.takeIf {
                         brandIds.isEmpty() || brandIds.contains(it?.brandId)
                     }?.takeIf {
-                        it.prices?.any { priceInfo ->
-                            val price = (priceInfo.price as? Number)?.toDouble() ?: 0.0
+                        it.prices.any { priceInfo ->
+                            val price = (priceInfo.price as? Number)?.toInt() ?: 0
                             price in minPrice..maxPrice
-                        } ?: false
+                        }
                     }
                 }
             }
@@ -108,8 +110,8 @@ class ProductRepositoryImpl : ProductRepository {
         searchQuery: String,
         categoryIds: List<String>,
         brandIds: List<String>,
-        minPrice: Double,
-        maxPrice: Double
+        minPrice: Int,
+        maxPrice: Int
     ): List<ProductModel> {
         return try {
             loadProductsCacheIfNeeded()
@@ -122,10 +124,10 @@ class ProductRepositoryImpl : ProductRepository {
                             .contains(trimmedQuery)) &&
                         (categoryIds.isEmpty() || categoryIds.contains(product.categoryId)) &&
                         (brandIds.isEmpty() || brandIds.contains(product.brandId)) &&
-                        (product.prices?.any { priceInfo ->
-                            val price = (priceInfo.price as? Number)?.toDouble() ?: 0.0
+                        (product.prices.any { priceInfo ->
+                            val price = (priceInfo.price as? Number)?.toInt() ?: 0
                             price in minPrice..maxPrice
-                        } ?: false)
+                        })
             }
 
             Log.d("QUERY", trimmedQuery)

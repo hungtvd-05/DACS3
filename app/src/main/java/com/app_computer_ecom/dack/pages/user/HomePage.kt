@@ -16,9 +16,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -198,9 +198,6 @@ fun HomePage(authViewModel: AuthViewModel, modifier: Modifier = Modifier) {
                     Text(text = "Xem tất cả")
                 }
             }
-//            item(span = {GridItemSpan(2)}) {
-//                Spacer(modifier = Modifier.height(4.dp))
-//            }
         }
     }
 }
@@ -260,7 +257,7 @@ fun CategoryItem(category: CategoryModel) {
 @Composable
 fun BrandItem(brand: BrandModel) {
     Card(
-        onClick = { GlobalNavigation.navController.navigate("listproduct/categoryId=&brandId=${brand.id}") },
+        onClick = { GlobalNavigation.navController.navigate("listproduct/categoryId=&brandId=${brand.id}&searchQuery=") },
         modifier = Modifier
             .padding(5.dp)
             .size(100.dp),

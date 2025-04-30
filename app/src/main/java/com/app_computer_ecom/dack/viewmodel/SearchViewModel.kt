@@ -60,8 +60,8 @@ class SearchViewModel(private val searchHistoryDao: SearchHistoryDao) : ViewMode
                 searchQuery = query,
                 categoryIds = emptyList(),
                 brandIds = emptyList(),
-                minPrice = 0.0,
-                maxPrice = Double.MAX_VALUE
+                minPrice = 0,
+                maxPrice = Int.MAX_VALUE
             )
             _suggestions.value = results
         }
