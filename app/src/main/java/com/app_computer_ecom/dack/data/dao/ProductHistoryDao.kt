@@ -28,12 +28,15 @@ interface ProductHistoryDao {
     @Query("DELETE FROM product_history WHERE id IN (SELECT id FROM product_history ORDER BY timestamp ASC LIMIT 1)")
     suspend fun deleteOldest()
 
+    @Query("SELECT COUNT(*) FROM product_history WHERE productId = :productId")
+    suspend fun isProductHistoryExist(productId: String): Int
+
     @Transaction
-    suspend fun insertWithLimit(history: ProductHistory, maxEntries: Int = 20) {
-        insert(history)
-        val count = getHistoryCount()
-        if (count > maxEntries) {
-            deleteOldest()
+    suspend fun insertIfNotExists(productHistory: ProductHistory) {
+        val count = isProductHistoryExist(productHistory.productId)
+        if (count == 0) {
+            insert(productHistory)
         }
     }
+
 }

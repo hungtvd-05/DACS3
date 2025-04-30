@@ -1,5 +1,6 @@
 package com.app_computer_ecom.dack.screen.user
 
+import DatabaseProvider
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -49,6 +50,7 @@ import coil.compose.AsyncImage
 import com.app_computer_ecom.dack.AppUtil
 import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.components.ProductItem
+import com.app_computer_ecom.dack.data.entity.ProductHistory
 import com.app_computer_ecom.dack.model.BrandModel
 import com.app_computer_ecom.dack.model.CategoryModel
 import com.app_computer_ecom.dack.model.PriceInfo
@@ -81,7 +83,11 @@ fun ProductDetailsScreen(productId: String) {
     var minPrice by remember { mutableStateOf(0) }
     var maxPrice by remember { mutableStateOf(0) }
 
+
     var context = LocalContext.current
+    val productHistoryDao = DatabaseProvider.getDatabase(context).productHistoryDao()
+
+
 
     LaunchedEffect(Unit) {
         product = GlobalRepository.productRepository.getProductById(productId)
@@ -94,6 +100,19 @@ fun ProductDetailsScreen(productId: String) {
         minPrice = product!!.prices.minOf { it.price as Int }
         maxPrice = product!!.prices.maxOf { it.price as Int }
         isLoading = false
+
+
+    }
+
+    LaunchedEffect(productId) {
+        scope.launch {
+            productHistoryDao.insertIfNotExists(
+                ProductHistory(
+                    productId = productId,
+                    timestamp = System.currentTimeMillis()
+                )
+            )
+        }
     }
 
     if (isLoading) {
@@ -264,7 +283,11 @@ fun ProductDetailsScreen(productId: String) {
                         onClick = {
                             if (selectedPriceInfo != null) {
                                 scope.launch {
-                                    GlobalRepository.cartRepository.addToCart(context, productId, selectedPriceInfo!!)
+                                    GlobalRepository.cartRepository.addToCart(
+                                        context,
+                                        productId,
+                                        selectedPriceInfo!!
+                                    )
                                 }
                             } else {
                                 AppUtil.showToast(context, "Vui lòng chọn mẫu sản phẩm !!!")

@@ -66,6 +66,12 @@ class SearchViewModel(
         }
     }
 
+    fun clearProductHistory() {
+        viewModelScope.launch {
+            productHistoryDao.deleteAll()
+        }
+    }
+
 
     fun searchProducts(query: String) {
         viewModelScope.launch {
