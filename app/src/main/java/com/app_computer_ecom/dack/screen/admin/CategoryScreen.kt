@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
@@ -60,6 +61,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.app_computer_ecom.dack.LoadingScreen
 import com.app_computer_ecom.dack.R
 import com.app_computer_ecom.dack.components.admin.HeaderViewMenu
 import com.app_computer_ecom.dack.model.CategoryModel
@@ -95,6 +97,7 @@ fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifi
     var bitmap = remember { mutableStateOf<Bitmap?>(null) }
     var isUploading = remember { mutableStateOf(false) }
     var isUpdate = remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(true) }
 
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
         imageUri = uri
@@ -103,6 +106,7 @@ fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifi
 
     LaunchedEffect(Unit) {
         categoryList = categoryRepository.getCategories()
+        isLoading = false
     }
 
     imageUri?.let {
@@ -131,7 +135,7 @@ fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifi
             },
             isUploading = false
         )
-        Spacer(modifier = Modifier.height(10.dp))
+//        Spacer(modifier = Modifier.height(10.dp))
 
         Box(
             modifier = Modifier.fillMaxWidth(),
@@ -312,46 +316,53 @@ fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifi
             }
         }
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(top = 8.dp, start = 8.dp, end = 8.dp)
-        ) {
-            items(categoryList.size) { index ->
-                categoryItem(
-                    category = categoryList[index],
-                    onClickShowHidden = {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            try {
-                                categoryRepository.updateCategory(categoryList[index].copy(enable = !categoryList[index].enable))
-                                categoryList = categoryRepository.getCategories()
-                            } catch (e: Exception) {
+        if (isLoading) {
+            LoadingScreen()
+        } else {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(top = 8.dp, start = 8.dp, end = 8.dp)
+            ) {
+                items(categoryList.size) { index ->
+                    categoryItem(
+                        category = categoryList[index],
+                        onClickShowHidden = {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                try {
+                                    categoryRepository.updateCategory(categoryList[index].copy(enable = !categoryList[index].enable))
+                                    categoryList = categoryRepository.getCategories()
+                                } catch (e: Exception) {
 
+                                }
                             }
-                        }
-                    },
-                    onDeleteClick = {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            try {
-                                categoryRepository.deleteCategory(categoryList[index])
-                                ImageCloudinary.deleteImage(categoryList[index].imageUrl)
-                                categoryList = categoryRepository.getCategories()
-                            } catch (e: Exception) {
-                                Log.e("BannerScreen", "Delete failed: ${e.message}")
+                        },
+                        onDeleteClick = {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                try {
+                                    categoryRepository.deleteCategory(categoryList[index])
+                                    ImageCloudinary.deleteImage(categoryList[index].imageUrl)
+                                    categoryList = categoryRepository.getCategories()
+                                } catch (e: Exception) {
+                                    Log.e("BannerScreen", "Delete failed: ${e.message}")
+                                }
                             }
+                        },
+                        onClickItem = {
+                            categoryId.value = categoryList[index].id
+                            categoryName.value = categoryList[index].name
+                            categoryIsEnable.value = categoryList[index].enable
+                            imageUrl = categoryList[index].imageUrl
+                            imageUri = null
+                            isUpdate.value = true
                         }
-                    },
-                    onClickItem = {
-                        categoryId.value = categoryList[index].id
-                        categoryName.value = categoryList[index].name
-                        categoryIsEnable.value = categoryList[index].enable
-                        imageUrl = categoryList[index].imageUrl
-                        imageUri = null
-                        isUpdate.value = true
-                    }
-                )
+                    )
+                }
+                item(span = { GridItemSpan(3) }) {
+
+                }
             }
         }
     }
@@ -395,7 +406,7 @@ fun categoryItem(category: CategoryModel, onClickShowHidden: () -> Unit, onDelet
                         contentDescription = "",
                         modifier = Modifier
                             .size(30.dp),
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = Color(30, 136, 229)
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))

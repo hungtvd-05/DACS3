@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.app_computer_ecom.dack.LoadingScreen
 import com.app_computer_ecom.dack.R
 import com.app_computer_ecom.dack.model.PriceInfo
 import com.app_computer_ecom.dack.model.ProductModel
@@ -70,10 +71,9 @@ fun CartItemView(
             .padding(bottom = 8.dp)
     ) {
         if (isLoading) {
-
+            LoadingScreen()
         } else {
-            Row(
-            ) {
+            Row {
                 AsyncImage(
                     model = product!!.imageUrls.firstOrNull()?.imageUrl,
                     contentDescription = null,

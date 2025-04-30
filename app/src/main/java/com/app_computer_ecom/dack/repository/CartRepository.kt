@@ -10,4 +10,5 @@ interface CartRepository {
     suspend fun addToCart(context: Context, productId: String, selectType: PriceInfo)
     suspend fun updateCart(context: Context, cart: CartModel)
     suspend fun deleteCart(context: Context, cart: CartModel)
+    suspend fun deleteCartByPid(pid: String)
 }

@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
@@ -59,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.app_computer_ecom.dack.LoadingScreen
 import com.app_computer_ecom.dack.R
 import com.app_computer_ecom.dack.components.admin.HeaderViewMenu
 import com.app_computer_ecom.dack.model.BrandModel
@@ -93,6 +95,7 @@ fun BrandScreen(navController: NavHostController, modifier: Modifier = Modifier)
     var bitmap = remember { mutableStateOf<Bitmap?>(null) }
     var isUploading = remember { mutableStateOf(false) }
     var isUpdate = remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(true) }
 
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
         imageUri = uri
@@ -101,6 +104,7 @@ fun BrandScreen(navController: NavHostController, modifier: Modifier = Modifier)
 
     LaunchedEffect(Unit) {
         brandList = brandRepository.getBrands()
+        isLoading = false
     }
 
     imageUri?.let {
@@ -129,7 +133,7 @@ fun BrandScreen(navController: NavHostController, modifier: Modifier = Modifier)
             isUploading = false
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+//        Spacer(modifier = Modifier.height(8.dp))
 
         Box(
             modifier = Modifier.fillMaxWidth(),
@@ -309,46 +313,53 @@ fun BrandScreen(navController: NavHostController, modifier: Modifier = Modifier)
             }
         }
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(top = 8.dp, start = 8.dp, end = 8.dp)
-        ) {
-            items(brandList.size) { index ->
-                brandItem(
-                    brand = brandList[index],
-                    onClickShowHidden = {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            try {
-                                brandRepository.updateBrand(brandList[index].copy(enable = !brandList[index].enable))
-                                brandList = brandRepository.getBrands()
-                            } catch (e: Exception) {
+        if (isLoading) {
+            LoadingScreen()
+        } else {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(top = 8.dp, start = 8.dp, end = 8.dp)
+            ) {
+                items(brandList.size) { index ->
+                    brandItem(
+                        brand = brandList[index],
+                        onClickShowHidden = {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                try {
+                                    brandRepository.updateBrand(brandList[index].copy(enable = !brandList[index].enable))
+                                    brandList = brandRepository.getBrands()
+                                } catch (e: Exception) {
 
+                                }
                             }
-                        }
-                    },
-                    onDeleteClick = {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            try {
-                                brandRepository.deleteBrand(brandList[index])
-                                ImageCloudinary.deleteImage(brandList[index].imageUrl)
-                                brandList = brandRepository.getBrands()
-                            } catch (e: Exception) {
-                                Log.e("BannerScreen", "Delete failed: ${e.message}")
+                        },
+                        onDeleteClick = {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                try {
+                                    brandRepository.deleteBrand(brandList[index])
+                                    ImageCloudinary.deleteImage(brandList[index].imageUrl)
+                                    brandList = brandRepository.getBrands()
+                                } catch (e: Exception) {
+                                    Log.e("BannerScreen", "Delete failed: ${e.message}")
+                                }
                             }
+                        },
+                        onClickItem = {
+                            brandId.value = brandList[index].id
+                            brandName.value = brandList[index].name
+                            brandIsEnable.value = brandList[index].enable
+                            imageUrl = brandList[index].imageUrl
+                            imageUri = null
+                            isUpdate.value = true
                         }
-                    },
-                    onClickItem = {
-                        brandId.value = brandList[index].id
-                        brandName.value = brandList[index].name
-                        brandIsEnable.value = brandList[index].enable
-                        imageUrl = brandList[index].imageUrl
-                        imageUri = null
-                        isUpdate.value = true
-                    }
-                )
+                    )
+                }
+                item(span = { GridItemSpan(3) }) {
+
+                }
             }
         }
     }
@@ -393,7 +404,7 @@ fun brandItem(brand: BrandModel, onClickShowHidden: () -> Unit, onDeleteClick: (
                         contentDescription = "",
                         modifier = Modifier
                             .size(30.dp),
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = Color(30, 136, 229)
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))

@@ -79,4 +79,14 @@ class CartRepositoryImpl : CartRepository {
         dbCart.document(cart.id).delete()
         AppUtil.showToast(context, "Đã xóa khỏi giỏ hàng")
     }
+
+    override suspend fun deleteCartByPid(pid: String) {
+        val querySnapshot = dbCart
+            .whereEqualTo("pid", pid)
+            .get()
+            .await()
+        for (document in querySnapshot.documents) {
+            dbCart.document(document.id).delete()
+        }
+    }
 }

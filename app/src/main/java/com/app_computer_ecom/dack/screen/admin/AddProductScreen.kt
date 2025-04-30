@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.runtime.Composable
@@ -388,15 +389,18 @@ fun AddProductScreen(navController: NavHostController) {
                                 uri = imageUris[index].toString(),
                                 onClick = {
                                     imageUris -= imageUris[index]
-                                    productImages.value = productImages.value.toMutableList().apply {
-                                        remove(imageInfo)
-                                    }
+                                    productImages.value =
+                                        productImages.value.toMutableList().apply {
+                                            remove(imageInfo)
+                                        }
                                 },
                                 onClickShowHidden = {
                                     if (productImages.value.size > 1) {
-                                        productImages.value = productImages.value.toMutableList().apply {
-                                            this[index] = imageInfo.copy(isHidden = !imageInfo.isHidden)
-                                        }
+                                        productImages.value =
+                                            productImages.value.toMutableList().apply {
+                                                this[index] =
+                                                    imageInfo.copy(isHidden = !imageInfo.isHidden)
+                                            }
                                     }
                                 },
                                 isEnable = !imageInfo.isHidden,
@@ -404,6 +408,10 @@ fun AddProductScreen(navController: NavHostController) {
                             )
                         }
                     }
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(4.dp))
                 }
 
                 item {
@@ -489,10 +497,16 @@ fun AddProductScreen(navController: NavHostController) {
                                 }
                             }
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(30, 136, 229)
+                        )
                     ) {
                         Text(text = "Thêm sản phẩm")
                     }
+                }
+                item {
+                    Spacer(modifier = Modifier.height(4.dp))
                 }
 
             }

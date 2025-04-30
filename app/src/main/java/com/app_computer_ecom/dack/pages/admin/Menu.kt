@@ -49,7 +49,7 @@ fun Menu(modifier: Modifier = Modifier, authViewModel: AuthViewModel, navControl
             .padding(16.dp)
     ) {
         HeaderViewAdmin(authViewModel, modifier)
-        Spacer(modifier = Modifier.height(10.dp))
+//        Spacer(modifier = Modifier.height(10.dp))
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),
             horizontalArrangement = Arrangement.spacedBy(20.dp),

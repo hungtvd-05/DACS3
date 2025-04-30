@@ -32,7 +32,7 @@ fun ImagePreviewItem(
 
     Box(
         modifier = Modifier
-            .fillMaxSize().padding(vertical = 4.dp, horizontal = 8.dp),
+            .fillMaxSize(),
         contentAlignment = Alignment.BottomCenter
     ) {
         AsyncImage(

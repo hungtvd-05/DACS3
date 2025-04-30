@@ -3,6 +3,7 @@ package com.app_computer_ecom.dack.repository.impl
 import android.util.Log
 import com.app_computer_ecom.dack.GlobalDatabase
 import com.app_computer_ecom.dack.model.ProductModel
+import com.app_computer_ecom.dack.repository.GlobalRepository
 import com.app_computer_ecom.dack.repository.ProductRepository
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.Query
@@ -23,8 +24,14 @@ class ProductRepositoryImpl : ProductRepository {
         dbProduct.document(product.id).set(product)
     }
 
+    override suspend fun showHiddenProduct(product: ProductModel) {
+        GlobalRepository.cartRepository.deleteCartByPid(product.id)
+        dbProduct.document(product.id).set(product.copy(show = !product.show))
+    }
+
     override suspend fun deleteProduct(product: ProductModel) {
-        TODO("Not yet implemented")
+        GlobalRepository.cartRepository.deleteCartByPid(product.id)
+        dbProduct.document(product.id).delete()
     }
 
     override suspend fun getProducts(): List<ProductModel> {

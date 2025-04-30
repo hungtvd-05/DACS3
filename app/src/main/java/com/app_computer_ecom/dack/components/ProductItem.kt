@@ -15,6 +15,10 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -34,6 +38,16 @@ import java.util.Locale
 fun ProductItem(product: ProductModel) {
 
     val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
+    var minPrice by remember { mutableStateOf(0) }
+    var maxPrice by remember { mutableStateOf(0) }
+
+    if (product.prices.size == 1) {
+        minPrice = product.prices.first().price as Int
+        maxPrice = product.prices.first().price as Int
+    } else {
+        minPrice = product.prices.minOf { it.price as Int }
+        maxPrice = product.prices.maxOf { it.price as Int }
+    }
 
     Card(
         onClick = {
@@ -42,7 +56,6 @@ fun ProductItem(product: ProductModel) {
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(8.dp),
-//        modifier = Modifier.padding(bottom = 8.dp)
     ) {
         Column(
         ) {
@@ -89,11 +102,18 @@ fun ProductItem(product: ProductModel) {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = formatter.format(product.prices[0].price),
+                    text = if (minPrice != maxPrice) "${
+                        formatter.format(
+                            minPrice
+                        )
+                    } - ${
+                        formatter.format(
+                            maxPrice
+                        )
+                    }" else formatter.format(minPrice),
                     fontSize = 10.sp,
                     color = Color.Red,
                     fontWeight = FontWeight.Bold
-
                 )
             }
         }

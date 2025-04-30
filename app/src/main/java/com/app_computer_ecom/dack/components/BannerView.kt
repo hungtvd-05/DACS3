@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,19 +46,28 @@ fun BannerView(modifier: Modifier = Modifier) {
         val pagerState = rememberPagerState(0) {
             banners.size
         }
-        HorizontalPager(
-            state = pagerState,
-            pageSpacing = 24.dp,
+
+        Card(
+            shape = RoundedCornerShape(12.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+            elevation = CardDefaults.cardElevation(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
         ) {
-            AsyncImage(
-                model = banners[it].imageUrl,
-                contentDescription = "Banner",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp)
-                    .clip(RoundedCornerShape(16.dp)),
-                contentScale = ContentScale.Crop
-            )
+            HorizontalPager(
+                state = pagerState,
+                pageSpacing = 24.dp,
+            ) {
+
+                AsyncImage(
+                    model = banners[it].imageUrl,
+                    contentDescription = "Banner",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp),
+                    contentScale = ContentScale.Crop
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(10.dp))
