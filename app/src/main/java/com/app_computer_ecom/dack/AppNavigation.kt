@@ -28,8 +28,13 @@ import com.app_computer_ecom.dack.screen.started.AuthScreen
 import com.app_computer_ecom.dack.screen.started.LoginScreen
 import com.app_computer_ecom.dack.screen.started.ResetPasswordScreen
 import com.app_computer_ecom.dack.screen.started.SignupScreen
+import com.app_computer_ecom.dack.screen.user.AddAddressScreen
+import com.app_computer_ecom.dack.screen.user.AddressMenuScreen
 import com.app_computer_ecom.dack.screen.user.HomeScreen
 import com.app_computer_ecom.dack.screen.user.ListProductScreen
+import com.app_computer_ecom.dack.screen.user.CheckoutScreen
+import com.app_computer_ecom.dack.screen.user.EditAddressScreen
+import com.app_computer_ecom.dack.screen.user.OrderSuccessScreen
 import com.app_computer_ecom.dack.screen.user.ProductDetailsScreen
 import com.app_computer_ecom.dack.screen.user.SearchScreen
 import com.app_computer_ecom.dack.viewmodel.AuthViewModel
@@ -110,6 +115,22 @@ fun AppNavigation(authViewModel: AuthViewModel, modifier: Modifier = Modifier) {
         }
         composable("search") {
             SearchScreen()
+        }
+        composable("checkout") {
+            CheckoutScreen()
+        }
+        composable("menuaddress") {
+            AddressMenuScreen()
+        }
+        composable("addaddress") {
+            AddAddressScreen()
+        }
+        composable("editaddress/{addressId}") {
+            var addressId = it.arguments?.getString("addressId").toString()
+            EditAddressScreen(addressId = addressId)
+        }
+        composable("order-success") {
+            OrderSuccessScreen()
         }
     }
 

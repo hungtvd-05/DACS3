@@ -20,6 +20,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -85,6 +86,9 @@ fun ProductDetailsScreen(productId: String) {
     var maxPrice by remember { mutableStateOf(0) }
 
 
+    var isFavorite by remember { mutableStateOf(false) }
+
+
     var context = LocalContext.current
     val productHistoryDao = DatabaseProvider.getDatabase(context).productHistoryDao()
 
@@ -101,6 +105,7 @@ fun ProductDetailsScreen(productId: String) {
         minPrice = product!!.prices.minOf { it.price as Int }
         maxPrice = product!!.prices.maxOf { it.price as Int }
         isLoading = false
+        isFavorite = GlobalRepository.favoriteRepository.isFavorite(productId)
 
 
     }
@@ -241,11 +246,30 @@ fun ProductDetailsScreen(productId: String) {
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         IconButton(
-                            onClick = {}
+                            onClick = {
+                                scope.launch {
+                                    if (isFavorite) {
+                                        GlobalRepository.favoriteRepository.deleteFavorite(
+                                            context = context,
+                                            productId = productId
+                                        )
+
+                                    } else {
+                                        GlobalRepository.favoriteRepository.addToFavorite(
+                                            context = context,
+                                            productId = productId
+                                        )
+                                    }
+
+                                    isFavorite = !isFavorite
+
+                                }
+                            }
                         ) {
                             Icon(
-                                imageVector = Icons.Default.FavoriteBorder,
-                                contentDescription = null
+                                imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                contentDescription = null,
+                                tint = if (isFavorite) Color.Red else Color.Black
                             )
                         }
                     }
@@ -295,7 +319,10 @@ fun ProductDetailsScreen(productId: String) {
                             }
                         }, modifier = Modifier
                             .fillMaxWidth()
-                            .height(50.dp)
+                            .height(50.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(25, 118, 210),
+                        )
                     ) {
                         Text(text = "Thêm vào giỏ hàng", fontSize = 16.sp)
                     }

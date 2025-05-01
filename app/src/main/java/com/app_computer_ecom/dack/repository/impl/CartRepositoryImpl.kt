@@ -15,18 +15,21 @@ class CartRepositoryImpl : CartRepository {
     var db = GlobalDatabase.database
     val dbCart: CollectionReference = db.collection("cart")
 
-    override suspend fun getCartList(): List<CartModel> {
+    override suspend fun getCartList(): Pair<List<CartModel>, Int> {
         return try {
-            val querySnapshot = dbCart.get().await()
+            val uid = FirebaseAuth.getInstance().currentUser?.uid
+            val querySnapshot = dbCart.whereEqualTo("uid", uid).get().await()
             if (querySnapshot.isEmpty) {
-                emptyList()
+                Pair(emptyList(), 0)
             } else {
-                querySnapshot.documents.mapNotNull { document ->
+                val cartList = querySnapshot.documents.mapNotNull { document ->
                     document.toObject(CartModel::class.java)?.copy(id = document.id)
                 }
+                val totalPrice = cartList.sumOf { it.selectType.price * it.quantity }
+                Pair(cartList, totalPrice)
             }
         } catch (e: Exception) {
-            emptyList()
+            Pair(emptyList(), 0)
         }
     }
 
@@ -80,6 +83,16 @@ class CartRepositoryImpl : CartRepository {
         AppUtil.showToast(context, "Đã xóa khỏi giỏ hàng")
     }
 
+    override suspend fun clearCart() {
+        val querySnapshot = dbCart
+            .whereEqualTo("uid", FirebaseAuth.getInstance().currentUser?.uid)
+            .get()
+            .await()
+        for (document in querySnapshot.documents) {
+            dbCart.document(document.id).delete()
+        }
+    }
+
     override suspend fun deleteCartByPid(pid: String) {
         val querySnapshot = dbCart
             .whereEqualTo("pid", pid)
@@ -88,5 +101,9 @@ class CartRepositoryImpl : CartRepository {
         for (document in querySnapshot.documents) {
             dbCart.document(document.id).delete()
         }
+    }
+
+    override suspend fun totalPriceByUid(): Double {
+        TODO("Not yet implemented")
     }
 }

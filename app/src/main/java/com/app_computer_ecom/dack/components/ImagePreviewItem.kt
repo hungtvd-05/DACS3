@@ -53,7 +53,7 @@ fun ImagePreviewItem(
                     contentDescription = "",
                     modifier = Modifier
                         .size(30.dp),
-                    tint = Color(30, 136, 229)
+                    tint = Color(25, 118, 210)
                 )
             }
         }

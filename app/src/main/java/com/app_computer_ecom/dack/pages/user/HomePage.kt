@@ -17,6 +17,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.Card
@@ -31,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -93,25 +95,32 @@ fun HomePage(authViewModel: AuthViewModel, modifier: Modifier = Modifier) {
             modifier = Modifier
         ) {
             item(span = { GridItemSpan(2) }) {
-                Column(
-//                    modifier = modifier
-                ) {
+                Column {
                     val pagerState = rememberPagerState(0) {
                         banners.size
                     }
-                    HorizontalPager(
-                        state = pagerState,
-                        pageSpacing = 24.dp,
+                    Card(
+                        shape = RoundedCornerShape(12.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+                        elevation = CardDefaults.cardElevation(8.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
                     ) {
-                        AsyncImage(
-                            model = banners[it].imageUrl,
-                            contentDescription = "Banner",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(100.dp)
-                                .clip(RoundedCornerShape(16.dp)),
-                            contentScale = ContentScale.Crop
-                        )
+                        HorizontalPager(
+                            state = pagerState,
+                            pageSpacing = 24.dp,
+                        ) {
+
+                            AsyncImage(
+                                model = banners[it].imageUrl,
+                                contentDescription = "Banner",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(100.dp)
+                                    .clip(RoundedCornerShape(12.dp)),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(10.dp))
@@ -193,7 +202,10 @@ fun HomePage(authViewModel: AuthViewModel, modifier: Modifier = Modifier) {
             }
             item(span = { GridItemSpan(2) }) {
                 Button(
-                    onClick = { GlobalNavigation.navController.navigate("listproduct/categoryId=&brandId=") }
+                    onClick = { GlobalNavigation.navController.navigate("listproduct/categoryId=&brandId=&searchQuery=") },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(25, 118, 210),
+                    )
                 ) {
                     Text(text = "Xem tất cả")
                 }

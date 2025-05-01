@@ -39,6 +39,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -206,7 +207,11 @@ fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifi
                                 onCheckedChange = {
                                     categoryIsEnable.value = it
                                 },
-                                modifier = Modifier
+                                modifier = Modifier,
+//                                colors = SwitchDefaults.colors(
+//                                    checkedThumbColor = Color.Green,
+//                                    uncheckedThumbColor = Color.Red
+//                                )
                             )
                         }
 
