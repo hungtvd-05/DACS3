@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -66,6 +67,7 @@ fun SearchScreen(
     val suggestions by viewModel.suggestions.collectAsState(initial = emptyList())
     val productHistory by viewModel.productHistory.collectAsState(initial = emptyList())
     var isLoadingSearch by remember { mutableStateOf(false) }
+    var isLoadingProductHistory by remember { mutableStateOf(true) }
 
     var productModels by remember { mutableStateOf<List<ProductModel>>(emptyList()) }
 
@@ -87,10 +89,12 @@ fun SearchScreen(
     }
 
     LaunchedEffect(productHistory) {
+        isLoadingProductHistory = true
         val result = productHistory.mapNotNull {
             GlobalRepository.productRepository.getProductById(it.productId)
         }
         productModels = result
+        isLoadingProductHistory = false
     }
 
 
@@ -127,7 +131,8 @@ fun SearchScreen(
             )
 
             Spacer(modifier = Modifier.height(32.dp))
-            ProductHistoryList(productModels) {
+
+            ProductHistoryList(productModels = productModels, isLoading = isLoadingProductHistory) {
                 viewModel.clearProductHistory()
             }
         }
@@ -139,7 +144,11 @@ fun SearchScreen(
 }
 
 @Composable
-fun ProductHistoryList(productModels: List<ProductModel>, onClearProductHistory: () -> Unit) {
+fun ProductHistoryList(
+    productModels: List<ProductModel>,
+    isLoading: Boolean = false,
+    onClearProductHistory: () -> Unit
+) {
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -154,36 +163,47 @@ fun ProductHistoryList(productModels: List<ProductModel>, onClearProductHistory:
         }
     }
 
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-    ) {
-        Spacer(modifier = Modifier.height(1.dp))
+    if (isLoading) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .height(300.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    } else {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+        ) {
+            Spacer(modifier = Modifier.height(1.dp))
 
-        productModels.chunked(2).forEach { rowItems ->
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                rowItems.forEach { product ->
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                    ) {
-                        ProductItem(product)
+            productModels.chunked(2).forEach { rowItems ->
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    rowItems.forEach { product ->
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                        ) {
+                            ProductItem(product)
+                        }
+                    }
+
+                    if (rowItems.size < 2) {
+                        // nếu chỉ có 1 item, chèn spacer cho cột còn lại
+                        Spacer(modifier = Modifier.weight(1f))
                     }
                 }
-
-                if (rowItems.size < 2) {
-                    // nếu chỉ có 1 item, chèn spacer cho cột còn lại
-                    Spacer(modifier = Modifier.weight(1f))
-                }
             }
-        }
 
-        Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(10.dp))
+        }
     }
 
 }
