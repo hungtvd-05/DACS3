@@ -1,5 +1,6 @@
 package com.app_computer_ecom.dack.screen.user
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,15 +17,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -97,7 +100,9 @@ fun SearchScreen(
 
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
         item {
             SearchBar(
@@ -209,7 +214,11 @@ fun SearchBar(
                 onClick = onBack,
                 modifier = Modifier.fillMaxHeight()
             ) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                Icon(
+                    Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
             }
 
             OutlinedTextField(
@@ -236,7 +245,12 @@ fun SearchBar(
                             strokeWidth = 2.dp
                         )
                     }
-                }
+                },
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                    focusedContainerColor = MaterialTheme.colorScheme.surface
+
+                )
             )
 
             Button(
@@ -249,7 +263,11 @@ fun SearchBar(
                 onClick = onSearch,
                 modifier = Modifier.fillMaxHeight()
             ) {
-                Icon(Icons.Default.Search, contentDescription = "Search")
+                Icon(
+                    Icons.Default.Search,
+                    contentDescription = "Search",
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
             }
         }
     }
@@ -275,6 +293,7 @@ fun SearchItemList(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(40.dp)
+                    .background(MaterialTheme.colorScheme.surface)
                     .clickable {
                         onClearSearchHistory()
                     }) {
@@ -286,11 +305,13 @@ fun SearchItemList(
                         .padding(start = 16.dp),
                     color = Color.Gray
                 )
-                HorizontalDivider(
+                Divider(
                     thickness = 1.dp,
-                    modifier = Modifier.align(Alignment.BottomCenter)
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.background
                 )
-
             }
         }
 
@@ -321,6 +342,7 @@ fun SearchItem(
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surface)
             .height(46.dp)
             .clickable {
                 viewModel.addSearchQueryWithLimit(text)
@@ -338,11 +360,15 @@ fun SearchItem(
             modifier = Modifier
                 .align(Alignment.CenterStart)
                 .padding(start = 16.dp, end = 40.dp),
+            color = MaterialTheme.colorScheme.onSurface
         )
 
-        HorizontalDivider(
+        Divider(
             thickness = 1.dp,
-            modifier = Modifier.align(Alignment.BottomCenter)
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth(),
+            color = MaterialTheme.colorScheme.background
         )
 
         if (isHistory) {

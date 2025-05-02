@@ -131,12 +131,15 @@ fun ProductDetailsScreen(productId: String) {
     }
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp),
+                .background(MaterialTheme.colorScheme.primary)
+                .padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(onClick = {
@@ -144,7 +147,8 @@ fun ProductDetailsScreen(productId: String) {
             }) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back"
+                    contentDescription = "Back",
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
@@ -163,7 +167,8 @@ fun ProductDetailsScreen(productId: String) {
                         Icon(
                             imageVector = Icons.Default.ShoppingCart,
                             contentDescription = "Shopping Cart",
-                            modifier = Modifier.align(Alignment.Center)
+                            modifier = Modifier.align(Alignment.Center),
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
 
                         Box(
@@ -191,11 +196,13 @@ fun ProductDetailsScreen(productId: String) {
                 ) {
                     Icon(
                         imageVector = Icons.Default.Home,
-                        contentDescription = "Home"
+                        contentDescription = "Home",
+                        tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             }
         }
+
         if (isLoading) {
             LoadingScreen()
         } else {
@@ -206,7 +213,6 @@ fun ProductDetailsScreen(productId: String) {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 16.dp)
-                    .padding(bottom = 16.dp)
             ) {
 
                 item(span = { GridItemSpan(2) }) {
@@ -215,6 +221,8 @@ fun ProductDetailsScreen(productId: String) {
                         val pagerState = rememberPagerState(0) {
                             product!!.imageUrls.size
                         }
+
+                        Spacer(modifier = Modifier.height(16.dp))
                         HorizontalPager(
                             state = pagerState,
                             pageSpacing = 24.dp,

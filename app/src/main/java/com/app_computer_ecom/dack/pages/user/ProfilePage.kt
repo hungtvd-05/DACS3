@@ -16,17 +16,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Divider
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,11 +35,11 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.R
+import com.app_computer_ecom.dack.components.TopBar
 import com.app_computer_ecom.dack.ui.theme.ThemeManager
 import com.app_computer_ecom.dack.viewmodel.AuthViewModel
 import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
@@ -56,235 +53,34 @@ fun ProfilePage(
 
     var cartItemCount by remember { mutableStateOf(0) }
 
-    var isDarkModeEnabled by remember { mutableStateOf(ThemeManager.isDarkTheme) }
 
-    LazyColumn(
+
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.primary)
-                    .padding(top = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                IconButton(onClick = {
-                    GlobalNavigation.navController.popBackStack()
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-                Spacer(modifier = Modifier.weight(1f))
-                Row(
-                    modifier = Modifier.padding(end = 4.dp)
-                ) {
-                    IconButton(
-                        onClick = {
-                            GlobalNavigation.navController.navigate("home/2")
-                        }
-                    ) {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier.size(30.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ShoppingCart,
-                                contentDescription = "Shopping Cart",
-                                modifier = Modifier.align(Alignment.Center),
-                                tint = MaterialTheme.colorScheme.onPrimary
-                            )
-
-                            Box(
-                                modifier = Modifier
-                                    .align(Alignment.BottomEnd)
-                                    .size(16.dp)
-                                    .background(Color.Red, shape = CircleShape),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = if (cartItemCount < 100) cartItemCount.toString() else "99+",
-                                    color = Color.White,
-                                    fontSize = 6.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    lineHeight = 8.sp
-                                )
-                            }
-                        }
-                    }
-
-                    IconButton(
-                        onClick = {
-                            GlobalNavigation.navController.navigate("home/0")
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Home,
-                            contentDescription = "Home",
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                }
+        TopBar {
+            GlobalNavigation.navController.navigate("home/0")
+        }
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            item {
+                UserProfileHeader(authViewModel = authViewModel)
             }
-        }
 
-        item {
-            UserProfileHeader(authViewModel = authViewModel)
-        }
-
-        item {
-            OrderStatusSection(
-                onPendingClick = {},
-                onPickupClick = {},
-                onDeliveryClick = {},
-                onCancelledClick = {},
-                onHistoryClick = {},
-            )
-        }
-
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-                    .background(MaterialTheme.colorScheme.surface)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { }
-                            .padding(vertical = 8.dp, horizontal = 8.dp)
-                    ) {
-                        Text(text = "Tài khoản & bảo mật", fontSize = 12.sp)
-                    }
-
-                    Divider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.BottomStart),
-                        color = MaterialTheme.colorScheme.background
-                    )
-
-
-                }
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { }
-                            .padding(vertical = 8.dp, horizontal = 8.dp)
-                    ) {
-                        Text(text = "Địa chỉ", fontSize = 12.sp)
-                    }
-
-                    Divider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.BottomStart),
-                        color = MaterialTheme.colorScheme.background
-                    )
-
-
-                }
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                ThemeManager.toggleTheme()
-                            }
-                            .padding(vertical = 8.dp, horizontal = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(text = "Chế độ nền tối", fontSize = 12.sp)
-                        Switch(
-                            checked = isDarkModeEnabled,
-                            onCheckedChange = {
-                                ThemeManager.toggleTheme()
-                                isDarkModeEnabled = ThemeManager.isDarkTheme
-                            },
-                            modifier = Modifier
-                                .size(width = 36.dp, height = 24.dp)
-                                .scale(0.8f),
-                        )
-                    }
-
-                    Divider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.BottomStart),
-                        color = MaterialTheme.colorScheme.background
-                    )
-
-
-                }
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { }
-                            .padding(vertical = 8.dp, horizontal = 8.dp)
-                    ) {
-                        Text(text = "Giới thiệu", fontSize = 12.sp)
-                    }
-
-                    Divider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.BottomStart),
-                        color = MaterialTheme.colorScheme.background
-                    )
-
-
-                }
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { }
-                            .padding(vertical = 8.dp, horizontal = 8.dp)
-                    ) {
-                        Text(text = "Điều khoản ứng dụng", fontSize = 12.sp)
-                    }
-
-                    Divider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.BottomStart),
-                        color = MaterialTheme.colorScheme.background
-                    )
-
-
-                }
+            item {
+                OrderStatusSection()
             }
+
+            item {
+                ProfileSettingsSection()
+            }
+
+
         }
-
-
     }
 }
 
@@ -294,6 +90,8 @@ fun UserProfileHeader(
     authViewModel: AuthViewModel,
     modifier: Modifier = Modifier
 ) {
+
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -326,11 +124,6 @@ fun UserProfileHeader(
 
 @Composable
 fun OrderStatusSection(
-    onPendingClick: () -> Unit,
-    onPickupClick: () -> Unit,
-    onDeliveryClick: () -> Unit,
-    onCancelledClick: () -> Unit,
-    onHistoryClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -357,7 +150,9 @@ fun OrderStatusSection(
                 fontSize = 10.sp,
                 lineHeight = 12.sp,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.clickable { onHistoryClick() }
+                modifier = Modifier.clickable {
+                    GlobalNavigation.navController.navigate("orderstatus/3")
+                }
             )
         }
         Row(
@@ -366,7 +161,9 @@ fun OrderStatusSection(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(
-                onClick = onPendingClick,
+                onClick = {
+                    GlobalNavigation.navController.navigate("orderstatus/0")
+                },
                 modifier = Modifier
                     .weight(1f)
                     .aspectRatio(1f)
@@ -390,7 +187,9 @@ fun OrderStatusSection(
                 }
             }
             IconButton(
-                onClick = onPickupClick,
+                onClick = {
+                    GlobalNavigation.navController.navigate("orderstatus/1")
+                },
                 modifier = Modifier
                     .weight(1f)
                     .aspectRatio(1f)
@@ -414,7 +213,9 @@ fun OrderStatusSection(
                 }
             }
             IconButton(
-                onClick = onDeliveryClick,
+                onClick = {
+                    GlobalNavigation.navController.navigate("orderstatus/2")
+                },
                 modifier = Modifier
                     .weight(1f)
                     .aspectRatio(1f)
@@ -438,7 +239,9 @@ fun OrderStatusSection(
                 }
             }
             IconButton(
-                onClick = onCancelledClick,
+                onClick = {
+                    GlobalNavigation.navController.navigate("orderstatus/4")
+                },
                 modifier = Modifier
                     .weight(1f)
                     .aspectRatio(1f)
@@ -465,8 +268,200 @@ fun OrderStatusSection(
     }
 }
 
-@Preview(showBackground = true, widthDp = 360, heightDp = 780)
 @Composable
-fun ProfilePagePreview() {
-//    Design()
+fun ProfileSettingsSection(authViewModel: AuthViewModel = GLobalAuthViewModel.getAuthViewModel()) {
+
+    var isDarkModeEnabled by remember { mutableStateOf(ThemeManager.isDarkTheme) }
+    var showLogoutDialog by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp)
+            .background(MaterialTheme.colorScheme.surface)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { }
+                    .padding(vertical = 8.dp, horizontal = 8.dp)
+            ) {
+                Text(text = "Tài khoản & bảo mật", fontSize = 12.sp)
+            }
+
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomStart),
+                color = MaterialTheme.colorScheme.background
+            )
+
+
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        GlobalNavigation.navController.navigate("menuaddress")
+                    }
+                    .padding(vertical = 8.dp, horizontal = 8.dp)
+            ) {
+                Text(text = "Địa chỉ", fontSize = 12.sp)
+            }
+
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomStart),
+                color = MaterialTheme.colorScheme.background
+            )
+
+
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        ThemeManager.toggleTheme()
+                        isDarkModeEnabled = ThemeManager.isDarkTheme
+                    }
+                    .padding(vertical = 8.dp, horizontal = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(text = "Chế độ nền tối", fontSize = 12.sp)
+                Switch(
+                    checked = isDarkModeEnabled,
+                    onCheckedChange = {
+                        ThemeManager.toggleTheme()
+                        isDarkModeEnabled = ThemeManager.isDarkTheme
+                    },
+                    modifier = Modifier
+                        .size(width = 36.dp, height = 24.dp)
+                        .scale(0.8f),
+                )
+            }
+
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomStart),
+                color = MaterialTheme.colorScheme.background
+            )
+
+
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { }
+                    .padding(vertical = 8.dp, horizontal = 8.dp)
+            ) {
+                Text(text = "Giới thiệu", fontSize = 12.sp)
+            }
+
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomStart),
+                color = MaterialTheme.colorScheme.background
+            )
+
+
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { }
+                    .padding(vertical = 8.dp, horizontal = 8.dp)
+            ) {
+                Text(text = "Điều khoản ứng dụng", fontSize = 12.sp)
+            }
+
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomStart),
+                color = MaterialTheme.colorScheme.background
+            )
+
+
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        showLogoutDialog = true
+                    }
+                    .padding(vertical = 8.dp, horizontal = 8.dp)
+            ) {
+                Text(text = "Đăng xuất", fontSize = 12.sp, color = Color.Red)
+            }
+
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomStart),
+                color = MaterialTheme.colorScheme.background
+            )
+
+
+        }
+
+        if (showLogoutDialog) {
+            AlertDialog(
+                onDismissRequest = { showLogoutDialog = false },
+                title = { Text("Xác nhận đăng xuất") },
+                text = { Text("Bạn có chắc muốn đăng xuất khỏi tài khoản?") },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            authViewModel.logout()
+                            showLogoutDialog = false
+                        }
+                    ) {
+                        Text("Xác nhận", color = Color.Red)
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showLogoutDialog = false }
+                    ) {
+                        Text("Hủy", color = MaterialTheme.colorScheme.onSurface)
+                    }
+                },
+                containerColor = MaterialTheme.colorScheme.surface,
+                titleContentColor = MaterialTheme.colorScheme.onSurface,
+                textContentColor = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    }
 }
