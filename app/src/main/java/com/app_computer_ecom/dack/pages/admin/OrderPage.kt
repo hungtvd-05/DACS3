@@ -1,6 +1,5 @@
 package com.app_computer_ecom.dack.pages.admin
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -111,7 +110,7 @@ fun ItemOrder(order: OrderModel, listStatus: List<String>) {
             .fillMaxWidth()
             .padding(bottom = 8.dp),
         onClick = {
-            GlobalNavigation.navController.navigate("admin/orderdetail")
+            GlobalNavigation.navController.navigate("admin/orderdetail/id=${order.id}")
         },
     ) {
         Column(
@@ -145,8 +144,11 @@ fun ItemOrder(order: OrderModel, listStatus: List<String>) {
                 )
                 Text(
                     text = listStatus[lastSelectedStatus],
-                    color = Color.Red,
-                    fontSize = 14.sp
+                    color = if (order.status == 3) Color(46, 125, 50)
+                    else if (order.status == 4) Color(230, 81, 0)
+                    else Color(255, 171, 0),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold
                 )
             }
             Row(
