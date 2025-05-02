@@ -1,5 +1,6 @@
 package com.app_computer_ecom.dack.repository.impl
 
+import android.util.Log
 import com.app_computer_ecom.dack.GlobalDatabase
 import com.app_computer_ecom.dack.model.OrderModel
 import com.app_computer_ecom.dack.repository.GlobalRepository
@@ -15,6 +16,26 @@ class OrderRepositoryImpl : OrderRepository {
     var db = GlobalDatabase.database
 
     val dbOrder: CollectionReference = db.collection("orders")
+
+    override suspend fun getOrdersByUidAndStatus(uid: String, status: Int): List<OrderModel> {
+        return try {
+            val querySnapshot = dbOrder
+                .whereEqualTo("uid", uid)
+                .whereEqualTo("status", status)
+                .get()
+                .await()
+            if (querySnapshot.isEmpty) {
+                emptyList()
+            } else {
+                querySnapshot.documents.mapNotNull { document ->
+                    document.toObject(OrderModel::class.java)?.copy(id = document.id)
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("OrderRepositoryImpl", "Error fetching orders: ${e.message}", e)
+            emptyList()
+        }
+    }
 
     override suspend fun addOrder(orderModel: OrderModel) {
         dbOrder.add(orderModel)
@@ -82,4 +103,6 @@ class OrderRepositoryImpl : OrderRepository {
         }
         batch.commit().await()
     }
+
+
 }

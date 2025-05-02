@@ -7,6 +7,12 @@ interface OrderRepository {
     suspend fun addOrder(orderModel: OrderModel)
     suspend fun getOrdersOnAdmin(): List<OrderModel>
     suspend fun getOrderById(orderId: String): OrderModel?
-    suspend fun updateOrderStatus(order: OrderModel, newStatus: Int, finishedAt: Timestamp = Timestamp.now())
+    suspend fun updateOrderStatus(
+        order: OrderModel,
+        newStatus: Int,
+        finishedAt: Timestamp = Timestamp.now()
+    )
+
+    suspend fun getOrdersByUidAndStatus(uid: String, status: Int): List<OrderModel>
 
 }
