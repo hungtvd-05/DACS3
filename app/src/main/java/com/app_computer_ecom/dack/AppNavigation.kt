@@ -132,8 +132,9 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         composable("order-success") {
             OrderSuccessScreen()
         }
-        composable("admin/orderdetail") {
-            OrderDetailScreen()
+        composable("admin/orderdetail/id={orderId}") {
+            var id = it.arguments?.getString("orderId").toString()
+            OrderDetailScreen(id)
         }
     }
 

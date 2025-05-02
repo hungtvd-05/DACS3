@@ -23,7 +23,8 @@ class OrderRepositoryImpl : OrderRepository {
 
     override suspend fun getOrdersOnAdmin(): List<OrderModel> {
         return try {
-            val querySnapshot = dbOrder.orderBy("createdAt", Query.Direction.DESCENDING).get().await()
+            val querySnapshot =
+                dbOrder.orderBy("createdAt", Query.Direction.DESCENDING).get().await()
             if (querySnapshot.isEmpty) {
                 emptyList()
             } else {
@@ -36,7 +37,7 @@ class OrderRepositoryImpl : OrderRepository {
         }
     }
 
-    override suspend fun getStatusById(orderId: String): OrderModel? {
+    override suspend fun getOrderById(orderId: String): OrderModel? {
         return try {
             val querySnapshot = dbOrder.document(orderId).get().await()
             if (!querySnapshot.exists()) {
@@ -49,18 +50,24 @@ class OrderRepositoryImpl : OrderRepository {
         }
     }
 
-    override suspend fun updateOrderStatus(order: OrderModel, newStatus: Int) {
+    override suspend fun updateOrderStatus(
+        order: OrderModel,
+        newStatus: Int,
+        finishedAt: Timestamp
+    ) {
         dbOrder.document(order.id).update("status", newStatus).await()
+        val batch = Firebase.firestore.batch()
+        batch.update(dbOrder.document(order.id), "finishedAt", finishedAt)
         if (newStatus == 3) {
-            val batch = Firebase.firestore.batch()
-            batch.update(dbOrder.document(order.id), "finishedAt", Timestamp.now())
             order.listProduct.forEach { productInfoModel ->
-                var product = GlobalRepository.productRepository.getProductById(productInfoModel.id)?: run {
-                    return@forEach
-                }
-                val priceInfo = product.prices.find { it.id == productInfoModel.selectType.id }?: run {
-                    return@forEach
-                }
+                var product =
+                    GlobalRepository.productRepository.getProductById(productInfoModel.id) ?: run {
+                        return@forEach
+                    }
+                val priceInfo =
+                    product.prices.find { it.id == productInfoModel.selectType.id } ?: run {
+                        return@forEach
+                    }
                 val newSold = priceInfo.sold + productInfoModel.quantity
                 val newQuantity = priceInfo.quantity - productInfoModel.quantity
                 if (newQuantity < 0) {
@@ -72,7 +79,7 @@ class OrderRepositoryImpl : OrderRepository {
                 val productRef = GlobalDatabase.database.collection("products").document(product.id)
                 batch.set(productRef, product)
             }
-            batch.commit().await()
         }
+        batch.commit().await()
     }
 }
