@@ -69,6 +69,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 @Composable
 fun UpdateProductScreen(navigaController: NavHostController, productId: String) {
@@ -118,7 +119,7 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
             productBrand.value = product!!.brandId
             productCategory.value = product!!.categoryId
             productDescription.value = product!!.description
-            productPrices.clear() // Xóa các phần tử cũ
+            productPrices.clear()
             productPrices.addAll(product?.prices ?: emptyList())
             productImages.value.clear()
             productImages.value.addAll(product?.imageUrls ?: emptyList())
@@ -249,7 +250,7 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                         Spacer(modifier = Modifier.weight(1f))
                         androidx.compose.material.IconButton(
                             onClick = {
-                                productPrices.add(PriceInfo())
+                                productPrices.add(PriceInfo(id = UUID.randomUUID().toString().replace("-", "").take(6)))
                             },
                         ) {
                             Icon(

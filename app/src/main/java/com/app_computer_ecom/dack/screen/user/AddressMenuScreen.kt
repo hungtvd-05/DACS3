@@ -50,6 +50,7 @@ fun AddressMenuScreen() {
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
+        isLoading = true
         addresses = GlobalRepository.addressRepository.getAddresses()
         isLoading = false
     }
@@ -155,6 +156,4 @@ fun AddressMenuScreen() {
             }
         }
     }
-
-
 }

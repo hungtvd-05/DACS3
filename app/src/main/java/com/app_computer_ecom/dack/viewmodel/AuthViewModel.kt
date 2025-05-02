@@ -247,3 +247,18 @@ class AuthViewModel(private val application: Application) : AndroidViewModel(app
     }
 
 }
+
+object GLobalAuthViewModel {
+    private lateinit var authViewModel: AuthViewModel
+
+    fun initialize(application: Application) {
+        if (!::authViewModel.isInitialized) {
+            authViewModel = AuthViewModel(application)
+        }
+    }
+
+    fun getAuthViewModel(): AuthViewModel {
+        check(::authViewModel.isInitialized) { "GLobalAuthViewModel must be initialized with an Application instance first." }
+        return authViewModel
+    }
+}

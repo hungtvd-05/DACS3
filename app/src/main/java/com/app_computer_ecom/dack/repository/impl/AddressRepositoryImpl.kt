@@ -6,9 +6,11 @@ import com.app_computer_ecom.dack.model.AddressModel
 import com.app_computer_ecom.dack.model.BannerModel
 import com.app_computer_ecom.dack.model.ProductModel
 import com.app_computer_ecom.dack.repository.AddressRepository
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
 
 class AddressRepositoryImpl : AddressRepository {
@@ -17,27 +19,46 @@ class AddressRepositoryImpl : AddressRepository {
     val dbAddress: CollectionReference = db.collection("addresses")
 
     override suspend fun addAddress(address: AddressModel) {
-        if (address.default) {
-            val querySnapshot = dbAddress.whereEqualTo("uid", FirebaseAuth.getInstance().currentUser?.uid).get().await()
-            if (!querySnapshot.isEmpty) {
+        try {
+            val uid = FirebaseAuth.getInstance().currentUser?.uid
+                ?: throw IllegalStateException()
+            val batch = Firebase.firestore.batch()
+
+            if (address.default) {
+                val querySnapshot = dbAddress.whereEqualTo("uid", uid).get().await()
                 for (document in querySnapshot.documents) {
-                    dbAddress.document(document.id).update("default", false)
+                    batch.update(dbAddress.document(document.id), "default", false)
                 }
             }
+
+            val addressId = address.id.ifEmpty { dbAddress.document().id }
+            batch.set(dbAddress.document(addressId), address.copy(id = addressId, uid = uid))
+            batch.commit().await()
+        } catch (e: Exception) {
+
         }
-        dbAddress.add(address)
     }
 
     override suspend fun updateAddress(address: AddressModel) {
-        if (address.default) {
-            val querySnapshot = dbAddress.whereEqualTo("uid", FirebaseAuth.getInstance().currentUser?.uid).get().await()
-            if (!querySnapshot.isEmpty) {
-                for (document in querySnapshot.documents) {
-                    dbAddress.document(document.id).update("default", false)
+        try {
+            val uid = FirebaseAuth.getInstance().currentUser?.uid
+                ?: throw IllegalStateException()
+            val batch = Firebase.firestore.batch()
+            if (address.default) {
+                val querySnapshot = dbAddress.whereEqualTo("uid", uid).get().await()
+                if (!querySnapshot.isEmpty) {
+                    for (document in querySnapshot.documents) {
+                        if (document.id != address.id) {
+                            batch.update(dbAddress.document(document.id), "default", false)
+                        }
+                    }
                 }
             }
+            batch.set(dbAddress.document(address.id), address)
+            batch.commit().await()
+        } catch (e: Exception) {
+
         }
-        dbAddress.document(address.id).set(address)
     }
 
     override suspend fun deleteAddress(address: AddressModel) {

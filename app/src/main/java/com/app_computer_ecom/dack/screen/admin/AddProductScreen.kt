@@ -75,6 +75,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 @Composable
 fun AddProductScreen(navController: NavHostController) {
@@ -110,7 +111,7 @@ fun AddProductScreen(navController: NavHostController) {
 
 
     if (productPrices.isEmpty()) {
-        productPrices.add(PriceInfo())
+        productPrices.add(PriceInfo(id = UUID.randomUUID().toString().replace("-", "").take(6)))
     }
 
     val launcher = rememberLauncherForActivityResult(
@@ -249,7 +250,7 @@ fun AddProductScreen(navController: NavHostController) {
                         Spacer(modifier = Modifier.weight(1f))
                         IconButton(
                             onClick = {
-                                productPrices.add(PriceInfo())
+                                productPrices.add(PriceInfo(id = UUID.randomUUID().toString().replace("-", "").take(6)))
                             },
                         ) {
                             Icon(

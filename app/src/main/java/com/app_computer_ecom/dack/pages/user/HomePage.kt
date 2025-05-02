@@ -56,7 +56,7 @@ import com.tbuonomo.viewpagerdotsindicator.compose.model.DotGraphic
 import com.tbuonomo.viewpagerdotsindicator.compose.type.ShiftIndicatorType
 
 @Composable
-fun HomePage(authViewModel: AuthViewModel, modifier: Modifier = Modifier) {
+fun HomePage(modifier: Modifier = Modifier) {
     var isLoading by remember { mutableStateOf(true) }
 
     var products by remember {
@@ -86,7 +86,7 @@ fun HomePage(authViewModel: AuthViewModel, modifier: Modifier = Modifier) {
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-        HeaderView(authViewModel, modifier)
+        HeaderView(modifier)
         Spacer(modifier = Modifier.height(10.dp))
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),

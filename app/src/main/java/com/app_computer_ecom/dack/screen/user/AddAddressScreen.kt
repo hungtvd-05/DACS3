@@ -55,6 +55,7 @@ import com.app_computer_ecom.dack.repository.GlobalRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.collections.forEach
 
@@ -343,8 +344,9 @@ fun AddAddressScreen() {
                                         default = defaultAddress
                                     )
                                 )
+                                delay(200)
+                                GlobalNavigation.navController.popBackStack()
                             }
-                            GlobalNavigation.navController.popBackStack()
                         } else {
                             AppUtil.showToast(context, "Vui lòng điền đầy đủ thông tin !!!")
                         }
@@ -354,7 +356,6 @@ fun AddAddressScreen() {
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(50.dp)
                 ) {
                     Text(
                         text = "Hoàn thành",
