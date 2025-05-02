@@ -52,7 +52,7 @@ import com.app_computer_ecom.dack.model.District
 import com.app_computer_ecom.dack.model.Province
 import com.app_computer_ecom.dack.model.Ward
 import com.app_computer_ecom.dack.repository.GlobalRepository
-import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -357,8 +357,9 @@ fun EditAddressScreen(addressId: String) {
                                         default = defaultAddress
                                     )
                                 )
+                                delay(200)
+                                GlobalNavigation.navController.popBackStack()
                             }
-                            GlobalNavigation.navController.popBackStack()
                         } else {
                             AppUtil.showToast(context, "Vui lòng điền đầy đủ thông tin !!!")
                         }
@@ -368,10 +369,29 @@ fun EditAddressScreen(addressId: String) {
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(50.dp)
                 ) {
                     Text(
                         text = "Hoàn thành",
+                        fontSize = 18.sp
+                    )
+                }
+                Spacer(modifier = Modifier.height(5.dp))
+                Button(
+                    onClick = {
+                        scope.launch {
+                            GlobalRepository.addressRepository.deleteAddress(address!!)
+                            delay(200)
+                            GlobalNavigation.navController.popBackStack()
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Red,
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Xóa",
                         fontSize = 18.sp
                     )
                 }

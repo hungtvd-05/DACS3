@@ -19,11 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import com.app_computer_ecom.dack.viewmodel.AuthViewModel
+import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
 
 @Composable
-fun HeaderViewAdmin(authViewModel: AuthViewModel, modifier: Modifier = Modifier) {
+fun HeaderViewAdmin(modifier: Modifier = Modifier) {
     var name by remember {
-        mutableStateOf(authViewModel.userModel?.username)
+        mutableStateOf(GLobalAuthViewModel.getAuthViewModel().userModel?.username)
     }
 
     Row(

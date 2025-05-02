@@ -45,10 +45,14 @@ import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.R
 import com.app_computer_ecom.dack.ui.theme.ThemeManager
 import com.app_computer_ecom.dack.viewmodel.AuthViewModel
+import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
 
 
 @Composable
-fun ProfilePage(authViewModel: AuthViewModel, modifier: Modifier = Modifier) {
+fun ProfilePage(
+    authViewModel: AuthViewModel = GLobalAuthViewModel.getAuthViewModel(),
+    modifier: Modifier = Modifier
+) {
 
     var cartItemCount by remember { mutableStateOf(0) }
 

@@ -22,6 +22,7 @@ import com.app_computer_ecom.dack.screen.admin.AdminScreen
 import com.app_computer_ecom.dack.screen.admin.BannerScreen
 import com.app_computer_ecom.dack.screen.admin.BrandScreen
 import com.app_computer_ecom.dack.screen.admin.CategoryScreen
+import com.app_computer_ecom.dack.screen.admin.OrderDetailScreen
 import com.app_computer_ecom.dack.screen.admin.ProductScreen
 import com.app_computer_ecom.dack.screen.admin.UpdateProductScreen
 import com.app_computer_ecom.dack.screen.started.AuthScreen
@@ -38,14 +39,15 @@ import com.app_computer_ecom.dack.screen.user.OrderSuccessScreen
 import com.app_computer_ecom.dack.screen.user.ProductDetailsScreen
 import com.app_computer_ecom.dack.screen.user.SearchScreen
 import com.app_computer_ecom.dack.viewmodel.AuthViewModel
+import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppNavigation(authViewModel: AuthViewModel, modifier: Modifier = Modifier) {
+fun AppNavigation(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     GlobalNavigation.navController = navController
-    val user = authViewModel.user
-    val userModel = authViewModel.userModel
+    val user = GLobalAuthViewModel.getAuthViewModel().user
+    val userModel = GLobalAuthViewModel.getAuthViewModel().userModel
 
     var firstPage by remember { mutableStateOf("loading") }
 
@@ -71,13 +73,11 @@ fun AppNavigation(authViewModel: AuthViewModel, modifier: Modifier = Modifier) {
         }
         composable("home/{indexValue}") {
             var indexValue = it.arguments?.getString("indexValue")
-            HomeScreen(authViewModel = authViewModel, indexValue = indexValue.toString().toInt())
+            HomeScreen(indexValue = indexValue.toString().toInt())
         }
         composable("admin/{indexValue}") {
             var indexValue = it.arguments?.getString("indexValue")
             AdminScreen(
-                navController = navController,
-                authViewModel = authViewModel,
                 indexValue = indexValue.toString().toInt()
             )
         }
@@ -131,6 +131,9 @@ fun AppNavigation(authViewModel: AuthViewModel, modifier: Modifier = Modifier) {
         }
         composable("order-success") {
             OrderSuccessScreen()
+        }
+        composable("admin/orderdetail") {
+            OrderDetailScreen()
         }
     }
 

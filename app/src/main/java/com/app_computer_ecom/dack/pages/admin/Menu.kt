@@ -27,12 +27,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
+import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.components.admin.HeaderViewAdmin
-import com.app_computer_ecom.dack.viewmodel.AuthViewModel
 
 @Composable
-fun Menu(modifier: Modifier = Modifier, authViewModel: AuthViewModel, navController: NavHostController) {
+fun Menu(modifier: Modifier = Modifier) {
     val itemMenus = listOf(
         NavItem("Product", Icons.Default.DateRange),
         NavItem("Category", Icons.Default.Menu),
@@ -47,7 +46,7 @@ fun Menu(modifier: Modifier = Modifier, authViewModel: AuthViewModel, navControl
         modifier = modifier.fillMaxSize()
             .padding(16.dp)
     ) {
-        HeaderViewAdmin(authViewModel, modifier)
+        HeaderViewAdmin(modifier)
 //        Spacer(modifier = Modifier.height(10.dp))
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),
@@ -57,14 +56,14 @@ fun Menu(modifier: Modifier = Modifier, authViewModel: AuthViewModel, navControl
             contentPadding = PaddingValues(top = 16.dp)
         ) {
             items(itemMenus.size) { index ->
-                ItemMenu(itemMenus[index], navController, index)
+                ItemMenu(itemMenus[index], index)
             }
         }
     }
 }
 
 @Composable
-fun ItemMenu(navItem: NavItem, navController: NavHostController, index: Int) {
+fun ItemMenu(navItem: NavItem, index: Int) {
     Card(
         modifier = Modifier.size(100.dp),
         shape = RoundedCornerShape(12.dp),
@@ -72,13 +71,13 @@ fun ItemMenu(navItem: NavItem, navController: NavHostController, index: Int) {
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         onClick = {
             when (index) {
-                0 -> navController.navigate("admin/product")
-                1 -> navController.navigate("category")
-                2 -> navController.navigate("brand")
-                3 -> navController.navigate("banner")
-                4 -> navController.navigate("policy")
-                5 -> navController.navigate("review")
-                6 -> navController.navigate("user")
+                0 -> GlobalNavigation.navController.navigate("admin/product")
+                1 -> GlobalNavigation.navController.navigate("category")
+                2 -> GlobalNavigation.navController.navigate("brand")
+                3 -> GlobalNavigation.navController.navigate("banner")
+                4 -> GlobalNavigation.navController.navigate("policy")
+                5 -> GlobalNavigation.navController.navigate("review")
+                6 -> GlobalNavigation.navController.navigate("user")
             }
         }
     ) {

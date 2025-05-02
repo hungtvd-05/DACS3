@@ -7,8 +7,10 @@ import com.app_computer_ecom.dack.model.BrandModel
 import com.app_computer_ecom.dack.model.CartModel
 import com.app_computer_ecom.dack.model.PriceInfo
 import com.app_computer_ecom.dack.repository.CartRepository
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
 
 class CartRepositoryImpl : CartRepository {
@@ -84,12 +86,20 @@ class CartRepositoryImpl : CartRepository {
     }
 
     override suspend fun clearCart() {
-        val querySnapshot = dbCart
-            .whereEqualTo("uid", FirebaseAuth.getInstance().currentUser?.uid)
-            .get()
-            .await()
-        for (document in querySnapshot.documents) {
-            dbCart.document(document.id).delete()
+        try {
+            val uid = FirebaseAuth.getInstance().currentUser?.uid
+                ?: throw IllegalStateException()
+            val batch = Firebase.firestore.batch()
+            val querySnapshot = dbCart
+                .whereEqualTo("uid", uid)
+                .get()
+                .await()
+            for (document in querySnapshot.documents) {
+                batch.delete(dbCart.document(document.id))
+            }
+            batch.commit().await()
+        } catch (e: Exception) {
+
         }
     }
 
