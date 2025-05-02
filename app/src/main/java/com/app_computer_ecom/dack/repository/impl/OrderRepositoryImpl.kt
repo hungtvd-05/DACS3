@@ -5,6 +5,7 @@ import com.app_computer_ecom.dack.model.OrderModel
 import com.app_computer_ecom.dack.repository.GlobalRepository
 import com.app_computer_ecom.dack.repository.OrderRepository
 import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
@@ -52,6 +53,7 @@ class OrderRepositoryImpl : OrderRepository {
         dbOrder.document(order.id).update("status", newStatus).await()
         if (newStatus == 3) {
             val batch = Firebase.firestore.batch()
+            batch.update(dbOrder.document(order.id), "finishedAt", Timestamp.now())
             order.listProduct.forEach { productInfoModel ->
                 var product = GlobalRepository.productRepository.getProductById(productInfoModel.id)?: run {
                     return@forEach

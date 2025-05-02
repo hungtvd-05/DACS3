@@ -10,5 +10,6 @@ data class OrderModel(
     val totalPrice: Int = 0,
     val paymentMethod: String = "",
     val createdAt: Timestamp = Timestamp.now(),
+    val finishedAt: Timestamp? = null,
     var status: Int = 0,
 )
