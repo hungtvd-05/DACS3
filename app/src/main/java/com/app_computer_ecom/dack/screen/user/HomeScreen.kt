@@ -23,7 +23,6 @@ import com.app_computer_ecom.dack.pages.user.CartPage
 import com.app_computer_ecom.dack.pages.user.FavoritePage
 import com.app_computer_ecom.dack.pages.user.HomePage
 import com.app_computer_ecom.dack.pages.user.ProfilePage
-import com.app_computer_ecom.dack.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnrememberedMutableState")
@@ -91,7 +90,7 @@ fun ContentScreen(
         0 -> HomePage(modifier)
         1 -> FavoritePage(modifier)
         2 -> CartPage(modifier)
-        3 -> ProfilePage(modifier)
+        3 -> ProfilePage(modifier = modifier)
     }
 }
 
