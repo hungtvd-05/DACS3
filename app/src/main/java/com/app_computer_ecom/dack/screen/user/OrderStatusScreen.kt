@@ -266,12 +266,14 @@ fun OrderProductItem(orderProductInfoModel: OrderProductInfoModel) {
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.surface)
             .padding(bottom = 16.dp)
+
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
                 .height(100.dp)
+                .clickable { GlobalNavigation.navController.navigate("product-details/productId=${orderProductInfoModel.product.id}") }
         ) {
             Card(
                 shape = RoundedCornerShape(12.dp),
