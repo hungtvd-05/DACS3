@@ -33,7 +33,7 @@ import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.repository.GlobalRepository
 
 @Composable
-fun TopBar(title: String = "", onBack: () -> Unit) {
+fun TopBar(title: String = "", isShowCard: Boolean = true, onBack: () -> Unit) {
 
     BackHandler {
         onBack()
@@ -42,7 +42,9 @@ fun TopBar(title: String = "", onBack: () -> Unit) {
     var cartItemCount by remember { mutableStateOf(0) }
 
     LaunchedEffect(Unit) {
-        cartItemCount = GlobalRepository.cartRepository.getCartList().first.size
+        if (isShowCard) {
+            cartItemCount = GlobalRepository.cartRepository.getCartList().first.size
+        }
     }
 
     Row(
@@ -71,36 +73,38 @@ fun TopBar(title: String = "", onBack: () -> Unit) {
         Row(
             modifier = Modifier.padding(end = 4.dp)
         ) {
-            IconButton(
-                onClick = {
-                    GlobalNavigation.navController.navigate("home/2")
-                }
-            ) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.size(30.dp)
+            if (isShowCard) {
+                IconButton(
+                    onClick = {
+                        GlobalNavigation.navController.navigate("home/2")
+                    }
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.ShoppingCart,
-                        contentDescription = "Shopping Cart",
-                        modifier = Modifier.align(Alignment.Center),
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
-
                     Box(
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .size(16.dp)
-                            .background(Color.Red, shape = CircleShape),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.size(30.dp)
                     ) {
-                        Text(
-                            text = if (cartItemCount < 100) cartItemCount.toString() else "99+",
-                            color = Color.White,
-                            fontSize = 6.sp,
-                            fontWeight = FontWeight.Bold,
-                            lineHeight = 8.sp
+                        Icon(
+                            imageVector = Icons.Default.ShoppingCart,
+                            contentDescription = "Shopping Cart",
+                            modifier = Modifier.align(Alignment.Center),
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
+
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .size(16.dp)
+                                .background(Color.Red, shape = CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = if (cartItemCount < 100) cartItemCount.toString() else "99+",
+                                color = Color.White,
+                                fontSize = 6.sp,
+                                fontWeight = FontWeight.Bold,
+                                lineHeight = 8.sp
+                            )
+                        }
                     }
                 }
             }

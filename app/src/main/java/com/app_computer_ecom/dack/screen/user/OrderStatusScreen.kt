@@ -154,9 +154,8 @@ fun OrderListWithFilter(
             }
         }
 
-        if (orderStatus >= 2) {
-            listState.animateScrollToItem(orderStatus)
-        }
+        listState.animateScrollToItem(orderStatus)
+
 
 
 
@@ -202,7 +201,10 @@ fun OrderListWithFilter(
                                 .padding(top = 4.dp)
                                 .height(2.dp)
                                 .width(32.dp)
-                                .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(1.dp))
+                                .background(
+                                    MaterialTheme.colorScheme.primary,
+                                    shape = RoundedCornerShape(1.dp)
+                                )
                         )
                     }
                 }
@@ -235,7 +237,10 @@ fun OrderListWithFilter(
                                 .height(300.dp),
                             contentAlignment = Alignment.Center,
                         ) {
-                            Text("Chưa có đơn hàng nào", color = MaterialTheme.colorScheme.onBackground)
+                            Text(
+                                "Chưa có đơn hàng nào",
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
                         }
                     }
                 }

@@ -12,10 +12,12 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -25,7 +27,9 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -40,10 +44,18 @@ import androidx.compose.ui.unit.sp
 import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.R
 import com.app_computer_ecom.dack.components.TopBar
+import com.app_computer_ecom.dack.model.OrderModel
+import com.app_computer_ecom.dack.repository.GlobalRepository
 import com.app_computer_ecom.dack.ui.theme.ThemeManager
 import com.app_computer_ecom.dack.viewmodel.AuthViewModel
 import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
 
+
+data class Status(
+    val id: Int,
+    val title: String,
+    val idPainterResource: Int
+)
 
 @Composable
 fun ProfilePage(
@@ -51,7 +63,7 @@ fun ProfilePage(
     modifier: Modifier = Modifier
 ) {
 
-    var cartItemCount by remember { mutableStateOf(0) }
+    var cartItemCount by remember { mutableIntStateOf(0) }
 
 
 
@@ -126,6 +138,30 @@ fun UserProfileHeader(
 fun OrderStatusSection(
     modifier: Modifier = Modifier
 ) {
+
+    val statusList = listOf(
+        Status(
+            id = 0,
+            title = "Chờ xác nhận",
+            idPainterResource = R.drawable.outline_wallet_24
+        ),
+        Status(
+            id = 1,
+            title = "Chờ lấy hàng",
+            idPainterResource = R.drawable.outline_package_2_24
+        ),
+        Status(
+            id = 2,
+            title = "Chờ giao hàng",
+            idPainterResource = R.drawable.outline_local_shipping_24
+        ),
+        Status(
+            id = 4,
+            title = "Đã huỷ",
+            idPainterResource = R.drawable.outline_cancel_24
+        ),
+    )
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -155,114 +191,98 @@ fun OrderStatusSection(
                 }
             )
         }
+
+
+
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            IconButton(
-                onClick = {
-                    GlobalNavigation.navController.navigate("orderstatus/0")
-                },
-                modifier = Modifier
-                    .weight(1f)
-                    .aspectRatio(1f)
-            ) {
+
+
+            statusList.forEach {
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .weight(1f)
                 ) {
-                    Icon(
-                        painter = painterResource(R.drawable.outline_wallet_24),
-                        contentDescription = "Chờ xác nhận",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(32.dp)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Chờ xác nhận",
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 8.sp,
-                        lineHeight = 10.sp
-                    )
+                    OrderStatusItem(it)
                 }
+
             }
-            IconButton(
-                onClick = {
-                    GlobalNavigation.navController.navigate("orderstatus/1")
-                },
-                modifier = Modifier
-                    .weight(1f)
-                    .aspectRatio(1f)
+
+        }
+    }
+}
+
+
+@Composable
+fun OrderStatusItem(status: Status) {
+
+    var orderModels by remember { mutableStateOf(emptyList<OrderModel>()) }
+    var quantity by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(Unit) {
+
+        orderModels = GlobalRepository.orderRepository.getOrdersByUidAndStatus(
+            uid = GLobalAuthViewModel.getAuthViewModel().userModel!!.uid,
+            status = status.id
+        )
+
+        quantity = orderModels.sumOf { order ->
+            order.listProduct.sumOf { it.quantity }
+        }
+    }
+
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+
+    ) {
+
+        IconButton(
+            onClick = {
+                GlobalNavigation.navController.navigate("orderstatus/${status.id}")
+            },
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.outline_package_2_24),
-                        contentDescription = "Chờ lấy hàng",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(32.dp)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Chờ lấy hàng",
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 8.sp,
-                        lineHeight = 10.sp
-                    )
-                }
+                Icon(
+                    painter = painterResource(status.idPainterResource),
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(32.dp)
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = status.title,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 8.sp,
+                    lineHeight = 10.sp
+                )
             }
-            IconButton(
-                onClick = {
-                    GlobalNavigation.navController.navigate("orderstatus/2")
-                },
+        }
+
+        if (quantity > 0) {
+            Box(
                 modifier = Modifier
-                    .weight(1f)
-                    .aspectRatio(1f)
+                    .align(Alignment.Center)
+                    .offset(12.dp, 2.dp)
+                    .size(16.dp)
+                    .background(Color.Red, shape = CircleShape),
+                contentAlignment = Alignment.Center
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.outline_local_shipping_24),
-                        contentDescription = "Chờ giao hàng",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(32.dp)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Chờ giao hàng",
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 8.sp,
-                        lineHeight = 10.sp
-                    )
-                }
-            }
-            IconButton(
-                onClick = {
-                    GlobalNavigation.navController.navigate("orderstatus/4")
-                },
-                modifier = Modifier
-                    .weight(1f)
-                    .aspectRatio(1f)
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.outline_cancel_24),
-                        contentDescription = "Đã hủy",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(32.dp)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Đã hủy",
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 8.sp,
-                        lineHeight = 10.sp
-                    )
-                }
+                Text(
+                    text = if (quantity < 100) quantity.toString() else "99+",
+                    color = Color.White,
+                    fontSize = 6.sp,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 8.sp
+                )
             }
         }
     }
@@ -395,7 +415,9 @@ fun ProfileSettingsSection(authViewModel: AuthViewModel = GLobalAuthViewModel.ge
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { }
+                    .clickable {
+                        GlobalNavigation.navController.navigate("terms")
+                    }
                     .padding(vertical = 8.dp, horizontal = 8.dp)
             ) {
                 Text(text = "Điều khoản ứng dụng", fontSize = 12.sp)

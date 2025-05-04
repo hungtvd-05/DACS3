@@ -39,6 +39,7 @@ import com.app_computer_ecom.dack.screen.user.OrderStatusScreen
 import com.app_computer_ecom.dack.screen.user.OrderSuccessScreen
 import com.app_computer_ecom.dack.screen.user.ProductDetailsScreen
 import com.app_computer_ecom.dack.screen.user.SearchScreen
+import com.app_computer_ecom.dack.screen.user.TermsScreen
 import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -140,6 +141,9 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         composable("orderstatus/{status}") {
             var status = it.arguments?.getString("status")!!.toInt()
             OrderStatusScreen(status)
+        }
+        composable("terms") {
+            TermsScreen()
         }
     }
 
