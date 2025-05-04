@@ -29,6 +29,7 @@ import com.app_computer_ecom.dack.screen.started.AuthScreen
 import com.app_computer_ecom.dack.screen.started.LoginScreen
 import com.app_computer_ecom.dack.screen.started.ResetPasswordScreen
 import com.app_computer_ecom.dack.screen.started.SignupScreen
+import com.app_computer_ecom.dack.screen.user.AccountScreen
 import com.app_computer_ecom.dack.screen.user.AddAddressScreen
 import com.app_computer_ecom.dack.screen.user.AddressMenuScreen
 import com.app_computer_ecom.dack.screen.user.CheckoutScreen
@@ -144,6 +145,9 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         }
         composable("terms") {
             TermsScreen()
+        }
+        composable("account") {
+            AccountScreen()
         }
     }
 

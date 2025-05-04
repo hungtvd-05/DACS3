@@ -307,7 +307,9 @@ fun ProfileSettingsSection(authViewModel: AuthViewModel = GLobalAuthViewModel.ge
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { }
+                    .clickable {
+                        GlobalNavigation.navController.navigate("account")
+                    }
                     .padding(vertical = 8.dp, horizontal = 8.dp)
             ) {
                 Text(text = "Tài khoản & bảo mật", fontSize = 12.sp)
