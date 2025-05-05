@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.NavigationBar
@@ -22,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.app_computer_ecom.dack.pages.admin.Dashboard
+import com.app_computer_ecom.dack.pages.admin.InfoAppScreen
 import com.app_computer_ecom.dack.pages.admin.Menu
 import com.app_computer_ecom.dack.pages.admin.OrderPage
 import com.app_computer_ecom.dack.pages.user.ProfilePage
@@ -36,6 +38,7 @@ fun AdminScreen(modifier: Modifier = Modifier, indexValue: Int = 0) {
         NavItem("Dashboard", Icons.Default.Home),
         NavItem("Menu", Icons.Default.Menu),
         NavItem("Đơn hàng", Icons.Default.DateRange),
+        NavItem("Thông tin", Icons.Default.Info),
     )
 
     var selectedIndex by remember {
@@ -75,5 +78,6 @@ fun ContentAdminScreen(modifier: Modifier = Modifier, selectedIndex: Int) {
         0 -> Dashboard(modifier)
         1 -> Menu(modifier)
         2 -> OrderPage(modifier)
+        3 -> InfoAppScreen()
     }
 }

@@ -10,4 +10,6 @@ data class UserModel(
     val role: String = "",
     val uid: String = "",
     val birthDate: Timestamp = Timestamp.now(),
+    val sex: String = "",
+    val phoneNumber: String = "",
 )
