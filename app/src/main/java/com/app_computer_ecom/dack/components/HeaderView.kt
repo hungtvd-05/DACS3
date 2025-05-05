@@ -21,7 +21,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.app_computer_ecom.dack.GlobalNavigation
-import com.app_computer_ecom.dack.viewmodel.AuthViewModel
 import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
 
 @Composable

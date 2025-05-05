@@ -1,7 +1,10 @@
 package com.app_computer_ecom.dack.repository.impl
 
 import com.app_computer_ecom.dack.GlobalDatabase
+import com.app_computer_ecom.dack.model.DailySales
+import com.app_computer_ecom.dack.model.MonthlySales
 import com.app_computer_ecom.dack.model.OrderModel
+import com.app_computer_ecom.dack.model.ProductSoldInfo
 import com.app_computer_ecom.dack.repository.GlobalRepository
 import com.app_computer_ecom.dack.repository.OrderRepository
 import com.google.firebase.Firebase
@@ -10,11 +13,33 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class OrderRepositoryImpl : OrderRepository {
     var db = GlobalDatabase.database
 
     val dbOrder: CollectionReference = db.collection("orders")
+
+    override suspend fun getOrdersByUidAndStatus(uid: String, status: Int): List<OrderModel> {
+        return try {
+            val querySnapshot = dbOrder
+                .whereEqualTo("uid", uid)
+                .whereEqualTo("status", status)
+                .get()
+                .await()
+            if (querySnapshot.isEmpty) {
+                emptyList()
+            } else {
+                querySnapshot.documents.mapNotNull { document ->
+                    document.toObject(OrderModel::class.java)?.copy(id = document.id)
+                }
+            }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
 
     override suspend fun addOrder(orderModel: OrderModel) {
         dbOrder.add(orderModel)
@@ -81,5 +106,97 @@ class OrderRepositoryImpl : OrderRepository {
             }
         }
         batch.commit().await()
+    }
+
+    override suspend fun getDailySalesLast6Days(): List<DailySales> {
+        val calendar = Calendar.getInstance()
+        val endTime = calendar.time
+        calendar.add(Calendar.DAY_OF_YEAR, -6)
+        val startTime = calendar.time
+
+        val querySnapshot = dbOrder
+            .whereGreaterThanOrEqualTo("createdAt", Timestamp(startTime))
+            .get()
+            .await()
+
+        val orders = querySnapshot.toObjects(OrderModel::class.java)
+        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val salesByDate = orders.groupBy { formatter.format(it.createdAt.toDate()) }
+            .map { (date, orders) ->
+                DailySales(
+                    date,
+                    orders.size.toDouble(),
+                    orders.filter { it.status == 3 }.size.toDouble(),
+                    orders.sumOf { it.totalPrice.toDouble() },
+                    orders.filter { it.status == 3 }.sumOf { it.totalPrice.toDouble() }
+                )
+            }
+
+        val result = mutableListOf<DailySales>()
+        for (i in 5 downTo 0) {
+            calendar.time = endTime
+            calendar.add(Calendar.DAY_OF_YEAR, -i)
+            val dateStr = formatter.format(calendar.time)
+            val dailySales = salesByDate.find { it.date == dateStr }
+                ?: DailySales(dateStr, totalOrders = 0.0, totalOrdersCompleted = 0.0, totalExpectedSales = 0.0, totalAchievedSales = 0.0)
+            result.add(dailySales)
+        }
+
+        return result.reversed()
+    }
+
+    override suspend fun getDailySalesLast6Months(): List<MonthlySales> {
+        val calendar = Calendar.getInstance()
+        val endTime = calendar.time
+        calendar.add(Calendar.MONTH, -6)
+        val startTime = calendar.time
+
+        val querySnapshot = dbOrder
+            .whereGreaterThanOrEqualTo("createdAt", Timestamp(startTime))
+            .get()
+            .await()
+
+        val orders = querySnapshot.toObjects(OrderModel::class.java)
+        val formatter = SimpleDateFormat("MM/yy", Locale.getDefault())
+
+        val salesByMonth = orders.groupBy { order ->
+            formatter.format(order.createdAt.toDate())
+        }.map { (month, orders) ->
+            MonthlySales(
+                month = month,
+                totalOrders = orders.size.toDouble(),
+                totalOrdersCompleted = orders.filter { it.status == 3 }.size.toDouble(),
+                totalExpectedSales = orders.sumOf { it.totalPrice.toDouble() },
+                totalAchievedSales = orders.filter { it.status == 3 }.sumOf { it.totalPrice.toDouble() }
+            )
+        }
+        val result = mutableListOf<MonthlySales>()
+        for (i in 5 downTo 0) {
+            calendar.time = endTime
+            calendar.add(Calendar.MONTH, -i)
+            val monthStr = formatter.format(calendar.time)
+            val monthlySales = salesByMonth.find { it.month == monthStr }
+                ?: MonthlySales(monthStr, totalOrders = 0.0, totalOrdersCompleted = 0.0, totalExpectedSales = 0.0, totalAchievedSales = 0.0)
+            result.add(monthlySales)
+        }
+
+        return result.reversed()
+    }
+
+    override suspend fun getProductSoldQuantities(): List<ProductSoldInfo> {
+        try {
+            var productList = GlobalRepository.productRepository.getProducts()
+            val productSoldInfoList = productList.map {
+                ProductSoldInfo(
+                    id = it.id,
+                    name = it.name,
+                    totalSold = it.prices.sumOf { priceInfo -> priceInfo.sold },
+                    revenue = it.prices.sumOf { priceInfo -> priceInfo.price.toLong() * priceInfo.sold }
+                )
+            }
+            return productSoldInfoList
+        } catch (e: Exception) {
+            return emptyList()
+        }
     }
 }

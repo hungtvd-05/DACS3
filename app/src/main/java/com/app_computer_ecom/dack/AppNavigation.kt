@@ -29,16 +29,18 @@ import com.app_computer_ecom.dack.screen.started.AuthScreen
 import com.app_computer_ecom.dack.screen.started.LoginScreen
 import com.app_computer_ecom.dack.screen.started.ResetPasswordScreen
 import com.app_computer_ecom.dack.screen.started.SignupScreen
+import com.app_computer_ecom.dack.screen.user.AccountScreen
 import com.app_computer_ecom.dack.screen.user.AddAddressScreen
 import com.app_computer_ecom.dack.screen.user.AddressMenuScreen
-import com.app_computer_ecom.dack.screen.user.HomeScreen
-import com.app_computer_ecom.dack.screen.user.ListProductScreen
 import com.app_computer_ecom.dack.screen.user.CheckoutScreen
 import com.app_computer_ecom.dack.screen.user.EditAddressScreen
+import com.app_computer_ecom.dack.screen.user.HomeScreen
+import com.app_computer_ecom.dack.screen.user.ListProductScreen
+import com.app_computer_ecom.dack.screen.user.OrderStatusScreen
 import com.app_computer_ecom.dack.screen.user.OrderSuccessScreen
 import com.app_computer_ecom.dack.screen.user.ProductDetailsScreen
 import com.app_computer_ecom.dack.screen.user.SearchScreen
-import com.app_computer_ecom.dack.viewmodel.AuthViewModel
+import com.app_computer_ecom.dack.screen.user.TermsScreen
 import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -46,8 +48,8 @@ import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
 fun AppNavigation(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     GlobalNavigation.navController = navController
-    val user = GLobalAuthViewModel.getAuthViewModel().user
-    val userModel = GLobalAuthViewModel.getAuthViewModel().userModel
+    var user = GLobalAuthViewModel.getAuthViewModel().user
+    var userModel = GLobalAuthViewModel.getAuthViewModel().userModel
 
     var firstPage by remember { mutableStateOf("loading") }
 
@@ -135,6 +137,17 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         composable("admin/orderdetail/id={orderId}") {
             var id = it.arguments?.getString("orderId").toString()
             OrderDetailScreen(id)
+        }
+
+        composable("orderstatus/{status}") {
+            var status = it.arguments?.getString("status")!!.toInt()
+            OrderStatusScreen(status)
+        }
+        composable("terms") {
+            TermsScreen()
+        }
+        composable("account") {
+            AccountScreen()
         }
     }
 

@@ -1,6 +1,7 @@
 package com.app_computer_ecom.dack.screen.user
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,16 +15,16 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -173,20 +174,34 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "", searchQuery
         if (isLoading) {
             LoadingScreen()
         } else {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(horizontal = 16.dp)
-            ) {
-                item(span = { GridItemSpan(2) }) {
-                    Spacer(modifier = Modifier.height(1.dp))
+
+            if (products.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Không tìm thấy sản phẩm",
+                        fontSize = 16.sp
+                    )
                 }
-                items(products.size) {
-                    ProductItem(product = products[it])
-                }
-                item(span = { GridItemSpan(2) }) {
-                    Spacer(modifier = Modifier.height(10.dp))
+            } else {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                ) {
+                    item(span = { GridItemSpan(2) }) {
+                        Spacer(modifier = Modifier.height(1.dp))
+                    }
+                    items(products.size) {
+                        ProductItem(product = products[it])
+                    }
+                    item(span = { GridItemSpan(2) }) {
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
                 }
             }
         }

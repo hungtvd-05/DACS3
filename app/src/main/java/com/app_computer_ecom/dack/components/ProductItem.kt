@@ -81,7 +81,12 @@ fun ProductItem(product: ProductModel) {
                                     .background(Color(233, 233, 233))
                                     .padding(horizontal = 4.dp)
                             ) {
-                                Text(text = it.type, fontSize = 8.sp, lineHeight = 10.sp)
+                                Text(
+                                    text = it.type,
+                                    fontSize = 8.sp,
+                                    lineHeight = 10.sp,
+                                    color = Color.Black
+                                )
                             }
                             Spacer(modifier = Modifier.width(4.dp))
                         }

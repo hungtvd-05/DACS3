@@ -18,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import com.app_computer_ecom.dack.viewmodel.AuthViewModel
 import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
 
 @Composable

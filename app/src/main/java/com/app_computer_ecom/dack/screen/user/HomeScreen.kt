@@ -24,13 +24,14 @@ import com.app_computer_ecom.dack.pages.user.FavoritePage
 import com.app_computer_ecom.dack.pages.user.HomePage
 import com.app_computer_ecom.dack.pages.user.ProfilePage
 import com.app_computer_ecom.dack.viewmodel.AuthViewModel
+import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    indexValue: Int = 0
+    indexValue: Int = 0,
 ) {
     val navItems = listOf(
         NavItem("Home", Icons.Default.ShoppingCart),
@@ -75,9 +76,7 @@ fun HomeScreen(
         ContentScreen(
             modifier = modifier.padding(paddingValues),
             selectedIndex,
-            onIndexSelect = { index ->
-                selectedIndex = index
-            })
+        )
     }
 }
 
@@ -85,13 +84,12 @@ fun HomeScreen(
 fun ContentScreen(
     modifier: Modifier = Modifier,
     selectedIndex: Int,
-    onIndexSelect: (Int) -> Unit
 ) {
     when (selectedIndex) {
         0 -> HomePage(modifier)
         1 -> FavoritePage(modifier)
         2 -> CartPage(modifier)
-        3 -> ProfilePage(modifier)
+        3 -> ProfilePage()
     }
 }
 

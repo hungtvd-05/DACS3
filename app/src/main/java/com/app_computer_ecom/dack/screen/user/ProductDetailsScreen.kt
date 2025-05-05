@@ -1,7 +1,9 @@
 package com.app_computer_ecom.dack.screen.user
 
 import DatabaseProvider
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -12,11 +14,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -89,6 +93,9 @@ fun ProductDetailsScreen(productId: String) {
     var isFavorite by remember { mutableStateOf(false) }
 
 
+    var cartItemCount by remember { mutableStateOf(0) }
+
+
     var context = LocalContext.current
     val productHistoryDao = DatabaseProvider.getDatabase(context).productHistoryDao()
 
@@ -102,10 +109,12 @@ fun ProductDetailsScreen(productId: String) {
             categoryIds = setOf(product!!.categoryId).toList(), limit = 8
         )
         ortherProducts = ortherProducts.dropWhile { it.id == productId }
-        minPrice = product!!.prices.minOf { it.price as Int }
-        maxPrice = product!!.prices.maxOf { it.price as Int }
-        isLoading = false
+        minPrice = product!!.prices.minOf { it.price }
+        maxPrice = product!!.prices.maxOf { it.price }
+
         isFavorite = GlobalRepository.favoriteRepository.isFavorite(productId)
+        cartItemCount = GlobalRepository.cartRepository.getCartList().first.size
+        isLoading = false
 
 
     }
@@ -122,12 +131,15 @@ fun ProductDetailsScreen(productId: String) {
     }
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp),
+//                .background(MaterialTheme.colorScheme.primary)
+                .padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(onClick = {
@@ -135,7 +147,8 @@ fun ProductDetailsScreen(productId: String) {
             }) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back"
+                    contentDescription = "Back",
+//                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
@@ -147,10 +160,33 @@ fun ProductDetailsScreen(productId: String) {
                         GlobalNavigation.navController.navigate("home/2")
                     }
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.ShoppingCart,
-                        contentDescription = "ShoppingCart"
-                    )
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.size(30.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ShoppingCart,
+                            contentDescription = "Shopping Cart",
+                            modifier = Modifier.align(Alignment.Center),
+//                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .size(16.dp)
+                                .background(Color.Red, shape = CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = if (cartItemCount < 100) cartItemCount.toString() else "99+",
+                                color = Color.White,
+                                fontSize = 6.sp,
+                                fontWeight = FontWeight.Bold,
+                                lineHeight = 8.sp
+                            )
+                        }
+                    }
                 }
 
                 IconButton(
@@ -165,6 +201,7 @@ fun ProductDetailsScreen(productId: String) {
                 }
             }
         }
+
         if (isLoading) {
             LoadingScreen()
         } else {
@@ -184,6 +221,8 @@ fun ProductDetailsScreen(productId: String) {
                         val pagerState = rememberPagerState(0) {
                             product!!.imageUrls.size
                         }
+
+//                        Spacer(modifier = Modifier.height(16.dp))
                         HorizontalPager(
                             state = pagerState,
                             pageSpacing = 24.dp,
@@ -313,6 +352,7 @@ fun ProductDetailsScreen(productId: String) {
                                         productId,
                                         selectedPriceInfo!!
                                     )
+                                    cartItemCount += 1
                                 }
                             } else {
                                 AppUtil.showToast(context, "Vui lòng chọn mẫu sản phẩm !!!")
