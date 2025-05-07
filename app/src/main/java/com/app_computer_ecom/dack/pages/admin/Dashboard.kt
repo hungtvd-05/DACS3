@@ -152,9 +152,8 @@ fun Dashboard(modifier: Modifier) {
     ) {
         Text(
             text = "Thống kê",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(vertical = 8.dp)
+            fontSize = 22.sp, fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(vertical = 16.dp)
         )
 
         if (isLoading) {

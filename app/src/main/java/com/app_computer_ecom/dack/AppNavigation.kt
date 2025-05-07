@@ -22,9 +22,11 @@ import com.app_computer_ecom.dack.screen.admin.AdminScreen
 import com.app_computer_ecom.dack.screen.admin.BannerScreen
 import com.app_computer_ecom.dack.screen.admin.BrandScreen
 import com.app_computer_ecom.dack.screen.admin.CategoryScreen
+import com.app_computer_ecom.dack.screen.admin.ListUserScreen
 import com.app_computer_ecom.dack.screen.admin.OrderDetailScreen
 import com.app_computer_ecom.dack.screen.admin.ProductScreen
 import com.app_computer_ecom.dack.screen.admin.UpdateProductScreen
+import com.app_computer_ecom.dack.screen.employee.EmployeeScreen
 import com.app_computer_ecom.dack.screen.started.AuthScreen
 import com.app_computer_ecom.dack.screen.started.LoginScreen
 import com.app_computer_ecom.dack.screen.started.ResetPasswordScreen
@@ -57,6 +59,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         firstPage = if (user == null) "auth"
         else if (userModel?.role == "admin") "admin/0"
         else if (userModel?.role == "user") "home/0"
+        else if (userModel?.role == "employee") "employee/0"
         else "loading"
     }
 
@@ -148,6 +151,15 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         }
         composable("account") {
             AccountScreen()
+        }
+        composable("admin/users") {
+            ListUserScreen()
+        }
+        composable("employee/{indexValue}") {
+            var indexValue = it.arguments?.getString("indexValue")
+            EmployeeScreen(
+                indexValue = indexValue.toString().toInt()
+            )
         }
     }
 

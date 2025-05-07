@@ -1,4 +1,4 @@
-package com.app_computer_ecom.dack.pages.admin
+package com.app_computer_ecom.dack.pages.employee
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,7 +38,6 @@ fun Menu(modifier: Modifier = Modifier) {
         NavItem("Thương hiệu", Icons.Default.LocationOn),
         NavItem("Banner", Icons.Default.Person),
         NavItem("Review", Icons.Default.Person),
-        NavItem("Tài khoản", Icons.Default.Person),
     )
 
     Column(
@@ -76,7 +74,6 @@ fun ItemMenu(navItem: NavItem, index: Int) {
                 2 -> GlobalNavigation.navController.navigate("brand")
                 3 -> GlobalNavigation.navController.navigate("banner")
                 4 -> GlobalNavigation.navController.navigate("review")
-                5 -> GlobalNavigation.navController.navigate("admin/users")
             }
         }
     ) {
