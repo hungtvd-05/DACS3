@@ -67,7 +67,11 @@ class AuthViewModel(private val application: Application) : AndroidViewModel(app
         }
     }
 
-    fun loginWithUsername(username: String, password: String, onResult: (Boolean, String?) -> Unit) {
+    fun loginWithUsername(
+        username: String,
+        password: String,
+        onResult: (Boolean, String?) -> Unit
+    ) {
         viewModelScope.launch {
             try {
                 val documents = firestore.collection("users")
@@ -120,14 +124,16 @@ class AuthViewModel(private val application: Application) : AndroidViewModel(app
     private suspend fun handleGoogleSignIn(result: GetCredentialResponse): Boolean {
         val credential = result.credential
         if (credential is CustomCredential &&
-            credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+            credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
+        ) {
 
             return try {
                 val tokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
                 val authCredential = GoogleAuthProvider.getCredential(tokenCredential.idToken, null)
                 val email = tokenCredential.id ?: return false
 
-                val signInMethods = auth.fetchSignInMethodsForEmail(email).await().signInMethods ?: listOf()
+                val signInMethods =
+                    auth.fetchSignInMethodsForEmail(email).await().signInMethods ?: listOf()
 
                 if (signInMethods.isNotEmpty() && !signInMethods.contains(GoogleAuthProvider.PROVIDER_ID)) {
                     val user = auth.currentUser ?: return false
@@ -179,7 +185,13 @@ class AuthViewModel(private val application: Application) : AndroidViewModel(app
         return credentialManager.getCredential(activityContext, request)
     }
 
-    fun signup(name: String, username: String, email: String, password: String, onResult: (Boolean, String?) -> Unit) {
+    fun signup(
+        name: String,
+        username: String,
+        email: String,
+        password: String,
+        onResult: (Boolean, String?) -> Unit
+    ) {
         viewModelScope.launch {
             try {
                 val documents = firestore.collection("users")
@@ -217,7 +229,10 @@ class AuthViewModel(private val application: Application) : AndroidViewModel(app
         viewModelScope.launch {
             try {
                 auth.sendPasswordResetEmail(email).await()
-                onResult(true, "Email đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra hộp thư của bạn.")
+                onResult(
+                    true,
+                    "Email đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra hộp thư của bạn."
+                )
             } catch (e: Exception) {
                 onResult(false, "Lỗi khi gửi email đặt lại mật khẩu: ${e.localizedMessage}")
             }
@@ -245,6 +260,22 @@ class AuthViewModel(private val application: Application) : AndroidViewModel(app
         auth.signOut()
         userModel = null
         user = null
+    }
+
+    suspend fun updateAvatar(url: String) {
+        val currentUser = auth.currentUser ?: return
+
+        viewModelScope.launch {
+            try {
+                firestore.collection("users")
+                    .document(currentUser.uid)
+                    .update("avatar", url)
+                    .await()
+                userModel = userModel?.copy(avatar = url)
+            } catch (e: Exception) {
+                Log.e("updateAvatar", "Lỗi khi cập nhật avatar: ${e.localizedMessage}")
+            }
+        }
     }
 
 }

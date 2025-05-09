@@ -36,14 +36,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.R
+import com.app_computer_ecom.dack.components.TopBar
 import com.app_computer_ecom.dack.model.OrderModel
 import com.app_computer_ecom.dack.model.Status
 import com.app_computer_ecom.dack.repository.GlobalRepository
@@ -93,6 +97,9 @@ fun ProfilePage(
 fun UserProfileHeader(
     modifier: Modifier = Modifier
 ) {
+
+    val avatarUrl by remember { mutableStateOf(GLobalAuthViewModel.getAuthViewModel().userModel?.avatar) }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -100,11 +107,23 @@ fun UserProfileHeader(
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            painter = painterResource(R.drawable.avatar_placeholder),
-            contentDescription = "Avatar",
-            modifier = Modifier.size(100.dp)
-        )
+
+        if (avatarUrl != null) {
+            AsyncImage(
+                model = avatarUrl,
+                contentDescription = "Avatar",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(CircleShape)
+            )
+        } else {
+            Image(
+                painter = painterResource(R.drawable.avatar_placeholder),
+                contentDescription = "Avatar",
+                modifier = Modifier.size(100.dp)
+            )
+        }
         Spacer(modifier = Modifier.width(16.dp))
         Column {
             Text(

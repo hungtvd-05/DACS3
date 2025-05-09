@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -42,11 +43,11 @@ fun ProductItem(product: ProductModel) {
     var maxPrice by remember { mutableStateOf(0) }
 
     if (product.prices.size == 1) {
-        minPrice = product.prices.first().price as Int
-        maxPrice = product.prices.first().price as Int
+        minPrice = product.prices.first().price
+        maxPrice = product.prices.first().price
     } else {
-        minPrice = product.prices.minOf { it.price as Int }
-        maxPrice = product.prices.maxOf { it.price as Int }
+        minPrice = product.prices.minOf { it.price }
+        maxPrice = product.prices.maxOf { it.price }
     }
 
     Card(
@@ -55,6 +56,7 @@ fun ProductItem(product: ProductModel) {
         },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        modifier = Modifier.fillMaxHeight(),
         elevation = CardDefaults.cardElevation(8.dp),
     ) {
         Column(
@@ -116,9 +118,11 @@ fun ProductItem(product: ProductModel) {
                             maxPrice
                         )
                     }" else formatter.format(minPrice),
+                    maxLines = 1,
                     fontSize = 10.sp,
                     color = Color(230, 81, 0),
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
         }
