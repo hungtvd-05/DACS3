@@ -1,4 +1,5 @@
 [versions]
+vico = "2.1.2"
 accompanistFlowlayoutVersion = "0.32.0"
 agp = "8.9.1"
 algoliasearchClientKotlinVersion = "3.6.4"
@@ -37,6 +38,7 @@ ksp = "2.0.21-1.0.27"
 roomCompilerVersion = "2.7.0"
 roomKtxVersion = "2.7.0"
 roomRuntimeVersion = "2.7.0"
+
 
 [libraries]
 algolia-algoliasearch-client-kotlin = { module = "com.algolia:algoliasearch-client-kotlin", version.ref = "algoliasearchClientKotlinVersion" }
@@ -81,6 +83,14 @@ googleid = { group = "com.google.android.libraries.identity.googleid", name = "g
 payos-java = { module = "vn.payos:payos-java", version.ref = "payosJavaVersion" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 ksp = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
+vico-compose = { group = "com.patrykandpatrick.vico", name = "compose", version.ref = "vico" }
+vico-compose-m2 = { group = "com.patrykandpatrick.vico", name = "compose-m2", version.ref = "vico" }
+vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }
+vico-multiplatform = { group = "com.patrykandpatrick.vico", name = "multiplatform", version.ref = "vico" }
+vico-multiplatform-m2 = { group = "com.patrykandpatrick.vico", name = "multiplatform-m2", version.ref = "vico" }
+vico-multiplatform-m3 = { group = "com.patrykandpatrick.vico", name = "multiplatform-m3", version.ref = "vico" }
+vico-views = { group = "com.patrykandpatrick.vico", name = "views", version.ref = "vico" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

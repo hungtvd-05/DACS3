@@ -8,7 +8,8 @@ import androidx.compose.ui.graphics.Color
 
 
 private val LightColorScheme = lightColorScheme(
-    primary = Color(0xFF536DFE),       // Xanh dương sáng cho nút, icon
+//    primary = Color(0xFF536DFE),       // Xanh dương sáng cho nút, icon
+    primary = Color(25, 118, 210),
     onPrimary = Color(0xFFFFFFFF),     // Trắng cho văn bản trên primary
     secondary = Color(0xFF26A69A),     // Xanh lam nhạt cho thành phần phụ
     onSecondary = Color(0xFFFFFFFF),   // Trắng trên secondary
@@ -26,7 +27,7 @@ private val DarkColorScheme = darkColorScheme(
     secondary = Color(0xFF4DB6AC),
     onSecondary = Color(0xFF000000),
     tertiary = Color(0xFFFFB300),
-    onTertiary = Color(0xFF000000),
+    onTertiary = Color(0xFF212121),
     background = Color(0xFF000000),
     onBackground = Color(0xFFFFFFFF),
     surface = Color(0xFF0E0E0E),

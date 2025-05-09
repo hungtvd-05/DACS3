@@ -93,10 +93,16 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
 
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+//    implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
-    implementation("io.github.thechance101:chart:1.1.0")
+//    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+//    implementation("io.github.thechance101:chart:1.1.0")
+
+    implementation(libs.vico.compose)
+    implementation(libs.vico.compose.m2)
+    implementation(libs.vico.compose.m3)
+//    implementation(libs.vico.multiplatform)
+//    implementation(libs.vico.views)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

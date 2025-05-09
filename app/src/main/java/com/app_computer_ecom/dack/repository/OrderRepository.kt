@@ -11,8 +11,8 @@ interface OrderRepository {
     suspend fun getOrdersOnAdmin(): List<OrderModel>
     suspend fun getOrderById(orderId: String): OrderModel?
     suspend fun updateOrderStatus(order: OrderModel, newStatus: Int, finishedAt: Timestamp = Timestamp.now())
-    suspend fun getDailySalesLast6Days(): List<DailySales>
-    suspend fun getDailySalesLast6Months(): List<MonthlySales>
+    suspend fun getDailySalesCurrentMonth(): List<DailySales>
+    suspend fun getMonthlySalesCurrentYear(): List<MonthlySales>
     suspend fun getOrdersByUidAndStatus(uid: String, status: Int): List<OrderModel>
     suspend fun getProductSoldQuantities(): List<ProductSoldInfo>
 }

@@ -4,8 +4,10 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.text.TextUtils
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,16 +21,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -73,6 +76,15 @@ import java.util.UUID
 
 @Composable
 fun UpdateProductScreen(navigaController: NavHostController, productId: String) {
+    BackHandler(enabled = true) {
+        GlobalNavigation.navController.navigate("admin/1") {
+            popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                inclusive = false
+            }
+            launchSingleTop = true
+        }
+    }
+
     val productRepository: ProductRepository = remember { ProductRepositoryImpl() }
     val categoryRepository: CategoryRepository = remember { CategoryRepositoryImpl() }
     val brandRepository: BrandRepository = remember { BrandRepositoryImpl() }
@@ -127,26 +139,30 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
         isLoading = false
     }
 
-    Column {
+    Column(
+        modifier = Modifier.background(MaterialTheme.colorScheme.background)
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
             IconButton(
-                onClick = { navigaController.popBackStack() },
+                onClick = { navigaController.navigate("admin/1") },
                 modifier = Modifier.align(Alignment.CenterStart)
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back"
+                    contentDescription = "Back",
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
 
             Text(
                 text = "Cập nhật sản phẩm",
-                fontSize = 20.sp,
+                fontSize = 16.sp,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.align(Alignment.Center)
+                modifier = Modifier.align(Alignment.Center),
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
 
@@ -169,7 +185,7 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                             )
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
+                        textStyle = TextStyle(fontSize = 14.sp),
                         singleLine = true
                     )
                 }
@@ -189,7 +205,7 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                             )
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
+                        textStyle = TextStyle(fontSize = 14.sp),
                     )
                 }
 
@@ -206,6 +222,7 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                             text = "Danh mục",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                         CategoryDropDownFun(
                             categoryList = categoryList,
@@ -228,6 +245,7 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                             text = "Thương hiệu",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                         BrandDropDownFun(
                             brandList = brandList,
@@ -246,6 +264,7 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                             text = "Nhãn, Số lượng, Giá",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         androidx.compose.material.IconButton(
@@ -255,7 +274,8 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Add,
-                                contentDescription = "Add"
+                                contentDescription = "Add",
+                                tint = MaterialTheme.colorScheme.onBackground
                             )
                         }
                     }
@@ -281,7 +301,7 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                                         fontSize = 12.sp
                                     )
                                 },
-                                textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
+                                textStyle = TextStyle(fontSize = 14.sp),
                                 singleLine = true,
                                 modifier = Modifier
                                     .weight(2f)
@@ -299,7 +319,7 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                                         fontSize = 12.sp
                                     )
                                 },
-                                textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
+                                textStyle = TextStyle(fontSize = 14.sp),
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Number
@@ -336,7 +356,7 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                                         fontSize = 12.sp
                                     )
                                 },
-                                textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
+                                textStyle = TextStyle(fontSize = 14.sp),
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Number
@@ -352,9 +372,9 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
 
                 }
 
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
+//                item {
+//                    Spacer(modifier = Modifier.height(16.dp))
+//                }
 
                 item {
                     Row(
@@ -365,6 +385,7 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                             text = "Ảnh",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         IconButton(
@@ -494,7 +515,7 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                                             product?.let { productRepository.updateProduct(it) }
 
                                             withContext(Dispatchers.Main) {
-                                                navigaController.navigate("admin/product")
+                                                navigaController.navigate("admin/1")
                                                 isLoading = false
                                             }
 
@@ -509,16 +530,17 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                         },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(30, 136, 229)
+                            containerColor = MaterialTheme.colorScheme.primary,
                         )
                     ) {
                         Text(
-                            text = "Cập nhật sản phẩm"
+                            text = "Xác nhận",
+                            color = Color.White,
+                            fontWeight = FontWeight.SemiBold
                         )
                     }
                 }
                 item {
-                    Spacer(modifier = Modifier.height(4.dp))
                 }
 
                 item {
@@ -527,16 +549,18 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                             isLoading = true
                             scope.launch {
                                 productRepository.deleteProduct(product!!)
-                                GlobalNavigation.navController.navigate("admin/product")
+                                GlobalNavigation.navController.navigate("admin/1")
                             }
                         },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Red
+                            containerColor = Color(230, 81, 0)
                         )
                     ) {
                         Text(
-                            text = "Xóa sản phẩm"
+                            text = "Xóa sản phẩm",
+                            color = Color.White,
+                            fontWeight = FontWeight.SemiBold
                         )
                     }
                 }

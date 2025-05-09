@@ -4,8 +4,10 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.text.TextUtils
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,21 +23,22 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -54,10 +57,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
+import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.LoadingScreen
 import com.app_computer_ecom.dack.components.ImagePreviewItem
-import com.app_computer_ecom.dack.components.admin.HeaderViewMenu
 import com.app_computer_ecom.dack.model.BrandModel
 import com.app_computer_ecom.dack.model.CategoryModel
 import com.app_computer_ecom.dack.model.ImageInfo
@@ -78,7 +80,16 @@ import kotlinx.coroutines.withContext
 import java.util.UUID
 
 @Composable
-fun AddProductScreen(navController: NavHostController) {
+fun AddProductScreen() {
+
+    BackHandler(enabled = true) {
+        GlobalNavigation.navController.navigate("admin/1") {
+            popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                inclusive = false
+            }
+            launchSingleTop = true
+        }
+    }
 
     val categoryRepository: CategoryRepository = remember { CategoryRepositoryImpl() }
     val brandRepository: BrandRepository = remember { BrandRepositoryImpl() }
@@ -126,27 +137,29 @@ fun AddProductScreen(navController: NavHostController) {
     }
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
             IconButton(
-                onClick = { navController.popBackStack() },
+                onClick = { GlobalNavigation.navController.navigate("admin/1") },
                 modifier = Modifier.align(Alignment.CenterStart)
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back"
+                    contentDescription = "Back",
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
 
             Text(
                 text = "Thêm sản phẩm",
-                fontSize = 20.sp,
+                fontSize = 16.sp,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.align(Alignment.Center)
+                modifier = Modifier.align(Alignment.Center),
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
 
@@ -169,7 +182,7 @@ fun AddProductScreen(navController: NavHostController) {
                             )
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
+                        textStyle = TextStyle(fontSize = 14.sp),
                         singleLine = true
                     )
                 }
@@ -189,7 +202,7 @@ fun AddProductScreen(navController: NavHostController) {
                             )
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
+                        textStyle = TextStyle(fontSize = 14.sp),
                     )
                 }
 
@@ -206,6 +219,7 @@ fun AddProductScreen(navController: NavHostController) {
                             text = "Danh mục",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                         CategoryDropDownFun(
                             categoryList = categoryList,
@@ -228,6 +242,7 @@ fun AddProductScreen(navController: NavHostController) {
                             text = "Thương hiệu",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                         BrandDropDownFun(
                             brandList = brandList,
@@ -246,6 +261,7 @@ fun AddProductScreen(navController: NavHostController) {
                             text = "Nhãn, Số lượng, Giá",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         IconButton(
@@ -282,7 +298,7 @@ fun AddProductScreen(navController: NavHostController) {
                                         fontSize = 12.sp
                                     )
                                 },
-                                textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
+                                textStyle = TextStyle(fontSize = 14.sp),
                                 singleLine = true,
                                 modifier = Modifier
                                     .weight(2f)
@@ -302,7 +318,7 @@ fun AddProductScreen(navController: NavHostController) {
                                         fontSize = 12.sp
                                     )
                                 },
-                                textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
+                                textStyle = TextStyle(fontSize = 14.sp),
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Number
@@ -339,7 +355,7 @@ fun AddProductScreen(navController: NavHostController) {
                                         fontSize = 12.sp
                                     )
                                 },
-                                textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
+                                textStyle = TextStyle(fontSize = 14.sp),
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Number
@@ -356,10 +372,6 @@ fun AddProductScreen(navController: NavHostController) {
                 }
 
                 item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-
-                item {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
@@ -368,6 +380,7 @@ fun AddProductScreen(navController: NavHostController) {
                             text = "Ảnh",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         IconButton(
@@ -377,7 +390,8 @@ fun AddProductScreen(navController: NavHostController) {
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Add,
-                                contentDescription = "Add"
+                                contentDescription = "Add",
+                                tint = MaterialTheme.colorScheme.onBackground
                             )
                         }
                     }
@@ -485,7 +499,7 @@ fun AddProductScreen(navController: NavHostController) {
                                             productRepository.addProduct(product)
 
                                             withContext(Dispatchers.Main) {
-                                                navController.navigate("admin/product")
+                                                GlobalNavigation.navController.navigate("admin/1")
                                                 isLoading = false
                                             }
 
@@ -500,10 +514,14 @@ fun AddProductScreen(navController: NavHostController) {
                         },
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(30, 136, 229)
+                            containerColor = MaterialTheme.colorScheme.primary
                         )
                     ) {
-                        Text(text = "Thêm sản phẩm")
+                        Text(
+                            text = "Xác nhận",
+                            color = Color.White,
+                            fontWeight = FontWeight.SemiBold
+                        )
                     }
                 }
                 item {
