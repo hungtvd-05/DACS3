@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -55,6 +56,7 @@ fun ProductItem(product: ProductModel) {
         },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        modifier = Modifier.fillMaxHeight(),
         elevation = CardDefaults.cardElevation(8.dp),
     ) {
         Column(
@@ -116,9 +118,11 @@ fun ProductItem(product: ProductModel) {
                             maxPrice
                         )
                     }" else formatter.format(minPrice),
+                    maxLines = 1,
                     fontSize = 10.sp,
                     color = Color.Red,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
         }

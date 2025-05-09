@@ -118,7 +118,8 @@ class ProductRepositoryImpl : ProductRepository {
         categoryIds: List<String>,
         brandIds: List<String>,
         minPrice: Int,
-        maxPrice: Int
+        maxPrice: Int,
+        limit: Int
     ): List<ProductModel> {
         return try {
             loadProductsCacheIfNeeded()
@@ -137,10 +138,12 @@ class ProductRepositoryImpl : ProductRepository {
                         })
             }
 
+            val limitedProducts = filteredProducts.take(limit)
+
             Log.d("QUERY", trimmedQuery)
             Log.d("QUERY_RESULT_SIZE", filteredProducts.size.toString())
 
-            filteredProducts
+            limitedProducts
         } catch (e: Exception) {
             emptyList()
         }

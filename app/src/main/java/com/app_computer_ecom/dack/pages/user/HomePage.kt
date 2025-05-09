@@ -45,12 +45,12 @@ import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.R
 import com.app_computer_ecom.dack.components.HeaderView
 import com.app_computer_ecom.dack.components.ProductItem
+import com.app_computer_ecom.dack.components.ProductListSection
 import com.app_computer_ecom.dack.model.BannerModel
 import com.app_computer_ecom.dack.model.BrandModel
 import com.app_computer_ecom.dack.model.CategoryModel
 import com.app_computer_ecom.dack.model.ProductModel
 import com.app_computer_ecom.dack.repository.GlobalRepository
-import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
 import com.tbuonomo.viewpagerdotsindicator.compose.DotsIndicator
 import com.tbuonomo.viewpagerdotsindicator.compose.model.DotGraphic
 import com.tbuonomo.viewpagerdotsindicator.compose.type.ShiftIndicatorType
@@ -180,13 +180,24 @@ fun HomePage(modifier: Modifier = Modifier) {
                     }
                 }
             }
+
+            items(categories.size, span = { GridItemSpan(2) }) {
+                ProductListSection(categoryId = categories[it].id, title = categories[it].name)
+            }
+
+            items(brands.size, span = { GridItemSpan(2) }) {
+                ProductListSection(brandId = brands[it].id, title = brands[it].name)
+            }
+
+
             item(span = { GridItemSpan(2) }) {
                 Text(
                     text = "Sản phẩm mới",
                     style = TextStyle(
                         fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                        fontWeight = FontWeight.Bold,
+                    ),
+                    modifier = Modifier.padding(vertical = 16.dp)
                 )
             }
             if (isLoading) {
@@ -210,6 +221,8 @@ fun HomePage(modifier: Modifier = Modifier) {
                     Text(text = "Xem tất cả")
                 }
             }
+
+
         }
     }
 }
