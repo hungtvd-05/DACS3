@@ -1,11 +1,14 @@
 package com.app_computer_ecom.dack.screen.user
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,10 +19,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +33,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -45,6 +48,15 @@ import kotlinx.coroutines.launch
 @Composable
 fun AddressMenuScreen() {
 
+    BackHandler(enabled = true) {
+        GlobalNavigation.navController.navigate("home/3") {
+            popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                inclusive = false
+            }
+            launchSingleTop = true
+        }
+    }
+
     var addresses by remember { mutableStateOf(emptyList<AddressModel>()) }
     var isLoading by remember { mutableStateOf(true) }
     val scope = rememberCoroutineScope()
@@ -55,7 +67,9 @@ fun AddressMenuScreen() {
         isLoading = false
     }
 
-    Column {
+    Column(
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth().padding(top = 4.dp)
@@ -66,15 +80,18 @@ fun AddressMenuScreen() {
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back"
+                    contentDescription = "Back",
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
 
             Text(
                 text = "Chọn địa chỉ nhận hàng",
-                fontSize = 20.sp,
+                fontSize = 16.sp,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.align(Alignment.Center)
+                modifier = Modifier.align(Alignment.Center),
+                color = MaterialTheme.colorScheme.onBackground,
+                fontWeight = FontWeight.SemiBold
             )
         }
 
@@ -89,13 +106,12 @@ fun AddressMenuScreen() {
             ) {
                 item {  }
                 items(addresses.size) {
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color.White
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = CardDefaults.cardElevation(8.dp),
-                        modifier = Modifier.fillMaxWidth()
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+//                            .padding(bottom = 8.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(MaterialTheme.colorScheme.surface)
                     ) {
                         Row(
                             modifier = Modifier.padding(8.dp)
@@ -117,7 +133,8 @@ fun AddressMenuScreen() {
                                     Text(
                                         text = "${addresses[it].name} | ${addresses[it].phoneNum}",
                                         fontWeight = FontWeight.SemiBold,
-                                        fontSize = 12.sp
+                                        fontSize = 12.sp,
+                                        color = MaterialTheme.colorScheme.onBackground
                                     )
                                     Spacer(modifier = Modifier.weight(1f))
                                     Text(
@@ -125,13 +142,15 @@ fun AddressMenuScreen() {
                                         modifier = Modifier.clickable(onClick = {
                                             GlobalNavigation.navController.navigate("editaddress/${addresses[it].id}")
                                         }),
-                                        fontSize = 12.sp
+                                        fontSize = 12.sp,
+                                        color = MaterialTheme.colorScheme.onBackground
                                     )
                                 }
                                 Row {
                                     Text(
                                         text = "${addresses[it].street}, ${addresses[it].ward}, ${addresses[it].district}, ${addresses[it].province}",
-                                        fontSize = 12.sp
+                                        fontSize = 12.sp,
+                                        color = MaterialTheme.colorScheme.onBackground
                                     )
                                 }
                             }
@@ -144,12 +163,14 @@ fun AddressMenuScreen() {
                             GlobalNavigation.navController.navigate("addAddress")
                         },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(25, 118, 210),
+                            containerColor = MaterialTheme.colorScheme.primary,
                         ),
                         modifier = Modifier.fillMaxWidth().height(40.dp)
                     ) {
                         Text(
-                            text = "Thêm địa chỉ"
+                            text = "Thêm địa chỉ",
+                            color = Color.White,
+                            fontWeight = FontWeight.SemiBold
                         )
                     }
                 }

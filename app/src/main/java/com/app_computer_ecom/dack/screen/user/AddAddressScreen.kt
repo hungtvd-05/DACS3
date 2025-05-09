@@ -1,13 +1,13 @@
 package com.app_computer_ecom.dack.screen.user
 
 import android.content.Context
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,16 +16,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -36,6 +35,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
@@ -57,7 +57,6 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.collections.forEach
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,7 +75,9 @@ fun AddAddressScreen() {
     var defaultAddress by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    Column {
+    Column(
+        modifier = Modifier.background(MaterialTheme.colorScheme.background)
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth().padding(top = 4.dp)
@@ -87,15 +88,18 @@ fun AddAddressScreen() {
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back"
+                    contentDescription = "Back",
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
 
             Text(
                 text = "Thêm địa chỉ",
-                fontSize = 20.sp,
+                fontSize = 16.sp,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.align(Alignment.Center)
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.align(Alignment.Center),
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
 
@@ -110,12 +114,12 @@ fun AddAddressScreen() {
             ) {
                 item { }
                 item {
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color.White
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = CardDefaults.cardElevation(8.dp),
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+//                            .padding(bottom = 8.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(MaterialTheme.colorScheme.surface)
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp)
@@ -123,7 +127,8 @@ fun AddAddressScreen() {
                             Text(
                                 text = "Địa chỉ",
                                 fontWeight = FontWeight.SemiBold,
-                                fontSize = 16.sp
+                                fontSize = 16.sp,
+                                color = MaterialTheme.colorScheme.onBackground
                             )
                             TextField(
                                 value = name,
@@ -134,11 +139,11 @@ fun AddAddressScreen() {
                                     )
                                 },
                                 modifier = Modifier.fillMaxWidth(),
-                                textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
+                                textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground, fontSize = 15.sp),
                                 singleLine = true,
                                 colors = TextFieldDefaults.colors(
-                                    unfocusedContainerColor = Color.White,
-                                    focusedContainerColor = Color.White
+                                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                                    focusedContainerColor = MaterialTheme.colorScheme.surface
                                 )
                             )
                             TextField(
@@ -150,14 +155,14 @@ fun AddAddressScreen() {
                                     )
                                 },
                                 modifier = Modifier.fillMaxWidth(),
-                                textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
+                                textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground, fontSize = 15.sp),
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Number
                                 ),
                                 colors = TextFieldDefaults.colors(
-                                    unfocusedContainerColor = Color.White,
-                                    focusedContainerColor = Color.White
+                                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                                    focusedContainerColor = MaterialTheme.colorScheme.surface
                                 )
                             )
                             ExposedDropdownMenuBox(
@@ -172,8 +177,8 @@ fun AddAddressScreen() {
                                         .fillMaxWidth()
                                         .menuAnchor(),
                                     colors = TextFieldDefaults.colors(
-                                        unfocusedContainerColor = Color.White,
-                                        focusedContainerColor = Color.White
+                                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                                        focusedContainerColor = MaterialTheme.colorScheme.surface
                                     )
                                 )
                                 ExposedDropdownMenu(
@@ -209,8 +214,8 @@ fun AddAddressScreen() {
                                         .fillMaxWidth()
                                         .menuAnchor(),
                                     colors = TextFieldDefaults.colors(
-                                        unfocusedContainerColor = Color.White,
-                                        focusedContainerColor = Color.White,
+                                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                                        focusedContainerColor = MaterialTheme.colorScheme.surface,
                                     )
                                 )
                                 ExposedDropdownMenu(
@@ -244,8 +249,8 @@ fun AddAddressScreen() {
                                         .fillMaxWidth()
                                         .menuAnchor(),
                                     colors = TextFieldDefaults.colors(
-                                        unfocusedContainerColor = Color.White,
-                                        focusedContainerColor = Color.White
+                                        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                                        focusedContainerColor = MaterialTheme.colorScheme.surface
                                     )
                                 )
                                 ExposedDropdownMenu(
@@ -274,30 +279,30 @@ fun AddAddressScreen() {
                                     )
                                 },
                                 modifier = Modifier.fillMaxWidth(),
-                                textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
+                                textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground, fontSize = 15.sp),
                                 singleLine = true,
                                 colors = TextFieldDefaults.colors(
-                                    unfocusedContainerColor = Color.White,
-                                    focusedContainerColor = Color.White
+                                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                                    focusedContainerColor = MaterialTheme.colorScheme.surface
                                 )
                             )
                         }
                     }
                 }
                 item {
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color.White
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = CardDefaults.cardElevation(8.dp),
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(MaterialTheme.colorScheme.surface)
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(16.dp)
                         ) {
                             Text(
-                                text = "Đặt làm địa chỉ mặc định"
+                                text = "Đặt làm địa chỉ mặc định",
+                                color = MaterialTheme.colorScheme.onBackground
                             )
                             Spacer(modifier = Modifier.weight(1f))
                             Switch(
@@ -307,10 +312,10 @@ fun AddAddressScreen() {
                                 },
                                 modifier = Modifier,
                                 colors = SwitchDefaults.colors(
-                                    checkedThumbColor = Color(25, 118, 210),
-                                    uncheckedThumbColor = Color(25, 118, 210),
-                                    checkedTrackColor = Color.White,
-                                    uncheckedTrackColor = Color.White,
+                                    checkedThumbColor = MaterialTheme.colorScheme.primary,
+                                    uncheckedThumbColor = MaterialTheme.colorScheme.primary,
+                                    checkedTrackColor = MaterialTheme.colorScheme.background,
+                                    uncheckedTrackColor = MaterialTheme.colorScheme.background,
                                     checkedBorderColor = Color.Gray,
                                     uncheckedBorderColor = Color.Gray
                                 )
@@ -318,8 +323,6 @@ fun AddAddressScreen() {
                         }
                     }
                 }
-                item { }
-                item { }
             }
 
             Column(
@@ -352,14 +355,16 @@ fun AddAddressScreen() {
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(25, 118, 210),
+                        containerColor = MaterialTheme.colorScheme.primary,
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
                     Text(
                         text = "Hoàn thành",
-                        fontSize = 18.sp
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White
                     )
                 }
             }
