@@ -1,4 +1,4 @@
-package com.app_computer_ecom.dack.screen.admin
+package com.app_computer_ecom.dack.pages.admin
 
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
@@ -8,7 +8,6 @@ import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -27,19 +26,18 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -58,12 +56,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
-import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.app_computer_ecom.dack.LoadingScreen
 import com.app_computer_ecom.dack.R
-import com.app_computer_ecom.dack.components.admin.HeaderViewMenu
 import com.app_computer_ecom.dack.model.CategoryModel
 import com.app_computer_ecom.dack.repository.CategoryRepository
 import com.app_computer_ecom.dack.repository.impl.CategoryRepositoryImpl
@@ -74,18 +69,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifier) {
+fun CategoryPage() {
 
     val categoryRepository: CategoryRepository = remember { CategoryRepositoryImpl() }
     val context = LocalContext.current
-    BackHandler(enabled = true) {
-        navController.navigate("admin/01") {
-            popUpTo(navController.graph.startDestinationId) {
-                inclusive = false
-            }
-            launchSingleTop = true
-        }
-    }
 
     var categoryList by remember { mutableStateOf(emptyList<CategoryModel>()) }
 
@@ -122,21 +109,6 @@ fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifi
         modifier = Modifier
             .fillMaxSize()
     ) {
-        HeaderViewMenu(
-            title = "Category",
-            onBackClick = { navController.navigate("admin/01") },
-            onAddClick = {
-                imageUri = null
-                imageUrl = null
-                categoryName.value = ""
-                categoryIsEnable.value = true
-                categoryId.value = ""
-                isUpdate.value = false
-            },
-            isUploading = false
-        )
-//        Spacer(modifier = Modifier.height(10.dp))
-
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
@@ -144,7 +116,7 @@ fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifi
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
+                    .padding(horizontal = 8.dp).padding(bottom = 8.dp)
                     .alpha(if (isUploading.value) 0.5f else 1f)
             ) {
                 Box(
@@ -172,48 +144,61 @@ fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifi
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .background(Color.LightGray),
+                                .background(MaterialTheme.colorScheme.surface),
                             contentAlignment = Alignment.Center,
                         ) {
-                            Text("Image")
+                            Text("Chọn ảnh")
                         }
                     }
                 }
                 Column {
-                    OutlinedTextField(
-                        value = categoryName.value,
-                        onValueChange = { categoryName.value = it },
-                        label = {
-                            Text(
-                                text = "Enter category's name",
-                                fontSize = 12.sp
-                            )
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
-                        singleLine = true
-                    )
+                    Row {
+                        OutlinedTextField(
+                            value = categoryName.value,
+                            onValueChange = { categoryName.value = it },
+                            label = {
+                                Text(
+                                    text = "Nhập tên danh mục",
+                                    fontSize = 12.sp
+                                )
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
+                            singleLine = true
+                        )
+
+                    }
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            modifier = Modifier.weight(1f),
-                            verticalAlignment = Alignment.CenterVertically
+                        IconButton(
+                            onClick = {
+                                imageUri = null
+                                imageUrl = null
+                                categoryName.value = ""
+                                categoryIsEnable.value = true
+                                categoryId.value = ""
+                                isUpdate.value = false
+                            }
                         ) {
-                            Text(text = "Show category:")
-                            Switch(
-                                checked = categoryIsEnable.value,
-                                onCheckedChange = {
-                                    categoryIsEnable.value = it
-                                },
-                                modifier = Modifier,
-//                                colors = SwitchDefaults.colors(
-//                                    checkedThumbColor = Color.Green,
-//                                    uncheckedThumbColor = Color.Red
-//                                )
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Add"
                             )
                         }
+                        IconButton(onClick = {
+                            categoryIsEnable.value = !categoryIsEnable.value
+                        }) {
+                            Icon(painter = painterResource(id = if (categoryIsEnable.value) R.drawable.eye_svgrepo_com else R.drawable.eye_slash_svgrepo_com),
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .size(30.dp),
+                                tint = Color(30, 136, 229)
+                            )
+                        }
+                        Spacer(modifier = Modifier.weight(1f))
 
                         if (isUpdate.value) {
                             Button(onClick = {
@@ -264,7 +249,7 @@ fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifi
                                     }
                                 }
                             }) {
-                                Text(text = "Update")
+                                Text(text = "Cập nhật", color = Color.White)
                             }
                         } else {
                             Button(onClick = {
@@ -305,7 +290,7 @@ fun CategoryScreen(navController: NavHostController, modifier: Modifier = Modifi
                                     }
                                 }
                             }) {
-                                Text(text = "Add")
+                                Text(text = "Thêm", color = Color.White)
                             }
                         }
                     }
@@ -392,7 +377,7 @@ fun categoryItem(category: CategoryModel, onClickShowHidden: () -> Unit, onDelet
                 model = category.imageUrl,
                 contentDescription = null,
                 modifier = Modifier
-                    .size(100.dp),
+                    .size(100.dp).background(Color.White),
                 contentScale = ContentScale.Crop
             )
             Text(

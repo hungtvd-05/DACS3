@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -35,6 +34,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -47,13 +47,11 @@ import coil.compose.AsyncImage
 import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.LoadingScreen
 import com.app_computer_ecom.dack.R
-import com.app_computer_ecom.dack.components.CartItemViewOnCheckOut
 import com.app_computer_ecom.dack.model.OrderModel
 import com.app_computer_ecom.dack.model.ProductInfoModel
 import com.app_computer_ecom.dack.pages.admin.StatusDropDownFun
 import com.app_computer_ecom.dack.repository.GlobalRepository
 import com.google.firebase.Timestamp
-import com.google.firestore.admin.v1.Index.IndexField.Order
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -93,7 +91,7 @@ fun OrderDetailScreen(orderId: String) {
     }
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
     ) {
         Box(
             modifier = Modifier
@@ -105,15 +103,17 @@ fun OrderDetailScreen(orderId: String) {
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back"
+                    contentDescription = "Back",
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
 
             Text(
                 text = "Chi tiết đơn hàng",
-                fontSize = 20.sp,
+                fontSize = 18.sp,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.align(Alignment.Center)
+                modifier = Modifier.align(Alignment.Center),
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
 
@@ -129,13 +129,11 @@ fun OrderDetailScreen(orderId: String) {
             ) {
                 item { }
                 item {
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color.White
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = CardDefaults.cardElevation(8.dp),
-                        modifier = Modifier.fillMaxWidth()
+                    Column (
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(MaterialTheme.colorScheme.surface)
                     ) {
                         Column(
                             modifier = Modifier
@@ -153,44 +151,44 @@ fun OrderDetailScreen(orderId: String) {
                                 else if (lastSelectedStatus == 4) "Đơn hàng đã hủy"
                                 else "Đơn hàng chưa hoàn thành",
                                 modifier = Modifier.padding(8.dp),
-                                color = Color.White
+                                color = Color.White,
+                                fontWeight = FontWeight.SemiBold
                             )
                         }
 
-                        Column {
-                            Row(
-                                modifier = Modifier
-                                    .padding(horizontal = 8.dp)
-                                    .padding(top = 4.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                        Row(
+                            modifier = Modifier
+                                .padding(horizontal = 8.dp)
+                                .padding(top = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(
+                                    if (lastSelectedStatus == 3) R.drawable.truck_tick_svgrepo_com__1_
+                                    else if (lastSelectedStatus == 4) R.drawable.truck_remove_svgrepo_com
+                                    else R.drawable.truck_time_svgrepo_com
+                                ),
+                                modifier = Modifier.height(30.dp),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                            Column(
+                                modifier = Modifier.padding(start = 8.dp)
                             ) {
-                                Icon(
-                                    painter = painterResource(
-                                        if (lastSelectedStatus == 3) R.drawable.truck_tick_svgrepo_com
-                                        else if (lastSelectedStatus == 4) R.drawable.truck_remove_svgrepo_com
-                                        else R.drawable.truck_time_svgrepo_com
-                                    ),
-                                    modifier = Modifier.height(30.dp),
-                                    contentDescription = null,
+                                Text(
+                                    text = listStatus[lastSelectedStatus],
+                                    color = if (lastSelectedStatus == 3) Color(46, 125, 50)
+                                    else if (lastSelectedStatus == 4) Color(230, 81, 0)
+                                    else Color(255, 171, 0),
+                                    fontSize = 14.sp
                                 )
-                                Column(
-                                    modifier = Modifier.padding(start = 8.dp)
-                                ) {
-                                    Text(
-                                        text = listStatus[lastSelectedStatus],
-                                        color = if (lastSelectedStatus == 3) Color(46, 125, 50)
-                                        else if (lastSelectedStatus == 4) Color(230, 81, 0)
-                                        else Color(255, 171, 0),
-                                        fontSize = 14.sp
-                                    )
-                                    Text(
-                                        text = formatterDate.format(
-                                            time.toDate()
-                                        ),
-                                        fontSize = 12.sp,
-                                        color = Color(158, 158, 158)
-                                    )
-                                }
+                                Text(
+                                    text = formatterDate.format(
+                                        time.toDate()
+                                    ),
+                                    fontSize = 12.sp,
+                                    color = Color(158, 158, 158)
+                                )
                             }
                         }
 
@@ -203,10 +201,12 @@ fun OrderDetailScreen(orderId: String) {
                                 text = "Mã đơn hàng: ${order!!.id}",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onBackground
                             )
                             Text(
                                 text = "Ngày tạo đơn: ${formatterDate.format(order!!.createdAt.toDate())}",
                                 fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onBackground
                             )
                             Text(
                                 text = "Ngày hoàn thành: ${
@@ -215,30 +215,32 @@ fun OrderDetailScreen(orderId: String) {
                                     ) else ""
                                 }",
                                 fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onBackground
                             )
                             Text(
                                 text = "Tên người nhận : ${order!!.address.name}",
                                 fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onBackground
                             )
                             Text(
                                 text = "Số điện thoại : ${order!!.address.phoneNum}",
                                 fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onBackground
                             )
                             Text(
                                 text = "Địa chỉ: ${order!!.address.street}, ${order!!.address.ward}, ${order!!.address.district}, ${order!!.address.province}",
                                 fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onBackground
                             )
                         }
                     }
                 }
                 item {
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color.White
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = CardDefaults.cardElevation(8.dp),
-                        modifier = Modifier.fillMaxWidth(),
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(MaterialTheme.colorScheme.surface)
                     ) {
                         Column(
                             modifier = Modifier
@@ -248,17 +250,18 @@ fun OrderDetailScreen(orderId: String) {
                             order!!.listProduct.forEachIndexed { index, it ->
                                 ProductItemOrder(it)
                             }
-//                            Spacer(modifier = Modifier.height(8.dp))
                             Row {
                                 Spacer(modifier = Modifier.weight(1f))
                                 Text(
                                     text = "Tổng số tiền (${order!!.listProduct.size} sản phẩm) : ",
-                                    fontSize = 14.sp
+                                    fontSize = 14.sp,
+                                    color = MaterialTheme.colorScheme.onBackground
                                 )
                                 Text(
                                     text = "${formatter.format(order!!.totalPrice)}",
                                     fontSize = 14.sp,
-                                    fontWeight = FontWeight.SemiBold
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.onBackground
                                 )
                             }
                             Spacer(modifier = Modifier.height(4.dp))
@@ -266,13 +269,11 @@ fun OrderDetailScreen(orderId: String) {
                     }
                 }
                 item {
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color.White
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = CardDefaults.cardElevation(8.dp),
-                        modifier = Modifier.fillMaxWidth(),
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(MaterialTheme.colorScheme.surface)
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -294,15 +295,14 @@ fun OrderDetailScreen(orderId: String) {
                                             lastSelectedStatus = selectedStatus
                                             time = Timestamp.now()
                                             GlobalRepository.orderRepository.updateOrderStatus(order!!, lastSelectedStatus, finishedAt = time)
-//                                            order = GlobalRepository.orderRepository.getOrderById(orderId)
                                         }
                                     }
                                 },
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(25, 118, 210),
+                                    containerColor = MaterialTheme.colorScheme.primary,
                                 )
                             ) {
-                                Text(text = "Cập nhật")
+                                Text(text = "Cập nhật", color = Color.White)
                             }
                         }
                     }
@@ -316,71 +316,70 @@ fun OrderDetailScreen(orderId: String) {
 fun ProductItemOrder(productInfoModel: ProductInfoModel) {
     val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
 
-    Card(
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(8.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp)
-            .padding(bottom = 8.dp)
+    Row(
+        modifier = Modifier.height(100.dp).padding(bottom = 8.dp)
     ) {
-        Row {
+        Card(
+            shape = RoundedCornerShape(12.dp),
+            elevation = CardDefaults.cardElevation(6.dp),
+            modifier = Modifier
+                .fillMaxHeight()
+                .aspectRatio(1f)
+                .background(Color.White)
+        ) {
             AsyncImage(
                 model = productInfoModel.imageUrl,
                 contentDescription = null,
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .aspectRatio(1f),
                 contentScale = ContentScale.Crop,
                 error = painterResource(id = R.drawable.image_broken_svgrepo_com),
                 placeholder = painterResource(id = R.drawable.loading_svgrepo_com)
             )
-            Column(
-                modifier = Modifier.padding(8.dp)
+        }
+        Column(
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text(
+                text = productInfoModel.name,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 3,
+                minLines = 3,
+                overflow = TextOverflow.Ellipsis,
+                fontSize = 10.sp,
+                lineHeight = 12.sp,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Row(
+                modifier = Modifier
+                    .background(Color(233, 233, 233))
+                    .padding(horizontal = 4.dp)
             ) {
                 Text(
-                    text = productInfoModel.name,
+                    text = productInfoModel.selectType.type,
                     fontWeight = FontWeight.SemiBold,
-                    maxLines = 3,
-                    minLines = 3,
+                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    fontSize = 10.sp,
-                    lineHeight = 12.sp
-
+                    fontSize = 10.sp, lineHeight = 12.sp,
                 )
+            }
 
-                Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(2.dp))
 
-                Row(
-                    modifier = Modifier
-                        .background(Color(233, 233, 233))
-                        .padding(horizontal = 4.dp)
-                ) {
-                    Text(
-                        text = productInfoModel.selectType.type,
-                        fontWeight = FontWeight.SemiBold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        fontSize = 10.sp, lineHeight = 12.sp
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(2.dp))
-
-                Row {
-                    Text(
-                        text = formatter.format(productInfoModel.selectType.price),
-                        fontSize = 10.sp
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    Text(
-                        text = "x${productInfoModel.quantity}",
-                        fontSize = 10.sp
-                    )
-                }
+            Row {
+                Text(
+                    text = formatter.format(productInfoModel.selectType.price),
+                    fontSize = 10.sp,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = "x${productInfoModel.quantity}",
+                    fontSize = 10.sp,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
             }
         }
-
     }
 }

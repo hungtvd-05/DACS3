@@ -1,7 +1,7 @@
 package com.app_computer_ecom.dack.pages.admin
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,11 +15,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,54 +30,93 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aay.compose.barChart.BarChart
-import com.aay.compose.barChart.model.BarParameters
-import com.aay.compose.baseComponents.model.GridOrientation
-import com.aay.compose.lineChart.LineChart
-import com.aay.compose.lineChart.model.LineParameters
-import com.aay.compose.lineChart.model.LineType
-import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.LoadingScreen
 import com.app_computer_ecom.dack.model.DailySales
 import com.app_computer_ecom.dack.model.MonthlySales
 import com.app_computer_ecom.dack.model.ProductSoldInfo
 import com.app_computer_ecom.dack.repository.GlobalRepository
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
+import com.patrykandpatrick.vico.compose.cartesian.cartesianLayerPadding
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.stacked
+import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
+import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
+import com.patrykandpatrick.vico.compose.common.component.shapeComponent
+import com.patrykandpatrick.vico.compose.common.fill
+import com.patrykandpatrick.vico.compose.common.insets
+import com.patrykandpatrick.vico.compose.common.rememberHorizontalLegend
+import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
+import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
+import com.patrykandpatrick.vico.core.common.LegendItem
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import com.patrykandpatrick.vico.core.common.shape.CorneredShape
+import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.Locale
 
+
+private val LegendLabelKey = ExtraStore.Key<Set<String>>()
+
 @Composable
 fun Dashboard(modifier: Modifier) {
+    val modelProducer = remember { CartesianChartModelProducer() }
+    val modelOrder = remember { CartesianChartModelProducer() }
     var dailySales by remember { mutableStateOf<List<DailySales>>(emptyList()) }
     var monthlySales by remember { mutableStateOf<List<MonthlySales>>(emptyList()) }
-    var xAxisData by remember { mutableStateOf<List<String>>(emptyList()) }
-    var y1AxisData by remember { mutableStateOf<List<Double>>(emptyList()) }
-    var y2AxisData by remember { mutableStateOf<List<Double>>(emptyList()) }
     var listFilter = listOf("Theo ngày", "Theo tháng")
     var isLoading by remember { mutableStateOf(true) }
 
     var selectTypeSales by remember { mutableStateOf(0) }
     var productSoldQuantities by remember { mutableStateOf<List<ProductSoldInfo>>(emptyList()) }
-    var totalOrders by remember { mutableStateOf<List<Double>>(emptyList()) }
 
-    var totalOrdersCompleted by remember { mutableStateOf<List<Double>>(emptyList()) }
     var listFilterSold = listOf("Theo số lượng", "Theo doanh thu")
     var selectTypeSold by remember { mutableStateOf(0) }
 
     val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
 
+    var labelSales = listOf<Number>()
+
+    var sales = mapOf<String, List<Number>>()
+
+    var orders = mapOf<String, List<Number>>()
+
+
     LaunchedEffect(Unit) {
-        dailySales = GlobalRepository.orderRepository.getDailySalesLast6Days()
-        monthlySales = GlobalRepository.orderRepository.getDailySalesLast6Months()
-        xAxisData = dailySales.map { it.date.substring(0, 5) }
-        y1AxisData = dailySales.map { it.totalExpectedSales }
-        y2AxisData = dailySales.map { it.totalAchievedSales }
-        totalOrders = dailySales.map { it.totalOrders }
-        totalOrdersCompleted = dailySales.map { it.totalOrdersCompleted }
+
+        dailySales = GlobalRepository.orderRepository.getDailySalesCurrentMonth()
+        labelSales = dailySales.map { it.date.substring(0, 2).toInt() }
+        sales = mapOf(
+            "Doanh thu đạt được" to dailySales.map { it.totalAchievedSales },
+            "Doanh thu dự kiến đạt thêm" to dailySales.map { it.totalExpectedSales },
+        )
+        modelProducer.runTransaction {
+            columnSeries { sales.values.forEach { series(labelSales, it) } }
+            extras { it[LegendLabelKey] = sales.keys }
+        }
+
+        orders = mapOf(
+            "Đơn hàng hoàn thành" to dailySales.map { it.totalOrdersCompleted },
+            "Đơn hàng đang chờ" to dailySales.map { it.totalOrders },
+        )
+        modelOrder.runTransaction {
+            columnSeries { orders.values.forEach { series(labelSales, it) } }
+            extras { it[LegendLabelKey] = orders.keys }
+        }
+
         productSoldQuantities = GlobalRepository.orderRepository.getProductSoldQuantities().sortedByDescending { it.totalSold }
 
         isLoading = false
@@ -86,21 +125,41 @@ fun Dashboard(modifier: Modifier) {
     LaunchedEffect(selectTypeSales) {
         when {
             selectTypeSales == 0 -> {
-                dailySales = GlobalRepository.orderRepository.getDailySalesLast6Days()
-                xAxisData = dailySales.map { it.date.substring(0, 5) }
-                y1AxisData = dailySales.map { it.totalExpectedSales }
-                y2AxisData = dailySales.map { it.totalAchievedSales }
-                totalOrders = dailySales.map { it.totalOrders }
-                totalOrdersCompleted = dailySales.map { it.totalOrdersCompleted }
+                dailySales = GlobalRepository.orderRepository.getDailySalesCurrentMonth()
+                labelSales = dailySales.map { it.date.substring(0, 2).toInt() }
+                sales = mapOf(
+                    "Doanh thu đạt được" to dailySales.map { it.totalAchievedSales },
+                    "Doanh thu dự kiến đạt thêm" to dailySales.map { it.totalExpectedSales },
+                )
+                orders = mapOf(
+                    "Đơn hàng hoàn thành" to dailySales.map { it.totalOrdersCompleted },
+                    "Đơn hàng đang chờ" to dailySales.map { it.totalOrders },
+                )
+                modelOrder.runTransaction {
+                    columnSeries { orders.values.forEach { series(labelSales, it) } }
+                    extras { it[LegendLabelKey] = orders.keys }
+                }
             }
             selectTypeSales == 1 -> {
-                monthlySales = GlobalRepository.orderRepository.getDailySalesLast6Months()
-                xAxisData = monthlySales.map { it.month }
-                y1AxisData = monthlySales.map { it.totalExpectedSales }
-                y2AxisData = monthlySales.map { it.totalAchievedSales }
-                totalOrders = monthlySales.map { it.totalOrders }
-                totalOrdersCompleted = monthlySales.map { it.totalOrdersCompleted }
+                monthlySales = GlobalRepository.orderRepository.getMonthlySalesCurrentYear()
+                labelSales = monthlySales.map { it.month.substring(0, 2).toInt() }
+                sales = mapOf(
+                    "Doanh thu đạt được" to monthlySales.map { it.totalAchievedSales },
+                    "Doanh thu dự kiến đạt thêm" to monthlySales.map { it.totalExpectedSales },
+                )
+                orders = mapOf(
+                    "Đơn hàng hoàn thành" to monthlySales.map { it.totalOrdersCompleted },
+                    "Đơn hàng đang chờ" to monthlySales.map { it.totalOrders },
+                )
+                modelOrder.runTransaction {
+                    columnSeries { orders.values.forEach { series(labelSales, it) } }
+                    extras { it[LegendLabelKey] = orders.keys }
+                }
             }
+        }
+        modelProducer.runTransaction {
+            columnSeries { sales.values.forEach { series(labelSales, it) } }
+            extras { it[LegendLabelKey] = sales.keys }
         }
     }
 
@@ -115,35 +174,6 @@ fun Dashboard(modifier: Modifier) {
         }
     }
 
-    val testLineParameters: List<LineParameters> = listOf(
-        LineParameters(
-            label = "Doanh thu dự kiến",
-            data = y1AxisData,
-            lineColor = Color(0xFFFF7F50),
-            lineType = LineType.DEFAULT_LINE,
-            lineShadow = true
-        ),
-        LineParameters(
-            label = "Doanh thu thực tế",
-            data = y2AxisData,
-            lineColor = Color(0xFF81BE88),
-            lineType = LineType.DEFAULT_LINE,
-            lineShadow = false,
-        )
-    )
-
-    val testBarParameters: List<BarParameters> = listOf(
-        BarParameters(
-            dataName = "Số lượng đơn hàng",
-            data = totalOrders,
-            barColor = Color(0xFFF2BE22)
-        ),
-        BarParameters(
-            dataName = "Số lượng đơn hàng hoàn tất",
-            data = totalOrdersCompleted,
-            barColor = Color(0xFFDFA878)
-        ),
-    )
 
     Column(
         modifier = modifier
@@ -159,9 +189,7 @@ fun Dashboard(modifier: Modifier) {
         if (isLoading) {
             LoadingScreen()
         } else {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
+            LazyColumn {
                 item {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -178,56 +206,16 @@ fun Dashboard(modifier: Modifier) {
                                 selectTypeSales = it
                             }
                         )
-
                     }
                 }
                 item {
-                    Box(Modifier.fillMaxWidth().height(200.dp)) {
-                        LineChart(
-                            modifier = Modifier.fillMaxSize() ,
-                            linesParameters = testLineParameters,
-                            isGrid = true,
-                            gridColor = Color.Blue,
-                            xAxisData = xAxisData,
-                            animateChart = true,
-                            showGridWithSpacer = true,
-                            yAxisStyle = TextStyle(
-                                fontSize = 8.sp,
-                                color = Color.Gray,
-                            ),
-                            xAxisStyle = TextStyle(
-                                fontSize = 8.sp,
-                                color = Color.Gray,
-                                fontWeight = FontWeight.W400
-                            ),
-                            yAxisRange = 5,
-                            oneLineChart = false,
-                            gridOrientation = GridOrientation.VERTICAL
-                        )
-                    }
+                    SalesChart(modelProducer, Modifier)
                 }
                 item {
-                    Box(Modifier.fillMaxWidth().height(400.dp)) {
-                        BarChart(
-                            chartParameters = testBarParameters,
-                            gridColor = Color.DarkGray,
-                            xAxisData = xAxisData,
-                            isShowGrid = true,
-                            animateChart = true,
-                            showGridWithSpacer = true,
-                            yAxisStyle = TextStyle(
-                                fontSize = 14.sp,
-                                color = Color.DarkGray,
-                            ),
-                            xAxisStyle = TextStyle(
-                                fontSize = 14.sp,
-                                color = Color.DarkGray,
-                                fontWeight = FontWeight.W400
-                            ),
-                            yAxisRange = maxOf(totalOrders.max(), totalOrdersCompleted.max()).toInt() + 1,
-                            barWidth = 20.dp
-                        )
-                    }
+                    OrderChart(modelOrder)
+                }
+                item {
+                    Spacer(modifier = Modifier.height(30.dp))
                 }
                 item {
                     Row(
@@ -246,27 +234,26 @@ fun Dashboard(modifier: Modifier) {
                         )
                     }
                 }
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
                 items(productSoldQuantities.size) {
-                    Card(
-                        shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
-                        elevation = CardDefaults.cardElevation(8.dp),
+                    Column (
                         modifier = Modifier
-                            .fillMaxWidth(),
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(MaterialTheme.colorScheme.onTertiary)
+                            .padding(8.dp),
                     ) {
-                        Column(
-                            modifier = Modifier.padding(8.dp)
-                        ) {
-                            Text(text = productSoldQuantities[it].name)
-                            Row {
-                                Text(text = "Đã bán : ${productSoldQuantities[it].totalSold}")
-                                Spacer(modifier = Modifier.weight(1f))
-                                Text(text = "Doanh thu : ${formatter.format(productSoldQuantities[it].revenue)}")
-                            }
+                        Text(text = productSoldQuantities[it].name)
+                        Row {
+                            Text(text = "Đã bán : ${productSoldQuantities[it].totalSold}")
+                            Spacer(modifier = Modifier.weight(1f))
+                            Text(text = "Doanh thu : ${formatter.format(productSoldQuantities[it].revenue)}")
                         }
                     }
                 }
-                item {  }
             }
         }
     }
@@ -292,7 +279,7 @@ fun StatusFilterDropDownFun(
                     dropControl = true
                 }
             },
-            colors = CardDefaults.cardColors(containerColor = Color.White)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onTertiary)
         ) {
             Row(
                 horizontalArrangement = Arrangement.Center,
@@ -311,7 +298,7 @@ fun StatusFilterDropDownFun(
             DropdownMenu(
                 expanded = dropControl,
                 onDismissRequest = { dropControl = false },
-                containerColor = Color.White
+                containerColor = MaterialTheme.colorScheme.onTertiary
             ) {
                 statusList.forEachIndexed { index, status ->
                     DropdownMenuItem(
@@ -325,4 +312,124 @@ fun StatusFilterDropDownFun(
             }
         }
     }
+}
+
+@Composable
+fun SalesChart(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier = Modifier,
+) {
+    val YDecimalFormat = DecimalFormat("#.### tr")
+    val StartAxisValueFormatter = CartesianValueFormatter.decimal(YDecimalFormat)
+    val StartAxisItemPlacer = VerticalAxis.ItemPlacer.step({ 2.0 })
+    val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter.default(YDecimalFormat)
+
+    val columnColors = listOf(Color(0xff6438a7), Color(0xff3490de), Color(0xff73e8dc))
+    val legendItemLabelComponent = rememberTextComponent(MaterialTheme.colorScheme.onBackground)
+    CartesianChartHost(
+        chart =
+            rememberCartesianChart(
+                rememberColumnCartesianLayer(
+                    columnProvider =
+                        ColumnCartesianLayer.ColumnProvider.series(
+                            columnColors.map { color ->
+                                rememberLineComponent(fill = fill(color), thickness = 16.dp)
+                            }
+                        ),
+                    columnCollectionSpacing = 32.dp,
+                    mergeMode = { ColumnCartesianLayer.MergeMode.stacked() },
+                ),
+                startAxis =
+                    VerticalAxis.rememberStart(
+                        valueFormatter = StartAxisValueFormatter,
+                        itemPlacer = StartAxisItemPlacer,
+                        label = legendItemLabelComponent
+                    ),
+                bottomAxis =
+                    HorizontalAxis.rememberBottom(
+                        itemPlacer = remember { HorizontalAxis.ItemPlacer.segmented() },
+                        label = legendItemLabelComponent
+                    ),
+                marker = rememberMarker(MarkerValueFormatter),
+                layerPadding = { cartesianLayerPadding(scalableStart = 16.dp, scalableEnd = 16.dp) },
+                legend =
+                    rememberHorizontalLegend(
+                        items = { extraStore ->
+                            extraStore[LegendLabelKey].forEachIndexed { index, label ->
+                                add(
+                                    LegendItem(
+                                        shapeComponent(fill(columnColors[index]), CorneredShape.Pill),
+                                        legendItemLabelComponent,
+                                        label,
+                                    )
+                                )
+                            }
+                        },
+                        padding = insets(top = 16.dp),
+                    ),
+            ),
+        modelProducer = modelProducer,
+        modifier = modifier.height(252.dp),
+        zoomState = rememberVicoZoomState(zoomEnabled = true),
+    )
+}
+
+@Composable
+fun OrderChart(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier = Modifier,
+) {
+    val YDecimalFormat = DecimalFormat()
+    val StartAxisValueFormatter = CartesianValueFormatter.decimal(YDecimalFormat)
+    val StartAxisItemPlacer = VerticalAxis.ItemPlacer.step({ 1.0 })
+    val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter.default(YDecimalFormat)
+
+    val columnColors = listOf(Color(0xff6438a7), Color(0xff3490de), Color(0xff73e8dc))
+    val legendItemLabelComponent = rememberTextComponent(MaterialTheme.colorScheme.onBackground)
+    CartesianChartHost(
+        chart =
+            rememberCartesianChart(
+                rememberColumnCartesianLayer(
+                    columnProvider =
+                        ColumnCartesianLayer.ColumnProvider.series(
+                            columnColors.map { color ->
+                                rememberLineComponent(fill = fill(color), thickness = 16.dp)
+                            }
+                        ),
+                    columnCollectionSpacing = 32.dp,
+                    mergeMode = { ColumnCartesianLayer.MergeMode.stacked() },
+                ),
+                startAxis =
+                    VerticalAxis.rememberStart(
+                        valueFormatter = StartAxisValueFormatter,
+                        itemPlacer = StartAxisItemPlacer,
+                        label = legendItemLabelComponent
+                    ),
+                bottomAxis =
+                    HorizontalAxis.rememberBottom(
+                        itemPlacer = remember { HorizontalAxis.ItemPlacer.segmented() },
+                        label = legendItemLabelComponent
+                    ),
+                marker = rememberMarker(MarkerValueFormatter),
+                layerPadding = { cartesianLayerPadding(scalableStart = 16.dp, scalableEnd = 16.dp) },
+                legend =
+                    rememberHorizontalLegend(
+                        items = { extraStore ->
+                            extraStore[LegendLabelKey].forEachIndexed { index, label ->
+                                add(
+                                    LegendItem(
+                                        shapeComponent(fill(columnColors[index]), CorneredShape.Pill),
+                                        legendItemLabelComponent,
+                                        label,
+                                    )
+                                )
+                            }
+                        },
+                        padding = insets(top = 16.dp),
+                    ),
+            ),
+        modelProducer = modelProducer,
+        modifier = modifier.height(252.dp),
+        zoomState = rememberVicoZoomState(zoomEnabled = true),
+    )
 }

@@ -111,8 +111,6 @@ fun OrderStatusScreen(status: Int) {
             OrderListWithFilter(orderStatusList, orderStatus) {
                 orderStatus = it
             }
-
-
         }
     }
 }

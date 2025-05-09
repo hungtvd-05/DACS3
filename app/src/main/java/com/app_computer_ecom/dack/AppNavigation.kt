@@ -17,14 +17,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.app_computer_ecom.dack.pages.admin.ListUserPage
 import com.app_computer_ecom.dack.screen.admin.AddProductScreen
 import com.app_computer_ecom.dack.screen.admin.AdminScreen
-import com.app_computer_ecom.dack.screen.admin.BannerScreen
-import com.app_computer_ecom.dack.screen.admin.BrandScreen
-import com.app_computer_ecom.dack.screen.admin.CategoryScreen
-import com.app_computer_ecom.dack.screen.admin.ListUserScreen
 import com.app_computer_ecom.dack.screen.admin.OrderDetailScreen
-import com.app_computer_ecom.dack.screen.admin.ProductScreen
 import com.app_computer_ecom.dack.screen.admin.UpdateProductScreen
 import com.app_computer_ecom.dack.screen.employee.EmployeeScreen
 import com.app_computer_ecom.dack.screen.started.AuthScreen
@@ -89,20 +85,11 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         composable("loading") {
             LoadingScreen()
         }
-        composable("banner") {
-            BannerScreen(navController)
-        }
-        composable("category") {
-            CategoryScreen(navController)
-        }
-        composable("brand") {
-            BrandScreen(navController)
-        }
-        composable("admin/product") {
-            ProductScreen(navController)
-        }
+//        composable("admin/product") {
+//            ProductPage(navController)
+//        }
         composable("admin/addproduct") {
-            AddProductScreen(navController)
+            AddProductScreen()
         }
         composable("admin/editproduct/{productId}") {
             var productId = it.arguments?.getString("productId").toString()
@@ -153,7 +140,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
             AccountScreen()
         }
         composable("admin/users") {
-            ListUserScreen()
+            ListUserPage()
         }
         composable("employee/{indexValue}") {
             var indexValue = it.arguments?.getString("indexValue")

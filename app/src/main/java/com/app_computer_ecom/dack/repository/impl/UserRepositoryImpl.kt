@@ -3,6 +3,7 @@ package com.app_computer_ecom.dack.repository.impl
 import com.app_computer_ecom.dack.GlobalDatabase
 import com.app_computer_ecom.dack.model.UserModel
 import com.app_computer_ecom.dack.repository.UserRepository
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import kotlinx.coroutines.tasks.await
 
@@ -17,7 +18,7 @@ class UserRepositoryImpl : UserRepository {
                 emptyList()
             } else {
                 querySnapshot.documents.mapNotNull { document ->
-                    document.toObject(UserModel::class.java)?.copy(uid = document.id)
+                    document.takeIf { document.id !=  FirebaseAuth.getInstance().currentUser?.uid }?.toObject(UserModel::class.java)?.copy(uid = document.id)
                 }
             }
         } catch (e: Exception) {

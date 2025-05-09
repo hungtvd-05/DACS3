@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -51,12 +50,6 @@ import com.app_computer_ecom.dack.model.Status
 import com.app_computer_ecom.dack.repository.GlobalRepository
 import com.app_computer_ecom.dack.ui.theme.ThemeManager
 import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-
-
 
 
 @Composable

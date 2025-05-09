@@ -108,10 +108,11 @@ class OrderRepositoryImpl : OrderRepository {
         batch.commit().await()
     }
 
-    override suspend fun getDailySalesLast6Days(): List<DailySales> {
+    override suspend fun getDailySalesCurrentMonth(): List<DailySales> {
         val calendar = Calendar.getInstance()
-        val endTime = calendar.time
-        calendar.add(Calendar.DAY_OF_YEAR, -6)
+        val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
         val startTime = calendar.time
 
         val querySnapshot = dbOrder
@@ -123,32 +124,44 @@ class OrderRepositoryImpl : OrderRepository {
         val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val salesByDate = orders.groupBy { formatter.format(it.createdAt.toDate()) }
             .map { (date, orders) ->
+                val doanhthudatduoc = orders.filter { it.status == 3 }.sumOf { it.totalPrice.toDouble() / 1000000 }
+                val doanhthudukiendatthem = orders.sumOf { it.totalPrice.toDouble() / 1000000 } - doanhthudatduoc
+                val donhanhhoanthanh = orders.filter { it.status == 3 }.size.toDouble()
+                val donhangdangcho = orders.size.toDouble() - donhanhhoanthanh
                 DailySales(
                     date,
-                    orders.size.toDouble(),
-                    orders.filter { it.status == 3 }.size.toDouble(),
-                    orders.sumOf { it.totalPrice.toDouble() },
-                    orders.filter { it.status == 3 }.sumOf { it.totalPrice.toDouble() }
+                    donhangdangcho,
+                    donhanhhoanthanh,
+                    doanhthudukiendatthem,
+                    doanhthudatduoc
                 )
             }
 
         val result = mutableListOf<DailySales>()
-        for (i in 5 downTo 0) {
-            calendar.time = endTime
-            calendar.add(Calendar.DAY_OF_YEAR, -i)
+        for (i in 0 until currentDay) {
+            calendar.time = startTime
+            calendar.add(Calendar.DAY_OF_MONTH, i)
             val dateStr = formatter.format(calendar.time)
             val dailySales = salesByDate.find { it.date == dateStr }
-                ?: DailySales(dateStr, totalOrders = 0.0, totalOrdersCompleted = 0.0, totalExpectedSales = 0.0, totalAchievedSales = 0.0)
+                ?: DailySales(
+                    dateStr,
+                    totalOrders = 0.0,
+                    totalOrdersCompleted = 0.0,
+                    totalExpectedSales = 0.0,
+                    totalAchievedSales = 0.0
+                )
             result.add(dailySales)
         }
 
-        return result.reversed()
+        return result
     }
 
-    override suspend fun getDailySalesLast6Months(): List<MonthlySales> {
+    override suspend fun getMonthlySalesCurrentYear(): List<MonthlySales> {
         val calendar = Calendar.getInstance()
-        val endTime = calendar.time
-        calendar.add(Calendar.MONTH, -6)
+        val currentMonth = calendar.get(Calendar.MONTH)
+
+        calendar.set(Calendar.MONTH, 0)
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
         val startTime = calendar.time
 
         val querySnapshot = dbOrder
@@ -158,29 +171,39 @@ class OrderRepositoryImpl : OrderRepository {
 
         val orders = querySnapshot.toObjects(OrderModel::class.java)
         val formatter = SimpleDateFormat("MM/yy", Locale.getDefault())
-
         val salesByMonth = orders.groupBy { order ->
             formatter.format(order.createdAt.toDate())
         }.map { (month, orders) ->
+            val doanhthudatduoc = orders.filter { it.status == 3 }.sumOf { it.totalPrice.toDouble() / 1000000 }
+            val doanhthudukiendatthem = orders.sumOf { it.totalPrice.toDouble() / 1000000 } - doanhthudatduoc
+            val donhanhhoanthanh = orders.filter { it.status == 3 }.size.toDouble()
+            val donhangdangcho = orders.size.toDouble() - donhanhhoanthanh
             MonthlySales(
                 month = month,
-                totalOrders = orders.size.toDouble(),
-                totalOrdersCompleted = orders.filter { it.status == 3 }.size.toDouble(),
-                totalExpectedSales = orders.sumOf { it.totalPrice.toDouble() },
-                totalAchievedSales = orders.filter { it.status == 3 }.sumOf { it.totalPrice.toDouble() }
+                totalOrders = donhangdangcho,
+                totalOrdersCompleted = donhanhhoanthanh,
+                totalExpectedSales = doanhthudukiendatthem,
+                totalAchievedSales = doanhthudatduoc
             )
         }
+
         val result = mutableListOf<MonthlySales>()
-        for (i in 5 downTo 0) {
-            calendar.time = endTime
-            calendar.add(Calendar.MONTH, -i)
+        for (i in 0..currentMonth) {
+            calendar.time = startTime
+            calendar.add(Calendar.MONTH, i)
             val monthStr = formatter.format(calendar.time)
             val monthlySales = salesByMonth.find { it.month == monthStr }
-                ?: MonthlySales(monthStr, totalOrders = 0.0, totalOrdersCompleted = 0.0, totalExpectedSales = 0.0, totalAchievedSales = 0.0)
+                ?: MonthlySales(
+                    month = monthStr,
+                    totalOrders = 0.0,
+                    totalOrdersCompleted = 0.0,
+                    totalExpectedSales = 0.0,
+                    totalAchievedSales = 0.0
+                )
             result.add(monthlySales)
         }
 
-        return result.reversed()
+        return result
     }
 
     override suspend fun getProductSoldQuantities(): List<ProductSoldInfo> {

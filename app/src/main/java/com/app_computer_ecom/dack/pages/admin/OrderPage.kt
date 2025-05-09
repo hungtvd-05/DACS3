@@ -1,6 +1,7 @@
 package com.app_computer_ecom.dack.pages.admin
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,13 +18,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,12 +39,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -68,7 +76,7 @@ fun OrderPage(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 8.dp)
             .padding(top = 16.dp)
     ) {
         Text(text = "Đơn hàng", fontSize = 22.sp, fontWeight = FontWeight.SemiBold)
@@ -102,150 +110,224 @@ fun ItemOrder(order: OrderModel, listStatus: List<String>) {
     var selectedStatus by remember { mutableStateOf(order.status) }
     var lastSelectedStatus by remember { mutableStateOf(order.status) }
 
-    Card(
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(8.dp),
+    Column (
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 8.dp),
-        onClick = {
-            GlobalNavigation.navController.navigate("admin/orderdetail/id=${order.id}")
-        },
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(8.dp)
+            .clickable(
+                onClick = {
+                    GlobalNavigation.navController.navigate("admin/orderdetail/id=${order.id}")
+                }
+            )
     ) {
+        Text(
+            text = "Mã đơn hàng: ${order.id}",
+            fontSize = 14.sp,
+            fontWeight = FontWeight.SemiBold,
+        )
         Column(
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
         ) {
             Text(
-                text = "Mã đơn hàng: ${order.id}",
-                fontSize = 14.sp,
+                text = "Địa chỉ nhận hàng",
                 fontWeight = FontWeight.SemiBold,
-            )
-            Text(
-                text = "Tên người nhận : ${order.address.name}",
                 fontSize = 12.sp,
+                lineHeight = 14.sp,
+                color = MaterialTheme.colorScheme.onSurface
             )
-            Text(
-                text = "Số điện thoại : ${order.address.phoneNum}",
-                fontSize = 12.sp,
-            )
-            Text(
-                text = "Địa chỉ: ${order.address.street}, ${order.address.ward}, ${order.address.district}, ${order.address.province}",
-                fontSize = 12.sp,
-            )
+            Spacer(modifier = Modifier.height(8.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = "Trạng thái : ",
-                    fontSize = 14.sp
+                Icon(
+                    imageVector = Icons.Default.LocationOn,
+                    contentDescription = "Location",
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
-                Text(
-                    text = listStatus[lastSelectedStatus],
-                    color = if (order.status == 3) Color(46, 125, 50)
-                    else if (order.status == 4) Color(230, 81, 0)
-                    else Color(255, 171, 0),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onSurface)) {
+                                append("${order.address.name} | ")
+                            }
+                            withStyle(style = SpanStyle(color = Color.Gray, fontSize = 8.sp)) {
+                                append(order.address.phoneNum)
+                            }
+                        },
+                        fontSize = 12.sp,
+                        lineHeight = 14.sp,
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "${order.address.street}, ${order.address.ward}, ${order.address.district}, ${order.address.province}",
+                        fontSize = 10.sp,
+                        lineHeight = 12.sp,
+                        color = Color.Gray
+                    )
+                }
             }
-            Row(
-                modifier = Modifier.height(80.dp)
+            Spacer(modifier = Modifier.height(8.dp))
+            HorizontalDivider(
+                thickness = 1.dp,
+                color = MaterialTheme.colorScheme.background
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Trạng thái : ",
+                fontSize = 12.sp
+            )
+            Text(
+                text = listStatus[lastSelectedStatus],
+                color = if (order.status == 3) Color(46, 125, 50)
+                else if (order.status == 4) Color(230, 81, 0)
+                else Color(255, 171, 0),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Phương thức thanh toán : ",
+                fontSize = 12.sp
+            )
+            Text(
+                text = order.paymentMethod,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        HorizontalDivider(
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.background
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.height(100.dp)
+        ) {
+            Card(
+                shape = RoundedCornerShape(12.dp),
+                elevation = CardDefaults.cardElevation(6.dp),
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .aspectRatio(1f)
             ) {
                 AsyncImage(
                     model = order.listProduct.firstOrNull()?.imageUrl,
                     contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .aspectRatio(1f),
                     contentScale = ContentScale.Crop,
                     error = painterResource(id = R.drawable.image_broken_svgrepo_com),
                     placeholder = painterResource(id = R.drawable.loading_svgrepo_com)
                 )
-                Column(
-                    modifier = Modifier.padding(start = 4.dp)
+            }
+            Column(
+                modifier = Modifier.padding(start = 4.dp)
+            ) {
+                Text(
+                    text = order.listProduct[0].name,
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = order.listProduct[0].name,
-                        fontSize = 12.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
                     Row(
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier = Modifier
+                            .background(Color(233, 233, 233))
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .background(Color(233, 233, 233))
-                        ) {
-                            Text(
-                                text = order.listProduct[0].selectType.type,
-                                fontWeight = FontWeight.SemiBold,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                fontSize = 10.sp, lineHeight = 12.sp
-                            )
-                        }
-                        Spacer(modifier = Modifier.weight(1f))
                         Text(
-                            text = "x${order.listProduct[0].quantity}",
-                            fontSize = 12.sp,
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            textAlign = TextAlign.End
+                            text = order.listProduct[0].selectType.type,
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            fontSize = 10.sp, lineHeight = 12.sp,
+                            color = Color.Black
                         )
                     }
-
+                    Spacer(modifier = Modifier.weight(1f))
                     Text(
-                        text = "${formatter.format(order.listProduct[0].selectType.price)}",
+                        text = "x${order.listProduct[0].quantity}",
                         fontSize = 12.sp,
                         modifier = Modifier
                             .fillMaxWidth(),
                         textAlign = TextAlign.End
                     )
                 }
-            }
-            Row {
-                Spacer(modifier = Modifier.weight(1f))
+
                 Text(
-                    text = "Tổng số tiền (${order.listProduct.size} sản phẩm) : ",
-                    fontSize = 14.sp
-                )
-                Text(
-                    text = "${formatter.format(order.totalPrice)}",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold
+                    text = "${formatter.format(order.listProduct[0].selectType.price)}",
+                    fontSize = 12.sp,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.End
                 )
             }
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Spacer(modifier = Modifier.weight(1f))
-                StatusDropDownFun(
-                    statusList = listStatus,
-                    selected = selectedStatus,
-                    lastSelected = lastSelectedStatus,
-                    onStatusSelected = {
-                        selectedStatus = it
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Text(
+                text = buildAnnotatedString {
+                    append("Tổng số tiền (${order.listProduct.size} sản phẩm) : ")
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.SemiBold)) {
+                        append(formatter.format(order.totalPrice))
                     }
-                )
-                Button(
-                    onClick = {
-                        scope.launch {
-                            if (selectedStatus != lastSelectedStatus) {
-                                lastSelectedStatus = selectedStatus
-                                GlobalRepository.orderRepository.updateOrderStatus(order, lastSelectedStatus)
-                            }
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(25, 118, 210),
-                    )
-                ) {
-                    Text(text = "Cập nhật")
+                },
+                fontSize = 12.sp,
+                lineHeight = 14.sp,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(modifier = Modifier.weight(1f))
+            StatusDropDownFun(
+                statusList = listStatus,
+                selected = selectedStatus,
+                lastSelected = lastSelectedStatus,
+                onStatusSelected = {
+                    selectedStatus = it
                 }
+            )
+            Button(
+                onClick = {
+                    scope.launch {
+                        if (selectedStatus != lastSelectedStatus) {
+                            lastSelectedStatus = selectedStatus
+                            GlobalRepository.orderRepository.updateOrderStatus(order, lastSelectedStatus)
+                        }
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                )
+            ) {
+                Text(text = "Cập nhật", color = Color.White)
             }
         }
     }
@@ -271,7 +353,7 @@ fun StatusDropDownFun(
                     dropControl = true
                 }
             },
-            colors = CardDefaults.cardColors(containerColor = Color.White)
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
             Row(
                 horizontalArrangement = Arrangement.Center,
@@ -290,7 +372,7 @@ fun StatusDropDownFun(
             DropdownMenu(
                 expanded = dropControl,
                 onDismissRequest = { dropControl = false },
-                containerColor = Color.White
+                containerColor = MaterialTheme.colorScheme.surface
             ) {
                 if (lastSelected == 3) {
                     DropdownMenuItem(
