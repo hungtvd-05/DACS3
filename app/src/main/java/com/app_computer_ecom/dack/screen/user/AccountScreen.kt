@@ -1,6 +1,7 @@
 package com.app_computer_ecom.dack.screen.user
 
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -36,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,12 +54,15 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
+import com.app_computer_ecom.dack.AppUtil
 import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.R
 import com.app_computer_ecom.dack.components.TopBar
 import com.app_computer_ecom.dack.model.UserModel
 import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
+import com.app_computer_ecom.dack.viewmodel.ImageCloudinary
+import kotlinx.coroutines.launch
 
 @Composable
 fun AccountScreen() {
@@ -181,14 +186,38 @@ fun AccountScreen() {
 }
 
 @Composable
-fun AvatarPicker() {
+fun AvatarPicker(
+) {
     val context = LocalContext.current
-    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    val coroutineScope = rememberCoroutineScope()
+    var avatarUrl by remember { mutableStateOf(GLobalAuthViewModel.getAuthViewModel().userModel?.avatar) }
+
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        selectedImageUri = uri
+        uri?.let {
+            coroutineScope.launch {
+                val bitmap = AppUtil.getBitmapFromUri(context, it)
+                if (bitmap != null) {
+
+                    avatarUrl?.let {
+                        ImageCloudinary.deleteImage(it)
+                    }
+
+                    val result = ImageCloudinary.uploadImage(context, bitmap)
+                    result.onSuccess { url ->
+                        GLobalAuthViewModel.getAuthViewModel().updateAvatar(url)
+                        val updatedAvatarUrl =
+                            GLobalAuthViewModel.getAuthViewModel().userModel?.avatar
+                        avatarUrl = updatedAvatarUrl
+                        Log.d("AvatarPicker", "Uploaded: $url")
+                    }.onFailure { error ->
+                        Log.e("AvatarPicker", "Upload failed", error)
+                    }
+                }
+            }
+        }
     }
 
     Row(
@@ -205,9 +234,11 @@ fun AvatarPicker() {
                     launcher.launch("image/*")
                 }
         ) {
-            if (selectedImageUri != null) {
-                Image(
-                    painter = rememberAsyncImagePainter(model = selectedImageUri),
+
+
+            if (!avatarUrl.isNullOrEmpty()) {
+                AsyncImage(
+                    model = avatarUrl,
                     contentDescription = "Avatar",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
