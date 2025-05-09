@@ -94,7 +94,7 @@ fun TopBar(title: String = "", isShowCard: Boolean = true, onBack: () -> Unit) {
                             modifier = Modifier
                                 .align(Alignment.BottomEnd)
                                 .size(16.dp)
-                                .background(Color.Red, shape = CircleShape),
+                                .background(Color(230, 81, 0), shape = CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(

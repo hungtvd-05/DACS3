@@ -1,6 +1,5 @@
 package com.app_computer_ecom.dack.pages.user
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -138,7 +138,7 @@ fun CartPage(modifier: Modifier = Modifier) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(text = "Tổng cộng: ", fontSize = 14.sp)
-                Text(text = formatter.format(totalPrice), fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = Color(25, 118, 210))
+                Text(text = formatter.format(totalPrice), fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.primary)
                 Spacer(modifier = Modifier.weight(1f))
                 Button(
                     onClick = {
@@ -147,11 +147,12 @@ fun CartPage(modifier: Modifier = Modifier) {
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(25, 118, 210),
+                        containerColor = MaterialTheme.colorScheme.primary,
                     )
                 ) {
                     Text(
-                        text = "Mua hàng (${cartList.size})"
+                        text = "Mua hàng (${cartList.size})",
+                        color = Color.White
                     )
                 }
             }

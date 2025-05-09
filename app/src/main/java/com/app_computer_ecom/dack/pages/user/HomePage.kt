@@ -1,5 +1,6 @@
 package com.app_computer_ecom.dack.pages.user
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,7 +51,6 @@ import com.app_computer_ecom.dack.model.BrandModel
 import com.app_computer_ecom.dack.model.CategoryModel
 import com.app_computer_ecom.dack.model.ProductModel
 import com.app_computer_ecom.dack.repository.GlobalRepository
-import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
 import com.tbuonomo.viewpagerdotsindicator.compose.DotsIndicator
 import com.tbuonomo.viewpagerdotsindicator.compose.model.DotGraphic
 import com.tbuonomo.viewpagerdotsindicator.compose.type.ShiftIndicatorType
@@ -204,10 +204,10 @@ fun HomePage(modifier: Modifier = Modifier) {
                 Button(
                     onClick = { GlobalNavigation.navController.navigate("listproduct/categoryId=&brandId=&searchQuery=") },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(25, 118, 210),
+                        containerColor = MaterialTheme.colorScheme.primary,
                     )
                 ) {
-                    Text(text = "Xem tất cả")
+                    Text(text = "Xem tất cả", color = Color.White)
                 }
             }
         }
@@ -251,7 +251,9 @@ fun CategoryItem(category: CategoryModel) {
             AsyncImage(
                 model = category.imageUrl,
                 contentDescription = null,
-                modifier = Modifier.size(50.dp),
+                modifier = Modifier
+                    .size(50.dp)
+                    .background(Color.White),
                 contentScale = ContentScale.Crop,
                 error = painterResource(id = R.drawable.image_broken_svgrepo_com),
                 placeholder = painterResource(id = R.drawable.loading_svgrepo_com)
@@ -287,7 +289,9 @@ fun BrandItem(brand: BrandModel) {
             AsyncImage(
                 model = brand.imageUrl,
                 contentDescription = null,
-                modifier = Modifier.size(50.dp),
+                modifier = Modifier
+                    .size(50.dp)
+                    .background(Color.White),
                 contentScale = ContentScale.Crop,
                 error = painterResource(id = R.drawable.image_broken_svgrepo_com),
                 placeholder = painterResource(id = R.drawable.loading_svgrepo_com)

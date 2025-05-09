@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.R
-import com.app_computer_ecom.dack.components.TopBar
 import com.app_computer_ecom.dack.model.OrderModel
 import com.app_computer_ecom.dack.model.Status
 import com.app_computer_ecom.dack.repository.GlobalRepository
@@ -65,9 +64,9 @@ fun ProfilePage(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        TopBar {
-            GlobalNavigation.navController.navigate("home/0")
-        }
+//        TopBar {
+//            GlobalNavigation.navController.navigate("home/0")
+//        }
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -98,7 +97,8 @@ fun UserProfileHeader(
         modifier = modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.primary)
-            .padding(horizontal = 8.dp, vertical = 8.dp)
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
             painter = painterResource(R.drawable.avatar_placeholder),
@@ -263,7 +263,7 @@ fun OrderStatusItem(status: Status) {
                     .align(Alignment.Center)
                     .offset(12.dp, 2.dp)
                     .size(16.dp)
-                    .background(Color.Red, shape = CircleShape),
+                    .background(Color(230, 81, 0), shape = CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -438,7 +438,7 @@ fun ProfileSettingsSection() {
                     }
                     .padding(vertical = 8.dp, horizontal = 8.dp)
             ) {
-                Text(text = "Đăng xuất", fontSize = 12.sp, color = Color.Red)
+                Text(text = "Đăng xuất", fontSize = 12.sp, color = Color(230, 81, 0))
             }
 
             Divider(

@@ -148,7 +148,7 @@ fun ProductDetailsScreen(productId: String) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
-//                    tint = MaterialTheme.colorScheme.onPrimary
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
@@ -168,14 +168,14 @@ fun ProductDetailsScreen(productId: String) {
                             imageVector = Icons.Default.ShoppingCart,
                             contentDescription = "Shopping Cart",
                             modifier = Modifier.align(Alignment.Center),
-//                            tint = MaterialTheme.colorScheme.onPrimary
+                            tint = MaterialTheme.colorScheme.onBackground
                         )
 
                         Box(
                             modifier = Modifier
                                 .align(Alignment.BottomEnd)
                                 .size(16.dp)
-                                .background(Color.Red, shape = CircleShape),
+                                .background(Color(230, 81, 0), shape = CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
@@ -196,7 +196,8 @@ fun ProductDetailsScreen(productId: String) {
                 ) {
                     Icon(
                         imageVector = Icons.Default.Home,
-                        contentDescription = "Home"
+                        contentDescription = "Home",
+                        tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
             }
@@ -258,7 +259,7 @@ fun ProductDetailsScreen(productId: String) {
                         text = product?.name.toString(),
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
-
+                        color = MaterialTheme.colorScheme.onBackground
                         )
                 }
 
@@ -281,7 +282,7 @@ fun ProductDetailsScreen(productId: String) {
                             ),
                             fontSize = 18.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color(227, 0, 25)
+                            color = Color(230, 81, 0)
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         IconButton(
@@ -308,7 +309,7 @@ fun ProductDetailsScreen(productId: String) {
                             Icon(
                                 imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                 contentDescription = null,
-                                tint = if (isFavorite) Color.Red else Color.Black
+                                tint = if (isFavorite) Color(230, 81, 0) else MaterialTheme.colorScheme.onBackground
                             )
                         }
                     }
@@ -324,16 +325,12 @@ fun ProductDetailsScreen(productId: String) {
                                     selectedPriceInfo = priceInfo
                                 },
                                 colors = ButtonDefaults.outlinedButtonColors(
-                                    containerColor = if (selectedPriceInfo == priceInfo) Color(
-                                        84,
-                                        110,
-                                        122
-                                    ) else Color.Transparent
+                                    containerColor = if (selectedPriceInfo == priceInfo) MaterialTheme.colorScheme.primary else Color.Transparent
                                 )
                             ) {
                                 Text(
                                     text = priceInfo.type,
-                                    color = if (selectedPriceInfo == priceInfo) Color.White else Color.Black
+                                    color = if (selectedPriceInfo == priceInfo) Color.White else MaterialTheme.colorScheme.onBackground
                                 )
                             }
                         }
@@ -361,10 +358,10 @@ fun ProductDetailsScreen(productId: String) {
                             .fillMaxWidth()
                             .height(50.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(25, 118, 210),
+                            containerColor = MaterialTheme.colorScheme.primary,
                         )
                     ) {
-                        Text(text = "Thêm vào giỏ hàng", fontSize = 16.sp)
+                        Text(text = "Thêm vào giỏ hàng", fontSize = 16.sp, color = Color.White)
                     }
                 }
                 if (category != null) {
@@ -377,10 +374,12 @@ fun ProductDetailsScreen(productId: String) {
                                 text = "Danh mục : ",
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 18.sp,
+                                color = MaterialTheme.colorScheme.onBackground
                             )
                             Text(
                                 text = category!!.name,
                                 fontSize = 18.sp,
+                                color = MaterialTheme.colorScheme.onBackground
                             )
                         }
                     }
@@ -395,10 +394,12 @@ fun ProductDetailsScreen(productId: String) {
                                 text = "Thương hiệu : ",
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 18.sp,
+                                color = MaterialTheme.colorScheme.onBackground
                             )
                             Text(
                                 text = brand!!.name,
                                 fontSize = 18.sp,
+                                color = MaterialTheme.colorScheme.onBackground
                             )
                         }
                     }
@@ -411,12 +412,14 @@ fun ProductDetailsScreen(productId: String) {
                         text = "Mô tả sản phẩm : ",
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 18.sp,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 item(span = { GridItemSpan(2) }) {
                     Text(
                         text = product!!.description,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 if (ortherProducts.isNotEmpty()) {
@@ -428,6 +431,7 @@ fun ProductDetailsScreen(productId: String) {
                             text = "Sản phẩm liên quan : ",
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 18.sp,
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     }
                     ortherProducts.forEach { product ->

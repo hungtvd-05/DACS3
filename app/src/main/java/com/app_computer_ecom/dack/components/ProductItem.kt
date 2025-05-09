@@ -117,7 +117,7 @@ fun ProductItem(product: ProductModel) {
                         )
                     }" else formatter.format(minPrice),
                     fontSize = 10.sp,
-                    color = Color.Red,
+                    color = Color(230, 81, 0),
                     fontWeight = FontWeight.Bold
                 )
             }

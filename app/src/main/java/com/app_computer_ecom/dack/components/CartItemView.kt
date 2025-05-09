@@ -110,7 +110,8 @@ fun CartItemView(
                             fontWeight = FontWeight.SemiBold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            fontSize = 10.sp, lineHeight = 12.sp
+                            fontSize = 10.sp, lineHeight = 12.sp,
+                            color = Color.Black
                         )
                     }
 
@@ -120,7 +121,8 @@ fun CartItemView(
                         Column {
                             Text(
                                 text = formatter.format(selectType.price),
-                                fontWeight = FontWeight.SemiBold
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(230, 81, 0)
                             )
                             Row(
                                 verticalAlignment = Alignment.CenterVertically
@@ -160,7 +162,7 @@ fun CartItemView(
                             Icon(
                                 imageVector = Icons.Default.Delete,
                                 contentDescription = null,
-                                tint = Color.Red
+                                tint = Color(230, 81, 0)
                             )
                         }
                     }
