@@ -1,5 +1,6 @@
 package com.app_computer_ecom.dack.screen.user
 
+import android.app.Activity
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
@@ -50,7 +51,11 @@ import com.app_computer_ecom.dack.model.ProductInfoModel
 import com.app_computer_ecom.dack.model.ProductModel
 import com.app_computer_ecom.dack.pages.user.Loading
 import com.app_computer_ecom.dack.repository.GlobalRepository
+import com.app_computer_ecom.dack.zalopay.Api.CreateOrder
 import kotlinx.coroutines.launch
+import vn.zalopay.sdk.ZaloPayError
+import vn.zalopay.sdk.ZaloPaySDK
+import vn.zalopay.sdk.listeners.PayOrderListener
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -77,6 +82,17 @@ fun CheckoutScreen() {
     var tempProduct by remember { mutableStateOf<ProductModel?>(null) }
     var listProduct by remember { mutableStateOf(emptyList<ProductModel>()) }
     val scope = rememberCoroutineScope()
+
+    var selectPayment by remember { mutableStateOf(false) }
+    var zpTransToken by remember { mutableStateOf<String?>(null) }
+    var isCreatingOrder by remember { mutableStateOf(false) }
+
+    val activity = remember(context) {
+        when (context) {
+            is Activity -> context
+            else -> null
+        }
+    }
 
     LaunchedEffect(Unit) {
         address = GlobalRepository.addressRepository.getDefaultAddress()
@@ -119,7 +135,7 @@ fun CheckoutScreen() {
             )
         }
 
-        if (isLoading) {
+        if (isLoading || isCreatingOrder) {
             Loading()
         } else {
             LazyColumn(
@@ -223,8 +239,10 @@ fun CheckoutScreen() {
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     RadioButton(
-                                        selected = (true),
-                                        onClick = null
+                                        selected = !selectPayment,
+                                        onClick = {
+                                            selectPayment = false
+                                        }
                                     )
                                     Text(
                                         text = "Thanh toán khi nhận hàng",
@@ -240,8 +258,10 @@ fun CheckoutScreen() {
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     RadioButton(
-                                        selected = (false),
-                                        onClick = null
+                                        selected = selectPayment,
+                                        onClick = {
+                                            selectPayment = true
+                                        }
                                     )
                                     Text(
                                         text = "Thanh toán bằng thẻ tín dụng",
@@ -276,31 +296,131 @@ fun CheckoutScreen() {
                             if (address == null) {
                                 AppUtil.showToast(context, "Vui lòng chọn địa chỉ !!")
                             } else {
-                                isLoading = true
-                                scope.launch {
-                                    val newProductList = mutableListOf<ProductInfoModel>()
-                                    listProduct.forEachIndexed { index, it ->
-                                        newProductList.add(
-                                            ProductInfoModel(
-                                                id = it.id,
-                                                name = it.name,
-                                                imageUrl = it.imageUrls.firstOrNull()!!.imageUrl,
-                                                selectType = cartList.get(index).selectType,
-                                                quantity = cartList.get(index).quantity
+                                if (selectPayment) {
+                                    if (activity == null) {
+                                        AppUtil.showToast(context, "Không thể truy cập Activity")
+                                        Log.e("ZaloPay", "Activity is null")
+                                        return@Button
+                                    }
+                                    isCreatingOrder = true
+                                    scope.launch {
+
+                                        try {
+                                            val orderApi = CreateOrder()
+                                            val data = orderApi.createOrder(totalPrice.toString())
+                                            val code = data.getString("returncode")
+//                                            Log.d("ZaloPay", "CreateOrder response: $data")
+                                            if (code == "1") {
+                                                zpTransToken = data.getString("zptranstoken")
+                                                // Gọi thanh toán ngay sau khi tạo đơn hàng
+                                                ZaloPaySDK.getInstance().payOrder(
+                                                    activity,
+                                                    zpTransToken!!,
+                                                    "demozpdk://app",
+                                                    object : PayOrderListener {
+                                                        override fun onPaymentSucceeded(
+                                                            transactionId: String,
+                                                            transToken: String,
+                                                            appTransID: String
+                                                        ) {
+                                                            AppUtil.showToast(
+                                                                context,
+                                                                "Thanh toán thành công: TransactionId=$transactionId"
+                                                            )
+                                                            scope.launch {
+                                                                val newProductList = mutableListOf<ProductInfoModel>()
+                                                                listProduct.forEachIndexed { index, it ->
+                                                                    newProductList.add(
+                                                                        ProductInfoModel(
+                                                                            id = it.id,
+                                                                            name = it.name,
+                                                                            imageUrl = it.imageUrls.firstOrNull()?.imageUrl ?: "",
+                                                                            selectType = cartList[index].selectType,
+                                                                            quantity = cartList[index].quantity
+                                                                        )
+                                                                    )
+                                                                }
+                                                                GlobalRepository.orderRepository.addOrder(
+                                                                    OrderModel(
+                                                                        uid = address!!.uid,
+                                                                        address = address!!,
+                                                                        listProduct = newProductList,
+                                                                        totalPrice = totalPrice,
+                                                                        paymentMethod = "ZaloPay"
+                                                                    )
+                                                                )
+                                                                GlobalNavigation.navController.navigate("order-success")
+                                                            }
+                                                            isCreatingOrder = false
+                                                        }
+
+                                                        override fun onPaymentCanceled(
+                                                            zpTransToken: String,
+                                                            appTransID: String
+                                                        ) {
+                                                            AppUtil.showToast(
+                                                                context,
+                                                                "Thanh toán bị hủy"
+                                                            )
+                                                            isCreatingOrder = false
+                                                        }
+
+                                                        override fun onPaymentError(
+                                                            zaloPayError: ZaloPayError,
+                                                            zpTransToken: String,
+                                                            appTransID: String
+                                                        ) {
+                                                            AppUtil.showToast(
+                                                                context,
+                                                                "Thanh toán thất bại: ${zaloPayError.name}"
+                                                            )
+//                                                            Log.e(
+//                                                                "ZaloPay",
+//                                                                "Payment error: ${zaloPayError.name}, zpTransToken: $zpTransToken"
+//                                                            )
+                                                            isCreatingOrder = false
+                                                        }
+                                                    }
+                                                )
+                                            } else {
+                                                val message = data.optString("returnmessage", "Lỗi không xác định")
+                                                AppUtil.showToast(context, "Tạo đơn hàng thất bại: $message")
+//                                                Log.e("ZaloPay", "CreateOrder failed with code: $code, message: $message")
+                                                isCreatingOrder = false
+                                            }
+                                        } catch (e: Exception) {
+                                            AppUtil.showToast(context, "Lỗi khi tạo đơn hàng: ${e.message}")
+                                            Log.e("ZaloPay", "CreateOrder error: ${e.message}")
+                                            isCreatingOrder = false
+                                        }
+                                    }
+                                } else {
+                                    isLoading = true
+                                    scope.launch {
+                                        val newProductList = mutableListOf<ProductInfoModel>()
+                                        listProduct.forEachIndexed { index, it ->
+                                            newProductList.add(
+                                                ProductInfoModel(
+                                                    id = it.id,
+                                                    name = it.name,
+                                                    imageUrl = it.imageUrls.firstOrNull()!!.imageUrl,
+                                                    selectType = cartList.get(index).selectType,
+                                                    quantity = cartList.get(index).quantity
+                                                )
+                                            )
+                                        }
+                                        GlobalRepository.orderRepository.addOrder(
+                                            OrderModel(
+                                                uid = address!!.uid,
+                                                address = address!!,
+                                                listProduct = newProductList,
+                                                totalPrice = totalPrice,
+                                                paymentMethod = "COD"
                                             )
                                         )
                                     }
-                                    GlobalRepository.orderRepository.addOrder(
-                                        OrderModel(
-                                            uid = address!!.uid,
-                                            address = address!!,
-                                            listProduct = newProductList,
-                                            totalPrice = totalPrice,
-                                            paymentMethod = "COD"
-                                        )
-                                    )
+                                    GlobalNavigation.navController.navigate("order-success")
                                 }
-                                GlobalNavigation.navController.navigate("order-success")
                             }
                         },
                         colors = ButtonDefaults.buttonColors(

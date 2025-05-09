@@ -80,6 +80,11 @@ dependencies {
 
 //    Room SQLite
     implementation(libs.androidx.room.runtime)
+    implementation(fileTree(mapOf(
+        "dir" to "/home/vien/AndroidStudioProjects/DACK/ZaloPayLib",
+        "include" to listOf("*.aar", "*.jar"),
+        "exclude" to listOf("")
+    )))
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
@@ -97,6 +102,8 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
 //    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 //    implementation("io.github.thechance101:chart:1.1.0")
+    implementation("commons-codec:commons-codec:1.18.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     implementation(libs.vico.compose)
     implementation(libs.vico.compose.m2)

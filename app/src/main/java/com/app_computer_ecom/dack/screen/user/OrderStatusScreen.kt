@@ -55,12 +55,9 @@ import coil.compose.AsyncImage
 import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.R
 import com.app_computer_ecom.dack.components.TopBar
-import com.app_computer_ecom.dack.model.AddressModel
 import com.app_computer_ecom.dack.model.OrderModel
-import com.app_computer_ecom.dack.model.ProductInfoModel
 import com.app_computer_ecom.dack.repository.GlobalRepository
 import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
-import com.google.firebase.Timestamp
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -68,18 +65,6 @@ import java.util.Locale
 data class OrderStatus(
     val id: Int,
     val title: String,
-)
-
-data class OrderProductInfoModel(
-    val id: String,
-    val uid: String,
-    val address: AddressModel,
-    val totalPrice: Int,
-    val paymentMethod: String,
-    val createdAt: Timestamp,
-    val finishedAt: Timestamp,
-    val status: Int,
-    val product: ProductInfoModel
 )
 
 @Composable
@@ -123,7 +108,7 @@ fun OrderListWithFilter(
 ) {
 
     var orderModels by remember { mutableStateOf(emptyList<OrderModel>()) }
-    var orderProductInfoModels by remember { mutableStateOf(emptyList<OrderProductInfoModel>()) }
+//    var orderProductInfoModels by remember { mutableStateOf(emptyList<OrderProductInfoModel>()) }
 
     var isLoading by remember { mutableStateOf(true) }
     val listState = rememberLazyListState()
@@ -136,21 +121,21 @@ fun OrderListWithFilter(
             status = orderStatus
         )
 
-        orderProductInfoModels = orderModels.flatMap { order ->
-            order.listProduct.map { product ->
-                OrderProductInfoModel(
-                    id = order.id,
-                    uid = order.uid,
-                    address = order.address,
-                    totalPrice = order.totalPrice,
-                    paymentMethod = order.paymentMethod,
-                    createdAt = order.createdAt,
-                    finishedAt = order.finishedAt,
-                    status = order.status,
-                    product = product
-                )
-            }
-        }
+//        orderProductInfoModels = orderModels.flatMap { order ->
+//            order.listProduct.map { product ->
+//                OrderProductInfoModel(
+//                    id = order.id,
+//                    uid = order.uid,
+//                    address = order.address,
+//                    totalPrice = order.totalPrice,
+//                    paymentMethod = order.paymentMethod,
+//                    createdAt = order.createdAt,
+//                    finishedAt = order.finishedAt,
+//                    status = order.status,
+//                    product = product
+//                )
+//            }
+//        }
 
         listState.animateScrollToItem(orderStatus)
 
@@ -227,7 +212,7 @@ fun OrderListWithFilter(
 
                 }
             } else {
-                if (orderProductInfoModels.isEmpty()) {
+                if (orderModels.isEmpty()) {
                     item {
                         Box(
                             modifier = Modifier
@@ -242,8 +227,8 @@ fun OrderListWithFilter(
                         }
                     }
                 }
-                items(orderProductInfoModels.size) {
-                    OrderProductItem(orderProductInfoModels[it])
+                items(orderModels.size) {
+                    OrderProductItem(orderModels[it])
                 }
             }
 
@@ -258,7 +243,7 @@ fun OrderListWithFilter(
 }
 
 @Composable
-fun OrderProductItem(orderProductInfoModel: OrderProductInfoModel) {
+fun OrderProductItem(orderModel: OrderModel) {
 
     val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
     var listStatus = listOf("Chờ xác nhận", "Chờ lấy hàng", "Chờ giao hàng", "Đã giao", "Đã hủy")
@@ -276,7 +261,7 @@ fun OrderProductItem(orderProductInfoModel: OrderProductInfoModel) {
                 .fillMaxWidth()
                 .padding(16.dp)
                 .height(100.dp)
-                .clickable { GlobalNavigation.navController.navigate("product-details/productId=${orderProductInfoModel.product.id}") }
+//                .clickable { GlobalNavigation.navController.navigate("product-details/productId=${orderModel..product.id}") }
         ) {
             Card(
                 shape = RoundedCornerShape(12.dp),
@@ -286,7 +271,7 @@ fun OrderProductItem(orderProductInfoModel: OrderProductInfoModel) {
                     .aspectRatio(1f)
             ) {
                 AsyncImage(
-                    model = orderProductInfoModel.product.imageUrl,
+                    model = orderModel.listProduct[0].imageUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     error = painterResource(id = R.drawable.image_broken_svgrepo_com),
@@ -300,7 +285,7 @@ fun OrderProductItem(orderProductInfoModel: OrderProductInfoModel) {
                         .padding(start = 16.dp)
                 ) {
                     Text(
-                        text = orderProductInfoModel.product.name,
+                        text = orderModel.listProduct[0].name,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         fontSize = 12.sp,
@@ -313,7 +298,7 @@ fun OrderProductItem(orderProductInfoModel: OrderProductInfoModel) {
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = orderProductInfoModel.product.selectType.type,
+                            text = orderModel.listProduct[0].selectType.type,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             fontSize = 10.sp,
@@ -322,7 +307,7 @@ fun OrderProductItem(orderProductInfoModel: OrderProductInfoModel) {
                         )
 
                         Text(
-                            text = "x" + orderProductInfoModel.product.quantity,
+                            text = "x" + orderModel.listProduct[0].quantity,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             fontSize = 10.sp,
@@ -332,7 +317,7 @@ fun OrderProductItem(orderProductInfoModel: OrderProductInfoModel) {
                     }
                 }
                 Text(
-                    text = formatter.format(orderProductInfoModel.product.selectType.price),
+                    text = formatter.format(orderModel.listProduct[0].selectType.price),
                     modifier = Modifier.align(Alignment.BottomEnd),
                     fontSize = 12.sp,
                     lineHeight = 14.sp,
@@ -349,9 +334,9 @@ fun OrderProductItem(orderProductInfoModel: OrderProductInfoModel) {
         ) {
             Text(
                 text = buildAnnotatedString {
-                    append("Tổng số tiền: ")
+                    append("Tổng số tiền (${orderModel.listProduct.size} sản phẩm) : ")
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append(formatter.format(orderProductInfoModel.product.quantity * orderProductInfoModel.product.selectType.price))
+                        append(formatter.format(orderModel.totalPrice))
                     }
                 },
                 fontSize = 12.sp,
@@ -396,10 +381,10 @@ fun OrderProductItem(orderProductInfoModel: OrderProductInfoModel) {
                     Text(
                         text = buildAnnotatedString {
                             withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onSurface)) {
-                                append("${orderProductInfoModel.address.name} | ")
+                                append("${orderModel.address.name} | ")
                             }
                             withStyle(style = SpanStyle(color = Color.Gray, fontSize = 8.sp)) {
-                                append(orderProductInfoModel.address.phoneNum.toString())
+                                append(orderModel.address.phoneNum.toString())
                             }
 
 
@@ -409,7 +394,7 @@ fun OrderProductItem(orderProductInfoModel: OrderProductInfoModel) {
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "${orderProductInfoModel.address.street}, ${orderProductInfoModel.address.ward}, ${orderProductInfoModel.address.district}, ${orderProductInfoModel.address.province}",
+                        text = "${orderModel.address.street}, ${orderModel.address.ward}, ${orderModel.address.district}, ${orderModel.address.province}",
                         fontSize = 10.sp,
                         lineHeight = 12.sp,
                         color = Color.Gray
@@ -444,7 +429,7 @@ fun OrderProductItem(orderProductInfoModel: OrderProductInfoModel) {
                 )
 
                 Text(
-                    text = orderProductInfoModel.id,
+                    text = orderModel.id,
                     fontWeight = FontWeight.Light,
                     fontSize = 10.sp,
                     lineHeight = 12.sp,
@@ -468,7 +453,7 @@ fun OrderProductItem(orderProductInfoModel: OrderProductInfoModel) {
                 )
 
                 Text(
-                    text = orderProductInfoModel.paymentMethod,
+                    text = orderModel.paymentMethod,
                     fontWeight = FontWeight.Light,
                     fontSize = 10.sp,
                     lineHeight = 12.sp,
@@ -497,7 +482,7 @@ fun OrderProductItem(orderProductInfoModel: OrderProductInfoModel) {
         ) {
 
             Text(
-                text = listStatus[orderProductInfoModel.status],
+                text = listStatus[orderModel.status],
                 fontSize = 12.sp,
                 lineHeight = 14.sp,
                 color = MaterialTheme.colorScheme.primary
