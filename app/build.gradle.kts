@@ -94,7 +94,7 @@ dependencies {
     implementation(libs.googleid)
 
 //    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation(libs.converter.gson)
 //    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 //    implementation("io.github.thechance101:chart:1.1.0")
 
@@ -103,6 +103,8 @@ dependencies {
     implementation(libs.vico.compose.m3)
 //    implementation(libs.vico.multiplatform)
 //    implementation(libs.vico.views)
+
+    implementation(libs.androidx.datastore.preferences)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

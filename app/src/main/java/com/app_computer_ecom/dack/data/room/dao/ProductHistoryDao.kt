@@ -1,10 +1,10 @@
-package com.app_computer_ecom.dack.data.dao
+package com.app_computer_ecom.dack.data.room.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
-import com.app_computer_ecom.dack.data.entity.ProductHistory
+import com.app_computer_ecom.dack.data.room.entity.ProductHistory
 import kotlinx.coroutines.flow.Flow
 
 @Dao

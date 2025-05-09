@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app_computer_ecom.dack.ui.theme.ThemeManager
@@ -24,6 +25,9 @@ import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
 
 @Composable
 fun InfoAppScreen() {
+
+    val context = LocalContext.current
+
     Column {
         Button(
             onClick = {
@@ -40,7 +44,7 @@ fun InfoAppScreen() {
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
-                    ThemeManager.toggleTheme()
+                    ThemeManager.toggleTheme(context)
                     isDarkModeEnabled = ThemeManager.isDarkTheme
                 }
                 .padding(vertical = 8.dp, horizontal = 8.dp),
@@ -50,7 +54,7 @@ fun InfoAppScreen() {
             Switch(
                 checked = isDarkModeEnabled,
                 onCheckedChange = {
-                    ThemeManager.toggleTheme()
+                    ThemeManager.toggleTheme(context)
                     isDarkModeEnabled = ThemeManager.isDarkTheme
                 },
                 modifier = Modifier

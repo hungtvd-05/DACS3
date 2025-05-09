@@ -2,10 +2,10 @@ package com.app_computer_ecom.dack.viewmodel.Search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.app_computer_ecom.dack.data.dao.ProductHistoryDao
-import com.app_computer_ecom.dack.data.dao.SearchHistoryDao
-import com.app_computer_ecom.dack.data.entity.ProductHistory
-import com.app_computer_ecom.dack.data.entity.SearchHistory
+import com.app_computer_ecom.dack.data.room.dao.ProductHistoryDao
+import com.app_computer_ecom.dack.data.room.dao.SearchHistoryDao
+import com.app_computer_ecom.dack.data.room.entity.ProductHistory
+import com.app_computer_ecom.dack.data.room.entity.SearchHistory
 import com.app_computer_ecom.dack.model.ProductModel
 import com.app_computer_ecom.dack.repository.GlobalRepository
 import kotlinx.coroutines.flow.Flow

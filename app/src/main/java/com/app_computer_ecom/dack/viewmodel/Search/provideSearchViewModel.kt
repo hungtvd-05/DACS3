@@ -1,9 +1,9 @@
 package com.app_computer_ecom.dack.viewmodel.Search
 
-import DatabaseProvider
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.app_computer_ecom.dack.data.room.DatabaseProvider
 
 @Composable
 fun provideSearchViewModel(context: Context): SearchViewModel {

@@ -1,8 +1,9 @@
+package com.app_computer_ecom.dack.data.room
+
 import android.content.Context
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.app_computer_ecom.dack.data.AppDatabase
 
 object DatabaseProvider {
     @Volatile

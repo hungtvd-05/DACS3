@@ -1,6 +1,5 @@
 package com.app_computer_ecom.dack.screen.user
 
-import DatabaseProvider
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -56,7 +55,8 @@ import com.app_computer_ecom.dack.AppUtil
 import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.LoadingScreen
 import com.app_computer_ecom.dack.components.ProductItem
-import com.app_computer_ecom.dack.data.entity.ProductHistory
+import com.app_computer_ecom.dack.data.room.DatabaseProvider
+import com.app_computer_ecom.dack.data.room.entity.ProductHistory
 import com.app_computer_ecom.dack.model.BrandModel
 import com.app_computer_ecom.dack.model.CategoryModel
 import com.app_computer_ecom.dack.model.PriceInfo
