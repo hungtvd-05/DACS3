@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -36,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,6 +60,8 @@ import com.app_computer_ecom.dack.components.TopBar
 import com.app_computer_ecom.dack.model.OrderModel
 import com.app_computer_ecom.dack.repository.GlobalRepository
 import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
+import com.google.firebase.Timestamp
+import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -112,6 +116,7 @@ fun OrderListWithFilter(
 
     var isLoading by remember { mutableStateOf(true) }
     val listState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(orderStatus) {
         isLoading = true
@@ -227,13 +232,25 @@ fun OrderListWithFilter(
                         }
                     }
                 }
-                items(orderModels.size) {
-                    OrderProductItem(orderModels[it])
+                itemsIndexed(orderModels) { index, item ->
+                    OrderProductItem(
+                        orderModel = item,
+                        onClick = {
+                            if (item.status != 4) {
+                                scope.launch {
+                                    orderModels = orderModels.filter { it.id != item.id }
+                                    var time = Timestamp.now()
+                                    GlobalRepository.orderRepository.updateOrderStatus(
+                                        item,
+                                        4,
+                                        finishedAt = time
+                                    )
+                                }
+                            }
+                        }
+                    )
                 }
             }
-
-
-
 
             item {
                 Spacer(modifier = Modifier.height(32.dp))
@@ -243,7 +260,7 @@ fun OrderListWithFilter(
 }
 
 @Composable
-fun OrderProductItem(orderModel: OrderModel) {
+fun OrderProductItem(orderModel: OrderModel, onClick: () -> Unit = {}) {
 
     val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
     var listStatus = listOf("Chờ xác nhận", "Chờ lấy hàng", "Chờ giao hàng", "Đã giao", "Đã hủy")
@@ -254,14 +271,13 @@ fun OrderProductItem(orderModel: OrderModel) {
             .clip(RoundedCornerShape(12.dp))
             .background(MaterialTheme.colorScheme.surface)
             .padding(bottom = 16.dp)
-
+            .clickable { GlobalNavigation.navController.navigate("order-details/orderId=${orderModel.id}") }
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
                 .height(100.dp)
-//                .clickable { GlobalNavigation.navController.navigate("product-details/productId=${orderModel..product.id}") }
         ) {
             Card(
                 shape = RoundedCornerShape(12.dp),
@@ -487,12 +503,28 @@ fun OrderProductItem(orderModel: OrderModel) {
                 lineHeight = 14.sp,
                 color = MaterialTheme.colorScheme.primary
             )
-            TextButton(onClick = {}, contentPadding = PaddingValues(2.dp)) {
+            TextButton(
+                onClick = onClick
+//                    {
+//                        if (orderModel.status != 4) {
+//                            scope.launch {
+////                        lastSelectedStatus = 4
+//                                var time = Timestamp.now()
+//                                GlobalRepository.orderRepository.updateOrderStatus(
+//                                    orderModel,
+//                                    4,
+//                                    finishedAt = time
+//                                )
+//                            }
+//                        }
+//                    }
+                , contentPadding = PaddingValues(2.dp)
+            ) {
                 Text(
                     text = "Huỷ đơn",
                     fontSize = 12.sp,
                     lineHeight = 14.sp,
-                    color = Color.Red,
+                    color = if (orderModel.status == 4) Color.Gray else Color(230, 81, 0),
                     fontWeight = FontWeight.Normal
                 )
             }

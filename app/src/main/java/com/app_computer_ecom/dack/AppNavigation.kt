@@ -20,7 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import com.app_computer_ecom.dack.pages.admin.ListUserPage
 import com.app_computer_ecom.dack.screen.admin.AddProductScreen
 import com.app_computer_ecom.dack.screen.admin.AdminScreen
-import com.app_computer_ecom.dack.screen.admin.OrderDetailScreen
+import com.app_computer_ecom.dack.screen.admin.OrderDetailAdminScreen
 import com.app_computer_ecom.dack.screen.admin.UpdateProductScreen
 import com.app_computer_ecom.dack.screen.employee.EmployeeScreen
 import com.app_computer_ecom.dack.screen.started.AuthScreen
@@ -34,6 +34,7 @@ import com.app_computer_ecom.dack.screen.user.CheckoutScreen
 import com.app_computer_ecom.dack.screen.user.EditAddressScreen
 import com.app_computer_ecom.dack.screen.user.HomeScreen
 import com.app_computer_ecom.dack.screen.user.ListProductScreen
+import com.app_computer_ecom.dack.screen.user.OrderDetailUserScreen
 import com.app_computer_ecom.dack.screen.user.OrderStatusScreen
 import com.app_computer_ecom.dack.screen.user.OrderSuccessScreen
 import com.app_computer_ecom.dack.screen.user.ProductDetailsScreen
@@ -126,7 +127,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         }
         composable("admin/orderdetail/id={orderId}") {
             var id = it.arguments?.getString("orderId").toString()
-            OrderDetailScreen(id)
+            OrderDetailAdminScreen(id)
         }
 
         composable("orderstatus/{status}") {
@@ -147,6 +148,10 @@ fun AppNavigation(modifier: Modifier = Modifier) {
             EmployeeScreen(
                 indexValue = indexValue.toString().toInt()
             )
+        }
+        composable("order-details/orderId={orderId}") {
+            var orderID = it.arguments?.getString("orderId").toString()
+            OrderDetailUserScreen(orderID)
         }
     }
 

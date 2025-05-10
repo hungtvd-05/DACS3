@@ -1,9 +1,9 @@
-package com.app_computer_ecom.dack.screen.admin
+package com.app_computer_ecom.dack.screen.user
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,14 +15,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,7 +36,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,9 +43,9 @@ import coil.compose.AsyncImage
 import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.LoadingScreen
 import com.app_computer_ecom.dack.R
+import com.app_computer_ecom.dack.components.TopBar
 import com.app_computer_ecom.dack.model.OrderModel
 import com.app_computer_ecom.dack.model.ProductInfoModel
-import com.app_computer_ecom.dack.pages.admin.StatusDropDownFun
 import com.app_computer_ecom.dack.repository.GlobalRepository
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.launch
@@ -58,16 +54,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun OrderDetailScreen(orderId: String) {
-    BackHandler(enabled = true) {
-        GlobalNavigation.navController.navigate("admin/2") {
-            popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
-                inclusive = false
-            }
-            launchSingleTop = true
-        }
-    }
-
+fun OrderDetailUserScreen(orderId: String) {
     var order by remember { mutableStateOf<OrderModel?>(null) }
     var isLoading by remember { mutableStateOf(true) }
 
@@ -76,7 +63,6 @@ fun OrderDetailScreen(orderId: String) {
     val formatterDate = SimpleDateFormat("HH:mm:ss dd/MM/yyyy", Locale.getDefault())
     val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
 
-    var selectedStatus by remember { mutableStateOf(0) }
     var lastSelectedStatus by remember { mutableStateOf(0) }
     var time by remember { mutableStateOf(Timestamp.now()) }
 
@@ -84,37 +70,27 @@ fun OrderDetailScreen(orderId: String) {
 
     LaunchedEffect(Unit) {
         order = GlobalRepository.orderRepository.getOrderById(orderId)
-        selectedStatus = order!!.status
         lastSelectedStatus = order!!.status
         time = order!!.finishedAt
         isLoading = false
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            IconButton(
-                onClick = { GlobalNavigation.navController.navigate("admin/2") },
-                modifier = Modifier.align(Alignment.CenterStart)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
+    BackHandler(enabled = true) {
+        GlobalNavigation.navController.navigate("orderstatus/${if (order != null) order!!.status else 0}") {
+            popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                inclusive = false
             }
+            launchSingleTop = true
+        }
+    }
 
-            Text(
-                text = "Chi tiết đơn hàng",
-                fontSize = 18.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.align(Alignment.Center),
-                color = MaterialTheme.colorScheme.onBackground
-            )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        TopBar(title = "Chi tiết đơn hàng") {
+            GlobalNavigation.navController.navigate("orderstatus/${if (order != null) order!!.status else 0}")
         }
 
         if (isLoading) {
@@ -129,7 +105,7 @@ fun OrderDetailScreen(orderId: String) {
             ) {
                 item { }
                 item {
-                    Column (
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(12.dp))
@@ -204,6 +180,12 @@ fun OrderDetailScreen(orderId: String) {
                                 color = MaterialTheme.colorScheme.onBackground
                             )
                             Text(
+                                text = "Phương thức thanh toán: ${order!!.paymentMethod}",
+                                fontSize = 14.sp,
+//                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                            Text(
                                 text = "Ngày tạo đơn: ${formatterDate.format(order!!.createdAt.toDate())}",
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onBackground
@@ -268,41 +250,39 @@ fun OrderDetailScreen(orderId: String) {
                         }
                     }
                 }
-                item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(MaterialTheme.colorScheme.surface)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(vertical = 8.dp).padding(end = 8.dp)
+                if (lastSelectedStatus != 4) {
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(MaterialTheme.colorScheme.surface)
                         ) {
-                            StatusDropDownFun(
-                                statusList = listStatus,
-                                selected = selectedStatus,
-                                lastSelected = lastSelectedStatus,
-                                onStatusSelected = {
-                                    selectedStatus = it
-                                }
-                            )
-                            Spacer(modifier = Modifier.weight(1f))
-                            Button(
-                                onClick = {
-                                    scope.launch {
-                                        if (selectedStatus != lastSelectedStatus) {
-                                            lastSelectedStatus = selectedStatus
-                                            time = Timestamp.now()
-                                            GlobalRepository.orderRepository.updateOrderStatus(order!!, lastSelectedStatus, finishedAt = time)
-                                        }
-                                    }
-                                },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.primary,
-                                )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .padding(vertical = 8.dp)
+                                    .padding(end = 8.dp)
                             ) {
-                                Text(text = "Cập nhật", color = Color.White)
+                                Spacer(modifier = Modifier.weight(1f))
+                                Button(
+                                    onClick = {
+                                        scope.launch {
+                                            lastSelectedStatus = 4
+                                            time = Timestamp.now()
+                                            GlobalRepository.orderRepository.updateOrderStatus(
+                                                order!!,
+                                                lastSelectedStatus,
+                                                finishedAt = time
+                                            )
+                                        }
+                                    },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color(230, 81, 0),
+                                    )
+                                ) {
+                                    Text(text = "Hủy đơn", color = Color.White)
+                                }
                             }
                         }
                     }
@@ -317,7 +297,14 @@ fun ProductItemOrder(productInfoModel: ProductInfoModel) {
     val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
 
     Row(
-        modifier = Modifier.height(100.dp).padding(bottom = 8.dp)
+        modifier = Modifier
+            .height(100.dp)
+            .padding(bottom = 8.dp)
+            .clickable(
+                onClick = {
+                    GlobalNavigation.navController.navigate("product-details/productId=${productInfoModel.id}")
+                }
+            )
     ) {
         Card(
             shape = RoundedCornerShape(12.dp),
