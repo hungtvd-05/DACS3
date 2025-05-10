@@ -23,8 +23,6 @@ import com.app_computer_ecom.dack.pages.user.CartPage
 import com.app_computer_ecom.dack.pages.user.FavoritePage
 import com.app_computer_ecom.dack.pages.user.HomePage
 import com.app_computer_ecom.dack.pages.user.ProfilePage
-import com.app_computer_ecom.dack.viewmodel.AuthViewModel
-import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnrememberedMutableState")

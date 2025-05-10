@@ -30,6 +30,7 @@ import com.app_computer_ecom.dack.screen.started.SignupScreen
 import com.app_computer_ecom.dack.screen.user.AccountScreen
 import com.app_computer_ecom.dack.screen.user.AddAddressScreen
 import com.app_computer_ecom.dack.screen.user.AddressMenuScreen
+import com.app_computer_ecom.dack.screen.user.CheckRatingAndCommentScreen
 import com.app_computer_ecom.dack.screen.user.CheckoutScreen
 import com.app_computer_ecom.dack.screen.user.EditAddressScreen
 import com.app_computer_ecom.dack.screen.user.HomeScreen
@@ -38,6 +39,7 @@ import com.app_computer_ecom.dack.screen.user.OrderDetailUserScreen
 import com.app_computer_ecom.dack.screen.user.OrderStatusScreen
 import com.app_computer_ecom.dack.screen.user.OrderSuccessScreen
 import com.app_computer_ecom.dack.screen.user.ProductDetailsScreen
+import com.app_computer_ecom.dack.screen.user.RatingAndCommentScreen
 import com.app_computer_ecom.dack.screen.user.SearchScreen
 import com.app_computer_ecom.dack.screen.user.TermsScreen
 import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
@@ -107,7 +109,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
             ProductDetailsScreen(productId = productId)
         }
         composable("search") {
-            SearchScreen()
+            SearchScreen(modifier = modifier)
         }
         composable("checkout") {
             CheckoutScreen()
@@ -152,6 +154,16 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         composable("order-details/orderId={orderId}") {
             var orderID = it.arguments?.getString("orderId").toString()
             OrderDetailUserScreen(orderID)
+        }
+        composable("user/rating/orderId={orderId}&selectedProduct={selectedProduct}") {
+            var orderId = it.arguments?.getString("orderId").toString()
+            var selectedProduct = it.arguments?.getString("selectedProduct")!!.toInt()
+            RatingAndCommentScreen(orderId, selectedProduct)
+        }
+        composable("user/check-rating/orderId={orderId}&selectedProduct={selectedProduct}") {
+            var orderId = it.arguments?.getString("orderId").toString()
+            var selectedProduct = it.arguments?.getString("selectedProduct")!!.toInt()
+            CheckRatingAndCommentScreen(orderId, selectedProduct)
         }
     }
 

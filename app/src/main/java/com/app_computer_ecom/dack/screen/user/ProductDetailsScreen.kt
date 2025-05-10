@@ -1,12 +1,13 @@
 package com.app_computer_ecom.dack.screen.user
 
-import DatabaseProvider
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -27,14 +30,18 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -48,15 +55,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.app_computer_ecom.dack.AppUtil
 import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.LoadingScreen
+import com.app_computer_ecom.dack.R
 import com.app_computer_ecom.dack.components.ProductItem
-import com.app_computer_ecom.dack.data.entity.ProductHistory
+import com.app_computer_ecom.dack.data.room.DatabaseProvider
+import com.app_computer_ecom.dack.data.room.entity.ProductHistory
 import com.app_computer_ecom.dack.model.BrandModel
 import com.app_computer_ecom.dack.model.CategoryModel
 import com.app_computer_ecom.dack.model.PriceInfo
@@ -445,7 +459,155 @@ fun ProductDetailsScreen(productId: String) {
                         Spacer(modifier = Modifier.height(4.dp))
                     }
                 }
+
+                item(span = { GridItemSpan(2) }) {
+                    CommentSection()
+                }
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CommentSection() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 200.dp)
+            .background(MaterialTheme.colorScheme.surface)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "4.8",
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Icon(
+                    imageVector = Icons.Default.Star,
+                    tint = Color(241, 179, 59, 255),
+                    contentDescription = "rating",
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp)
+                        .size(14.dp)
+                )
+                Text(
+                    buildAnnotatedString {
+                        withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 12.sp
+                            )
+                        ) {
+                            append("Đánh giá sản phẩm")
+                        }
+                        append(" ")
+                        withStyle(style = SpanStyle(fontSize = 12.sp)) {
+                            append("(12)")
+                        }
+                    },
+                )
+            }
+            TextButton(onClick = {}, contentPadding = PaddingValues(0.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("Tất cả", fontSize = 10.sp, lineHeight = 12.sp)
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowRight,
+                        contentDescription = "",
+                        modifier = Modifier.size(12.dp)
+                    )
+
+                }
+            }
+
+        }
+        HorizontalDivider(
+            color = MaterialTheme.colorScheme.background,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        val list = listOf(1, 2, 3, 4, 5)
+
+        Column(modifier = Modifier.fillMaxWidth()) {
+            list.forEach {
+                CommentItem()
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.background,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun CommentItem() {
+
+    val name = "name"
+    val rate = 5
+    val comment =
+        "kjádhfládhfsalkjfhsalkjfhsalkjfhákljfhákljfhákljfhákjlfhákljfhsakljhfákjlfhádkjlfhsadfkjhá"
+
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(max = 24.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = painterResource(R.drawable.avatar_placeholder),
+                contentDescription = "avatar"
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(name, fontSize = 12.sp, lineHeight = 14.sp)
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(max = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            repeat(rate) {
+                Icon(
+                    imageVector = Icons.Default.Star,
+                    tint = Color(241, 179, 59, 255),
+                    contentDescription = "rating",
+                    modifier = Modifier
+                        .size(10.dp)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+        Row {
+            Text(text = comment, fontSize = 12.sp)
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        LazyRow {
+            item {
+                Image(
+                    painter = painterResource(R.drawable.ic_launcher_background),
+                    contentDescription = "",
+                    modifier = Modifier.size(96.dp)
+                )
+            }
+        }
+
     }
 }

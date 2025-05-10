@@ -4,6 +4,7 @@ import com.app_computer_ecom.dack.GlobalDatabase
 import com.app_computer_ecom.dack.model.DailySales
 import com.app_computer_ecom.dack.model.MonthlySales
 import com.app_computer_ecom.dack.model.OrderModel
+import com.app_computer_ecom.dack.model.ProductInfoModel
 import com.app_computer_ecom.dack.model.ProductSoldInfo
 import com.app_computer_ecom.dack.repository.GlobalRepository
 import com.app_computer_ecom.dack.repository.OrderRepository
@@ -106,6 +107,13 @@ class OrderRepositoryImpl : OrderRepository {
             }
         }
         batch.commit().await()
+    }
+
+    override suspend fun updateOrderListProduct(
+        orderId: String,
+        listProduct: List<ProductInfoModel>
+    ) {
+        dbOrder.document(orderId).update("listProduct", listProduct)
     }
 
     override suspend fun getDailySalesCurrentMonth(): List<DailySales> {

@@ -12,4 +12,7 @@ data class ProductModel(
     var imageUrls: MutableList<ImageInfo> = mutableListOf(),
     val show: Boolean = true,
     val createdAt: Timestamp = Timestamp.now(),
+    val numOfReviews: Int = 0,
+    val numOfStars: Int = 0,
+    val rating: Double = 0.0
 )

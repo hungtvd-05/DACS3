@@ -4,7 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,13 +19,17 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -39,6 +45,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -46,7 +53,6 @@ import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.R
 import com.app_computer_ecom.dack.components.HeaderView
 import com.app_computer_ecom.dack.components.ProductItem
-import com.app_computer_ecom.dack.components.ProductListSection
 import com.app_computer_ecom.dack.model.BannerModel
 import com.app_computer_ecom.dack.model.BrandModel
 import com.app_computer_ecom.dack.model.CategoryModel
@@ -74,11 +80,20 @@ fun HomePage(modifier: Modifier = Modifier) {
 
     var brands by remember { mutableStateOf(emptyList<BrandModel>()) }
 
+    var productListByBrand by remember { mutableStateOf(mapOf<BrandModel, List<ProductModel>>()) }
+
     LaunchedEffect(Unit) {
         products = GlobalRepository.productRepository.getProductsByCreatedAt()
         banners = GlobalRepository.bannerRepository.getBannerByEnable()
         categories = GlobalRepository.categoryRepository.getCategorybyIsEnable()
         brands = GlobalRepository.brandRepository.getBrandByIsEnable()
+        productListByBrand = brands.associateWith { brand ->
+            GlobalRepository.productRepository.getProductsWithFilter(
+                searchQuery = "",
+                brandIds = listOf(brand.id),
+                limit = 8
+            )
+        }
         isLoading = false
     }
 
@@ -117,7 +132,6 @@ fun HomePage(modifier: Modifier = Modifier) {
                                 contentDescription = "Banner",
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(100.dp)
                                     .clip(RoundedCornerShape(12.dp)),
                                 contentScale = ContentScale.Crop
                             )
@@ -182,12 +196,51 @@ fun HomePage(modifier: Modifier = Modifier) {
                 }
             }
 
-//            items(categories.size, span = { GridItemSpan(2) }) {
-//                ProductListSection(categoryId = categories[it].id, title = categories[it].name)
-//            }
+            productListByBrand.forEach { (brand, productsByBrand) ->
+                item(span = { GridItemSpan(2) }) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = brand.name,
+                            fontSize = 14.sp,
+                            lineHeight = 14.sp,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.fillMaxHeight(),
+                            fontWeight = FontWeight.Medium
+                        )
+                        TextButton(onClick = {
+                            GlobalNavigation.navController.navigate("listproduct/categoryId=&brandId=${brand.id}&searchQuery=")
+                        }) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxHeight()
+                            ) {
+                                Text(
+                                    text = "Xem thêm",
+                                    fontSize = 10.sp,
+                                    lineHeight = 12.sp,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    textDecoration = TextDecoration.Underline
+                                )
+                                Icon(
+                                    imageVector = Icons.Default.ArrowForward,
+                                    contentDescription = "",
+                                    modifier = Modifier.size(12.dp)
+                                )
+                            }
 
-            items(brands.size, span = { GridItemSpan(2) }) {
-                ProductListSection(brandId = brands[it].id, title = brands[it].name)
+                        }
+                    }
+                }
+                productsByBrand.forEachIndexed { index, product ->
+                    item {
+                        ProductItem(product = product)
+                    }
+                }
             }
 
 
@@ -195,7 +248,7 @@ fun HomePage(modifier: Modifier = Modifier) {
                 Text(
                     text = "Sản phẩm mới",
                     style = TextStyle(
-                        fontSize = 18.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                     ),
                     modifier = Modifier.padding(vertical = 16.dp)
@@ -222,6 +275,8 @@ fun HomePage(modifier: Modifier = Modifier) {
                     Text(text = "Xem tất cả", color = Color.White)
                 }
             }
+
+
         }
     }
 }

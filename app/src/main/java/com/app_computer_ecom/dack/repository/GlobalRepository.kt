@@ -8,6 +8,7 @@ import com.app_computer_ecom.dack.repository.impl.CategoryRepositoryImpl
 import com.app_computer_ecom.dack.repository.impl.FavoriteRepositoryImpl
 import com.app_computer_ecom.dack.repository.impl.OrderRepositoryImpl
 import com.app_computer_ecom.dack.repository.impl.ProductRepositoryImpl
+import com.app_computer_ecom.dack.repository.impl.RatingAndCommentRepositoryImpl
 import com.app_computer_ecom.dack.repository.impl.UserRepositoryImpl
 
 object GlobalRepository {
@@ -20,4 +21,5 @@ object GlobalRepository {
     var orderRepository: OrderRepository = OrderRepositoryImpl()
     var favoriteRepository: FavoriteRepository = FavoriteRepositoryImpl()
     var userRepository: UserRepository = UserRepositoryImpl()
+    var ratingAndCommentRepository: RatingAndCommentRepository = RatingAndCommentRepositoryImpl()
 }

@@ -3,6 +3,7 @@ package com.app_computer_ecom.dack.pages.admin
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -19,15 +21,16 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -157,6 +160,8 @@ fun Items(
     val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
     var minPrice by remember { mutableStateOf(0) }
     var maxPrice by remember { mutableStateOf(0) }
+    var showDialog by remember { mutableStateOf(false) }
+
 
     if (product.prices.size == 1) {
         minPrice = product.prices.first().price
@@ -179,90 +184,122 @@ fun Items(
                 onClick = onClick
             ),
     ) {
-        Row {
-            Card(
-                shape = RoundedCornerShape(12.dp),
-                elevation = CardDefaults.cardElevation(6.dp),
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .aspectRatio(1f)
-            ) {
-                AsyncImage(
-                    model = product.imageUrls.firstOrNull()?.imageUrl,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    error = painterResource(id = R.drawable.image_broken_svgrepo_com),
-                    placeholder = painterResource(id = R.drawable.loading_svgrepo_com)
-                )
-            }
-            Column(
-                modifier = Modifier.padding(8.dp)
-            ) {
-                Text(
-                    text = product.name,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 3,
-                    minLines = 3,
-                    overflow = TextOverflow.Ellipsis,
-                    fontSize = 12.sp,
-                    lineHeight = 12.sp
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Row {
-                    product.prices.forEach(
-                        action = {
-                            Row(
-                                modifier = Modifier
-                                    .background(Color(233, 233, 233))
-                                    .padding(horizontal = 4.dp)
-                            ) {
-                                Text(text = it.type, fontSize = 8.sp, lineHeight = 10.sp, color = Color.Black)
-                            }
-                            Spacer(modifier = Modifier.width(4.dp))
-                        }
+
+        Box() {
+            Row {
+                Card(
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = CardDefaults.cardElevation(6.dp),
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .aspectRatio(1f)
+                ) {
+                    AsyncImage(
+                        model = product.imageUrls.firstOrNull()?.imageUrl,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        error = painterResource(id = R.drawable.image_broken_svgrepo_com),
+                        placeholder = painterResource(id = R.drawable.loading_svgrepo_com)
                     )
                 }
-                Text(
-                    text = if (minPrice != maxPrice) "${
-                        formatter.format(
-                            minPrice
-                        )
-                    } - ${
-                        formatter.format(
-                            maxPrice
-                        )
-                    }" else formatter.format(minPrice),
-                    fontSize = 12.sp,
-                    color = Color.Red,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(6.dp))
-                HorizontalDivider(
-                    thickness = 1.dp,
-                    color = MaterialTheme.colorScheme.background
-                )
-                Spacer(modifier = Modifier.height(6.dp))
-                Row {
-                    IconButton(onClick = { delete() }) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "",
-                            modifier = Modifier
-                                .size(30.dp),
-                            tint = Color.Red
-                        )
-                    }
-                    IconButton(onClick = { onClickShowHidden() }) {
-                        Icon(
-                            painter = painterResource(id = if (isEnable) R.drawable.eye_svgrepo_com else R.drawable.eye_slash_svgrepo_com),
-                            contentDescription = "",
-                            modifier = Modifier
-                                .size(30.dp),
-                            tint = Color(30, 136, 229)
+                Column(
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Text(
+                        text = product.name,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 3,
+                        minLines = 3,
+                        overflow = TextOverflow.Ellipsis,
+                        fontSize = 12.sp,
+                        lineHeight = 12.sp
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Row {
+                        product.prices.forEach(
+                            action = {
+                                Row(
+                                    modifier = Modifier
+                                        .background(Color(233, 233, 233))
+                                        .padding(horizontal = 4.dp)
+                                ) {
+                                    Text(
+                                        text = it.type,
+                                        fontSize = 8.sp,
+                                        lineHeight = 10.sp,
+                                        color = Color.Black
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(4.dp))
+                            }
                         )
                     }
+                    Text(
+                        text = if (minPrice != maxPrice) "${
+                            formatter.format(
+                                minPrice
+                            )
+                        } - ${
+                            formatter.format(
+                                maxPrice
+                            )
+                        }" else formatter.format(minPrice),
+                        fontSize = 12.sp,
+                        color = Color.Red,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        fontWeight = FontWeight.Bold
+                    )
+
                 }
             }
+            Row(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .offset(0.dp, 8.dp)
+            ) {
+                IconButton(onClick = { showDialog = true }) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "",
+                        modifier = Modifier
+                            .size(22.dp),
+                        tint = Color.Red
+                    )
+                }
+                IconButton(onClick = { onClickShowHidden() }) {
+                    Icon(
+                        painter = painterResource(id = if (isEnable) R.drawable.eye_svgrepo_com else R.drawable.eye_slash_svgrepo_com),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .size(22.dp),
+                        tint = Color(30, 136, 229)
+                    )
+                }
+            }
+
         }
+
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = { Text("Xác nhận") },
+                text = { Text("Bạn có chắc chắn muốn xóa sản phẩm này?") },
+                confirmButton = {
+                    TextButton(onClick = {
+                        delete()
+                    }) {
+                        Text("Xóa")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDialog = false }) {
+                        Text("Hủy")
+                    }
+                }
+            )
+        }
+
+
     }
 }

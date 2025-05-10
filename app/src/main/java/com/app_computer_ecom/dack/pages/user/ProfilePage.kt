@@ -40,6 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -303,6 +304,7 @@ fun ProfileSettingsSection() {
     var isDarkModeEnabled by remember { mutableStateOf(ThemeManager.isDarkTheme) }
     var showLogoutDialog by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -368,7 +370,7 @@ fun ProfileSettingsSection() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        ThemeManager.toggleTheme()
+                        ThemeManager.toggleTheme(context)
                         isDarkModeEnabled = ThemeManager.isDarkTheme
                     }
                     .padding(vertical = 8.dp, horizontal = 8.dp),
@@ -378,7 +380,7 @@ fun ProfileSettingsSection() {
                 Switch(
                     checked = isDarkModeEnabled,
                     onCheckedChange = {
-                        ThemeManager.toggleTheme()
+                        ThemeManager.toggleTheme(context)
                         isDarkModeEnabled = ThemeManager.isDarkTheme
                     },
                     modifier = Modifier

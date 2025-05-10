@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -22,6 +24,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -230,7 +233,16 @@ fun OrderDetailUserScreen(orderId: String) {
                                 .padding(top = 8.dp)
                         ) {
                             order!!.listProduct.forEachIndexed { index, it ->
-                                ProductItemOrder(it)
+                                ProductItemOrder(
+                                    it, order!!.status,
+                                    onRating = {
+                                        if (it.ratingId.isEmpty()) {
+                                            GlobalNavigation.navController.navigate("user/rating/orderId=${order!!.id}&selectedProduct=${index}")
+                                        } else {
+                                            GlobalNavigation.navController.navigate("user/check-rating/orderId=${order!!.id}&selectedProduct=${index}")
+                                        }
+                                    }
+                                )
                             }
                             Row {
                                 Spacer(modifier = Modifier.weight(1f))
@@ -293,79 +305,118 @@ fun OrderDetailUserScreen(orderId: String) {
 }
 
 @Composable
-fun ProductItemOrder(productInfoModel: ProductInfoModel) {
+fun ProductItemOrder(
+    productInfoModel: ProductInfoModel,
+    orderStatus: Int = 0,
+    onRating: () -> Unit = {}
+) {
     val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
 
-    Row(
-        modifier = Modifier
-            .height(100.dp)
-            .padding(bottom = 8.dp)
-            .clickable(
-                onClick = {
-                    GlobalNavigation.navController.navigate("product-details/productId=${productInfoModel.id}")
-                }
-            )
-    ) {
-        Card(
-            shape = RoundedCornerShape(12.dp),
-            elevation = CardDefaults.cardElevation(6.dp),
+    Column {
+        Row(
             modifier = Modifier
-                .fillMaxHeight()
-                .aspectRatio(1f)
-                .background(Color.White)
+                .height(100.dp)
+                .padding(bottom = 8.dp)
+                .clickable(
+                    onClick = {
+                        GlobalNavigation.navController.navigate("product-details/productId=${productInfoModel.id}")
+                    }
+                )
         ) {
-            AsyncImage(
-                model = productInfoModel.imageUrl,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                error = painterResource(id = R.drawable.image_broken_svgrepo_com),
-                placeholder = painterResource(id = R.drawable.loading_svgrepo_com)
-            )
-        }
-        Column(
-            modifier = Modifier.padding(8.dp)
-        ) {
-            Text(
-                text = productInfoModel.name,
-                fontWeight = FontWeight.SemiBold,
-                maxLines = 3,
-                minLines = 3,
-                overflow = TextOverflow.Ellipsis,
-                fontSize = 10.sp,
-                lineHeight = 12.sp,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Row(
+            Card(
+                shape = RoundedCornerShape(12.dp),
+                elevation = CardDefaults.cardElevation(6.dp),
                 modifier = Modifier
-                    .background(Color(233, 233, 233))
-                    .padding(horizontal = 4.dp)
+                    .fillMaxHeight()
+                    .aspectRatio(1f)
             ) {
-                Text(
-                    text = productInfoModel.selectType.type,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    fontSize = 10.sp, lineHeight = 12.sp,
+                AsyncImage(
+                    model = productInfoModel.imageUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    error = painterResource(id = R.drawable.image_broken_svgrepo_com),
+                    placeholder = painterResource(id = R.drawable.loading_svgrepo_com),
+                    modifier = Modifier.background(Color.White)
                 )
             }
-
-            Spacer(modifier = Modifier.height(2.dp))
-
-            Row {
+            Column(
+                modifier = Modifier.padding(8.dp)
+            ) {
                 Text(
-                    text = formatter.format(productInfoModel.selectType.price),
+                    text = productInfoModel.name,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 3,
+                    minLines = 3,
+                    overflow = TextOverflow.Ellipsis,
                     fontSize = 10.sp,
+                    lineHeight = 12.sp,
                     color = MaterialTheme.colorScheme.onBackground
                 )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = "x${productInfoModel.quantity}",
-                    fontSize = 10.sp,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Row(
+                    modifier = Modifier
+                        .background(Color(233, 233, 233))
+                        .padding(horizontal = 4.dp)
+                ) {
+                    Text(
+                        text = productInfoModel.selectType.type,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        fontSize = 10.sp, lineHeight = 12.sp,
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(2.dp))
+
+                Row {
+                    Text(
+                        text = formatter.format(productInfoModel.selectType.price),
+                        fontSize = 10.sp,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = "x${productInfoModel.quantity}",
+                        fontSize = 10.sp,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            }
+        }
+        if (orderStatus == 3) {
+            if (productInfoModel.ratingId.isEmpty()) {
+                TextButton(
+                    onClick = onRating,
+                    modifier = Modifier.align(Alignment.End)
+                ) {
+                    Text(
+                        text = "Đánh giá sản phẩm",
+                        fontSize = 14.sp
+                    )
+                }
+            } else {
+                TextButton(
+                    onClick = onRating,
+                    modifier = Modifier.align(Alignment.End)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = "Đã đánh giá: ${productInfoModel.ratingStar}",
+                            fontSize = 14.sp
+                        )
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.surfaceTint,
+                            modifier = Modifier.height(15.dp)
+                        )
+                    }
+                }
             }
         }
     }

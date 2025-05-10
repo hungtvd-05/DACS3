@@ -1,4 +1,4 @@
-package com.app_computer_ecom.dack.data.entity
+package com.app_computer_ecom.dack.data.room.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

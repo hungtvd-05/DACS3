@@ -18,7 +18,9 @@ private val LightColorScheme = lightColorScheme(
     background = Color(0xFFF5F5F5),    // Xám nhẹ cho nền chính
     onBackground = Color(0xFF212121),  // Xám đen đậm cho văn bản trên nền
     surface = Color(0xFFFFFFFF),       // Trắng cho card, nhóm nội dung
-    onSurface = Color(0xFF212121)      // Xám đen đậm cho văn bản trên surface
+    onSurface = Color(0xFF212121),     // Xám đen đậm cho văn bản trên surface
+    scrim = Color.Gray,
+    surfaceTint = Color(255, 214, 0)
 )
 
 private val DarkColorScheme = darkColorScheme(
@@ -31,7 +33,9 @@ private val DarkColorScheme = darkColorScheme(
     background = Color(0xFF000000),
     onBackground = Color(0xFFFFFFFF),
     surface = Color(0xFF0E0E0E),
-    onSurface = Color(0xFFFFFFFF)
+    onSurface = Color(0xFFFFFFFF),
+    scrim = Color(0xFFFFFFFF),
+    surfaceTint = Color(255, 214, 0)
 )
 
 

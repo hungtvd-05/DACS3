@@ -2,8 +2,8 @@ package com.app_computer_ecom.dack.viewmodel.Search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.app_computer_ecom.dack.data.dao.ProductHistoryDao
-import com.app_computer_ecom.dack.data.dao.SearchHistoryDao
+import com.app_computer_ecom.dack.data.room.dao.ProductHistoryDao
+import com.app_computer_ecom.dack.data.room.dao.SearchHistoryDao
 
 class SearchViewModelFactory(
     private val searchHistoryDao: SearchHistoryDao,
