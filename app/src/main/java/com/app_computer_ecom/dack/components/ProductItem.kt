@@ -46,6 +46,7 @@ fun ProductItem(product: ProductModel) {
     val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
     var minPrice by remember { mutableStateOf(0) }
     var maxPrice by remember { mutableStateOf(0) }
+    var sold = product.prices.sumOf { it.sold }
 
     if (product.prices.size == 1) {
         minPrice = product.prices.first().price
@@ -137,9 +138,9 @@ fun ProductItem(product: ProductModel) {
                         contentDescription = "rating",
                         modifier = Modifier.size(12.dp)
                     )
-                    Text("4.7", fontSize = 8.sp, lineHeight = 8.sp)
+                    Text(String.format("%.1f", product.rating), fontSize = 8.sp, lineHeight = 8.sp)
                     Text(" | ", fontSize = 8.sp, lineHeight = 8.sp, color = Color.LightGray)
-                    Text(text = "Đã bán 61,4k", fontSize = 8.sp, lineHeight = 8.sp)
+                    Text(text = "Đã bán ${sold}", fontSize = 8.sp, lineHeight = 8.sp)
                 }
             }
         }

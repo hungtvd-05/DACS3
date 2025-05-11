@@ -1,6 +1,5 @@
 package com.app_computer_ecom.dack.repository.impl
 
-import android.util.Log
 import com.app_computer_ecom.dack.GlobalDatabase
 import com.app_computer_ecom.dack.model.ProductModel
 import com.app_computer_ecom.dack.repository.GlobalRepository
@@ -139,9 +138,6 @@ class ProductRepositoryImpl : ProductRepository {
             }
 
             val limitedProducts = filteredProducts.take(limit)
-
-            Log.d("QUERY", trimmedQuery)
-            Log.d("QUERY_RESULT_SIZE", filteredProducts.size.toString())
 
             limitedProducts
         } catch (e: Exception) {

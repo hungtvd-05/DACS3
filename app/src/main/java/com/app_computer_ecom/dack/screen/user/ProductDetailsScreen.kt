@@ -1,6 +1,5 @@
 package com.app_computer_ecom.dack.screen.user
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -60,7 +60,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -75,6 +74,7 @@ import com.app_computer_ecom.dack.model.BrandModel
 import com.app_computer_ecom.dack.model.CategoryModel
 import com.app_computer_ecom.dack.model.PriceInfo
 import com.app_computer_ecom.dack.model.ProductModel
+import com.app_computer_ecom.dack.model.RatingModel
 import com.app_computer_ecom.dack.repository.GlobalRepository
 import com.tbuonomo.viewpagerdotsindicator.compose.DotsIndicator
 import com.tbuonomo.viewpagerdotsindicator.compose.model.DotGraphic
@@ -152,7 +152,6 @@ fun ProductDetailsScreen(productId: String) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-//                .background(MaterialTheme.colorScheme.primary)
                 .padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -272,9 +271,9 @@ fun ProductDetailsScreen(productId: String) {
                     Text(
                         text = product?.name.toString(),
                         fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
+                        fontSize = 16.sp,
                         color = MaterialTheme.colorScheme.onBackground
-                        )
+                    )
                 }
 
                 item(span = { GridItemSpan(2) }) {
@@ -294,7 +293,7 @@ fun ProductDetailsScreen(productId: String) {
                             }" else if (selectedPriceInfo == null) formatter.format(minPrice) else formatter.format(
                                 selectedPriceInfo!!.price
                             ),
-                            fontSize = 18.sp,
+                            fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color(230, 81, 0)
                         )
@@ -323,7 +322,11 @@ fun ProductDetailsScreen(productId: String) {
                             Icon(
                                 imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                 contentDescription = null,
-                                tint = if (isFavorite) Color(230, 81, 0) else MaterialTheme.colorScheme.onBackground
+                                tint = if (isFavorite) Color(
+                                    230,
+                                    81,
+                                    0
+                                ) else MaterialTheme.colorScheme.onBackground
                             )
                         }
                     }
@@ -344,7 +347,8 @@ fun ProductDetailsScreen(productId: String) {
                             ) {
                                 Text(
                                     text = priceInfo.type,
-                                    color = if (selectedPriceInfo == priceInfo) Color.White else MaterialTheme.colorScheme.onBackground
+                                    color = if (selectedPriceInfo == priceInfo) Color.White else MaterialTheme.colorScheme.onBackground,
+                                    fontSize = 12.sp
                                 )
                             }
                         }
@@ -375,7 +379,7 @@ fun ProductDetailsScreen(productId: String) {
                             containerColor = MaterialTheme.colorScheme.primary,
                         )
                     ) {
-                        Text(text = "Thêm vào giỏ hàng", fontSize = 16.sp, color = Color.White)
+                        Text(text = "Thêm vào giỏ hàng", fontSize = 14.sp, color = Color.White)
                     }
                 }
                 if (category != null) {
@@ -387,12 +391,12 @@ fun ProductDetailsScreen(productId: String) {
                             Text(
                                 text = "Danh mục : ",
                                 fontWeight = FontWeight.SemiBold,
-                                fontSize = 18.sp,
+                                fontSize = 14.sp,
                                 color = MaterialTheme.colorScheme.onBackground
                             )
                             Text(
                                 text = category!!.name,
-                                fontSize = 18.sp,
+                                fontSize = 14.sp,
                                 color = MaterialTheme.colorScheme.onBackground
                             )
                         }
@@ -407,12 +411,12 @@ fun ProductDetailsScreen(productId: String) {
                             Text(
                                 text = "Thương hiệu : ",
                                 fontWeight = FontWeight.SemiBold,
-                                fontSize = 18.sp,
+                                fontSize = 14.sp,
                                 color = MaterialTheme.colorScheme.onBackground
                             )
                             Text(
                                 text = brand!!.name,
-                                fontSize = 18.sp,
+                                fontSize = 14.sp,
                                 color = MaterialTheme.colorScheme.onBackground
                             )
                         }
@@ -425,14 +429,14 @@ fun ProductDetailsScreen(productId: String) {
                     Text(
                         text = "Mô tả sản phẩm : ",
                         fontWeight = FontWeight.SemiBold,
-                        fontSize = 18.sp,
+                        fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 }
                 item(span = { GridItemSpan(2) }) {
                     Text(
                         text = product!!.description,
-                        fontSize = 16.sp,
+                        fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 }
@@ -444,7 +448,7 @@ fun ProductDetailsScreen(productId: String) {
                         Text(
                             text = "Sản phẩm liên quan : ",
                             fontWeight = FontWeight.SemiBold,
-                            fontSize = 18.sp,
+                            fontSize = 16.sp,
                             color = MaterialTheme.colorScheme.onBackground
                         )
                     }
@@ -460,17 +464,23 @@ fun ProductDetailsScreen(productId: String) {
                     }
                 }
 
-                item(span = { GridItemSpan(2) }) {
-                    CommentSection()
+                if (product!!.numOfReviews != 0) {
+                    item(span = { GridItemSpan(2) }) {
+                        CommentSection(product!!)
+                    }
                 }
             }
         }
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun CommentSection() {
+fun CommentSection(product: ProductModel) {
+    var listRatingModel by remember { mutableStateOf(emptyList<RatingModel>()) }
+    LaunchedEffect(Unit) {
+        listRatingModel =
+            GlobalRepository.ratingAndCommentRepository.getRatingAndComment(product.id, 4)
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -486,7 +496,7 @@ fun CommentSection() {
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "4.8",
+                    text = String.format("%.1f", product.rating),
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -510,9 +520,10 @@ fun CommentSection() {
                         }
                         append(" ")
                         withStyle(style = SpanStyle(fontSize = 12.sp)) {
-                            append("(12)")
+                            append("(${listRatingModel.size})")
                         }
                     },
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
             TextButton(onClick = {}, contentPadding = PaddingValues(0.dp)) {
@@ -533,11 +544,9 @@ fun CommentSection() {
             modifier = Modifier.fillMaxWidth()
         )
 
-        val list = listOf(1, 2, 3, 4, 5)
-
         Column(modifier = Modifier.fillMaxWidth()) {
-            list.forEach {
-                CommentItem()
+            listRatingModel.forEachIndexed { index, ratingModel ->
+                CommentItem(ratingModel)
                 HorizontalDivider(
                     color = MaterialTheme.colorScheme.background,
                     modifier = Modifier.fillMaxWidth()
@@ -548,14 +557,9 @@ fun CommentSection() {
 }
 
 @Composable
-fun CommentItem() {
-
-    val name = "name"
-    val rate = 5
-    val comment =
-        "kjádhfládhfsalkjfhsalkjfhsalkjfhákljfhákljfhákljfhákjlfhákljfhsakljhfákjlfhádkjlfhsadfkjhá"
-
-
+fun CommentItem(
+    ratingModel: RatingModel
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -567,12 +571,21 @@ fun CommentItem() {
                 .heightIn(max = 24.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(R.drawable.avatar_placeholder),
-                contentDescription = "avatar"
+            AsyncImage(
+                model = ratingModel.avatar,
+                contentDescription = "avatar",
+                modifier = Modifier
+                    .size(28.dp)
+                    .clip(RoundedCornerShape(50)),
+                contentScale = ContentScale.Crop,
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Text(name, fontSize = 12.sp, lineHeight = 14.sp)
+            Text(
+                ratingModel.uname,
+                fontSize = 12.sp,
+                lineHeight = 14.sp,
+                color = MaterialTheme.colorScheme.onBackground
+            )
         }
         Spacer(modifier = Modifier.height(8.dp))
         Row(
@@ -581,7 +594,7 @@ fun CommentItem() {
                 .heightIn(max = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            repeat(rate) {
+            repeat(ratingModel.rating) {
                 Icon(
                     imageVector = Icons.Default.Star,
                     tint = Color(241, 179, 59, 255),
@@ -591,23 +604,39 @@ fun CommentItem() {
                 )
             }
         }
+        Text(
+            text = "Phân loại : ${ratingModel.selectType.type}",
+            color = Color.Gray,
+            fontSize = 12.sp
+        )
 
-        Spacer(modifier = Modifier.height(8.dp))
-        Row {
-            Text(text = comment, fontSize = 12.sp)
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        LazyRow {
-            item {
-                Image(
-                    painter = painterResource(R.drawable.ic_launcher_background),
-                    contentDescription = "",
-                    modifier = Modifier.size(96.dp)
+        if (ratingModel.commentModel!!.content.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Row {
+                Text(
+                    text = ratingModel.commentModel.content,
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
 
+        if (ratingModel.commentModel.imageUrls.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(8.dp))
+
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                itemsIndexed(ratingModel.commentModel.imageUrls) { index, item ->
+                    AsyncImage(
+                        model = item,
+                        contentDescription = "",
+                        modifier = Modifier.height(96.dp),
+                        error = painterResource(id = R.drawable.image_broken_svgrepo_com),
+                        placeholder = painterResource(id = R.drawable.loading_svgrepo_com)
+                    )
+                }
+            }
+        }
     }
 }

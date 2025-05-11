@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,7 +57,7 @@ fun FavoritePage(modifier: Modifier = Modifier) {
     ) {
         Text(
             text = "Danh sách yêu thích",
-            fontSize = 22.sp,
+            fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold
         )
 
@@ -77,7 +76,7 @@ fun FavoritePage(modifier: Modifier = Modifier) {
                 ) {
                     Text(
                         text = "Không có sản phẩm yêu thích nào",
-                        fontSize = 16.sp
+                        fontSize = 12.sp
                     )
                 }
             }

@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -19,10 +20,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.sp
 import com.app_computer_ecom.dack.pages.admin.Dashboard
 import com.app_computer_ecom.dack.pages.admin.InfoAppScreen
 import com.app_computer_ecom.dack.pages.admin.Menu
 import com.app_computer_ecom.dack.pages.admin.OrderPage
+import com.app_computer_ecom.dack.pages.admin.RatingListPage
 import com.app_computer_ecom.dack.screen.user.NavItem
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -33,6 +36,7 @@ fun AdminScreen(modifier: Modifier = Modifier, indexValue: Int = 0) {
         NavItem("Dashboard", Icons.Default.Home),
         NavItem("Menu", Icons.Default.Menu),
         NavItem("Đơn hàng", Icons.Default.DateRange),
+        NavItem("Đánh giá", Icons.Default.Star),
         NavItem("Thông tin", Icons.Default.Info),
     )
 
@@ -54,7 +58,8 @@ fun AdminScreen(modifier: Modifier = Modifier, indexValue: Int = 0) {
                         },
                         label = {
                             Text(
-                                text = navItem.label
+                                text = navItem.label,
+                                fontSize = 8.sp
                             )
                         }
                     )
@@ -73,6 +78,7 @@ fun ContentAdminScreen(modifier: Modifier = Modifier, selectedIndex: Int) {
         0 -> Dashboard(modifier)
         1 -> Menu(modifier)
         2 -> OrderPage(modifier)
-        3 -> InfoAppScreen()
+        3 -> RatingListPage(modifier)
+        4 -> InfoAppScreen()
     }
 }

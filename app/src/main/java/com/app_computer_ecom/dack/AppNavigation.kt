@@ -21,6 +21,7 @@ import com.app_computer_ecom.dack.pages.admin.ListUserPage
 import com.app_computer_ecom.dack.screen.admin.AddProductScreen
 import com.app_computer_ecom.dack.screen.admin.AdminScreen
 import com.app_computer_ecom.dack.screen.admin.OrderDetailAdminScreen
+import com.app_computer_ecom.dack.screen.admin.ReplyRatingAndCommentScreen
 import com.app_computer_ecom.dack.screen.admin.UpdateProductScreen
 import com.app_computer_ecom.dack.screen.employee.EmployeeScreen
 import com.app_computer_ecom.dack.screen.started.AuthScreen
@@ -164,6 +165,10 @@ fun AppNavigation(modifier: Modifier = Modifier) {
             var orderId = it.arguments?.getString("orderId").toString()
             var selectedProduct = it.arguments?.getString("selectedProduct")!!.toInt()
             CheckRatingAndCommentScreen(orderId, selectedProduct)
+        }
+        composable("admin/reply-rating/ratingId={ratingId}") {
+            var ratingId = it.arguments?.getString("ratingId").toString()
+            ReplyRatingAndCommentScreen(ratingId)
         }
     }
 

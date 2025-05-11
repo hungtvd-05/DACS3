@@ -9,8 +9,34 @@ import kotlinx.coroutines.tasks.await
 class RatingAndCommentRepositoryImpl: RatingAndCommentRepository {
     val db = GlobalDatabase.database
     val dbRating = db.collection("ratings")
-    override suspend fun getRatingAndComment(pid: String): List<RatingModel> {
-        TODO("Not yet implemented")
+    override suspend fun getRatingAndComment(pid: String, limit: Int): List<RatingModel> {
+        return try {
+            val querySnapshot = dbRating.whereEqualTo("pid", pid).get().await()
+            if (querySnapshot.isEmpty) {
+                emptyList()
+            } else {
+                querySnapshot.documents.mapNotNull { document ->
+                    document.toObject(RatingModel::class.java)?.copy(id = document.id)
+                }.take(limit)
+            }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    override suspend fun getAllRatingAndComment(): List<RatingModel> {
+        return try {
+            val querySnapshot = dbRating.get().await()
+            if (querySnapshot.isEmpty) {
+                emptyList()
+            } else {
+                querySnapshot.documents.mapNotNull { document ->
+                    document.toObject(RatingModel::class.java)?.copy(id = document.id)
+                }
+            }
+        } catch (e: Exception) {
+            emptyList()
+        }
     }
 
     override suspend fun getRatingAndCommentById(id: String): RatingModel? {

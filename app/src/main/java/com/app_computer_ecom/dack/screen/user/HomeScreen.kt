@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.sp
 import com.app_computer_ecom.dack.pages.user.CartPage
 import com.app_computer_ecom.dack.pages.user.FavoritePage
 import com.app_computer_ecom.dack.pages.user.HomePage
@@ -33,8 +34,8 @@ fun HomeScreen(
 ) {
     val navItems = listOf(
         NavItem("Home", Icons.Default.ShoppingCart),
-        NavItem("Favorite", Icons.Default.Favorite),
-        NavItem("Cart", Icons.Default.ShoppingCart),
+        NavItem("Yêu thích", Icons.Default.Favorite),
+        NavItem("Giở hàng", Icons.Default.ShoppingCart),
         NavItem("Profile", Icons.Default.Person),
     )
 
@@ -56,7 +57,8 @@ fun HomeScreen(
                         },
                         label = {
                             Text(
-                                text = navItem.label
+                                text = navItem.label,
+                                fontSize = 8.sp
                             )
                         }
                     )

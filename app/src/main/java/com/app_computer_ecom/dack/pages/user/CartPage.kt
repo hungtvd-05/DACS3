@@ -62,7 +62,7 @@ fun CartPage(modifier: Modifier = Modifier) {
             .padding(horizontal = 16.dp)
             .padding(top = 16.dp)
     ) {
-        Text(text = "Giỏ hàng", fontSize = 22.sp, fontWeight = FontWeight.SemiBold)
+        Text(text = "Giỏ hàng", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
         Spacer(modifier = Modifier.height(10.dp))
         if (isLoading) {
             LoadingScreen()
@@ -137,8 +137,8 @@ fun CartPage(modifier: Modifier = Modifier) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "Tổng cộng: ", fontSize = 14.sp)
-                Text(text = formatter.format(totalPrice), fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.primary)
+                Text(text = "Tổng cộng: ", fontSize = 12.sp)
+                Text(text = formatter.format(totalPrice), fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.primary)
                 Spacer(modifier = Modifier.weight(1f))
                 Button(
                     onClick = {
@@ -152,7 +152,9 @@ fun CartPage(modifier: Modifier = Modifier) {
                 ) {
                     Text(
                         text = "Mua hàng (${cartList.size})",
-                        color = Color.White
+                        color = Color.White,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
             }

@@ -60,6 +60,7 @@ import com.app_computer_ecom.dack.model.OrderModel
 import com.app_computer_ecom.dack.model.ProductInfoModel
 import com.app_computer_ecom.dack.model.RatingModel
 import com.app_computer_ecom.dack.repository.GlobalRepository
+import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
 import com.app_computer_ecom.dack.viewmodel.ImageCloudinary
 import com.app_computer_ecom.dack.viewmodel.UriListSaver
 import kotlinx.coroutines.launch
@@ -304,7 +305,13 @@ fun RatingAndCommentScreen(orderId: String, selectedProduct: Int) {
                                             }
                                             var ratingModel = RatingModel(
                                                 pid = productInfoModel!!.id,
+                                                pname = productInfoModel!!.name,
+                                                pimageUrl = productInfoModel!!.imageUrl,
+                                                selectType = productInfoModel!!.selectType,
+                                                quantity = productInfoModel!!.quantity,
                                                 uid = order!!.uid,
+                                                uname = GLobalAuthViewModel.getAuthViewModel().userModel!!.name,
+                                                avatar = GLobalAuthViewModel.getAuthViewModel().userModel!!.avatar,
                                                 oid = order!!.id,
                                                 rating = rating,
                                                 commentModel = CommentModel(
