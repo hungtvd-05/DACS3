@@ -3,24 +3,27 @@ package com.app_computer_ecom.dack.screen.employee
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.sp
 import com.app_computer_ecom.dack.pages.admin.InfoAppScreen
-import com.app_computer_ecom.dack.pages.employee.Menu
 import com.app_computer_ecom.dack.pages.admin.OrderPage
+import com.app_computer_ecom.dack.pages.admin.RatingListPage
+import com.app_computer_ecom.dack.pages.employee.Menu
 import com.app_computer_ecom.dack.screen.user.NavItem
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -30,6 +33,7 @@ fun EmployeeScreen(modifier: Modifier = Modifier, indexValue: Int = 0) {
     val navItems = listOf(
         NavItem("Menu", Icons.Default.Menu),
         NavItem("Đơn hàng", Icons.Default.DateRange),
+        NavItem("Đánh giá", Icons.Default.Star),
         NavItem("Thông tin", Icons.Default.Info),
     )
 
@@ -51,7 +55,8 @@ fun EmployeeScreen(modifier: Modifier = Modifier, indexValue: Int = 0) {
                         },
                         label = {
                             Text(
-                                text = navItem.label
+                                text = navItem.label,
+                                fontSize = 8.sp
                             )
                         }
                     )
@@ -69,6 +74,7 @@ fun ContentEmployeeScreen(modifier: Modifier = Modifier, selectedIndex: Int) {
     when (selectedIndex) {
         0 -> Menu(modifier)
         1 -> OrderPage(modifier)
-        2 -> InfoAppScreen()
+        2 -> RatingListPage(modifier)
+        3 -> InfoAppScreen()
     }
 }

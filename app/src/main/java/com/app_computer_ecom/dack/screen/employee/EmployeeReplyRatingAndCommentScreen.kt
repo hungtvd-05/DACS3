@@ -1,4 +1,4 @@
-package com.app_computer_ecom.dack.screen.admin
+package com.app_computer_ecom.dack.screen.employee
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -64,9 +64,9 @@ import java.text.NumberFormat
 import java.util.Locale
 
 @Composable
-fun ReplyRatingAndCommentScreen(ratingId: String) {
+fun EmployeeReplyRatingAndCommentScreen(ratingId: String) {
     BackHandler(enabled = true) {
-        GlobalNavigation.navController.navigate("admin/3") {
+        GlobalNavigation.navController.navigate("employee/2") {
             popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
                 inclusive = false
             }
@@ -95,7 +95,7 @@ fun ReplyRatingAndCommentScreen(ratingId: String) {
             .background(MaterialTheme.colorScheme.background)
     ) {
         TopBar(title = "Đánh giá sản phẩm") {
-            GlobalNavigation.navController.navigate("admin/3")
+            GlobalNavigation.navController.navigate("employee/2")
         }
         if (isLoading) {
             LoadingScreen()
@@ -283,7 +283,7 @@ fun ReplyRatingAndCommentScreen(ratingId: String) {
                                             } catch (e: Exception) {
 
                                             } finally {
-                                                GlobalNavigation.navController.navigate("admin/3")
+                                                GlobalNavigation.navController.navigate("employee/2")
                                             }
                                         }
                                     }

@@ -90,7 +90,7 @@ fun CommentItem(
             .clip(RoundedCornerShape(12.dp))
             .clickable(
                 onClick = {
-                    GlobalNavigation.navController.navigate("admin/reply-rating/ratingId=${ratingModel.id}")
+                    GlobalNavigation.navController.navigate("employee/reply-rating/ratingId=${ratingModel.id}")
                 }
             )
             .background(MaterialTheme.colorScheme.surface)

@@ -23,7 +23,11 @@ import com.app_computer_ecom.dack.screen.admin.AdminScreen
 import com.app_computer_ecom.dack.screen.admin.OrderDetailAdminScreen
 import com.app_computer_ecom.dack.screen.admin.ReplyRatingAndCommentScreen
 import com.app_computer_ecom.dack.screen.admin.UpdateProductScreen
+import com.app_computer_ecom.dack.screen.employee.EmployeeAddProductScreen
+import com.app_computer_ecom.dack.screen.employee.EmployeeOrderDetailScreen
+import com.app_computer_ecom.dack.screen.employee.EmployeeReplyRatingAndCommentScreen
 import com.app_computer_ecom.dack.screen.employee.EmployeeScreen
+import com.app_computer_ecom.dack.screen.employee.EmployeeUpdateProductScreen
 import com.app_computer_ecom.dack.screen.started.AuthScreen
 import com.app_computer_ecom.dack.screen.started.LoginScreen
 import com.app_computer_ecom.dack.screen.started.ResetPasswordScreen
@@ -169,6 +173,21 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         composable("admin/reply-rating/ratingId={ratingId}") {
             var ratingId = it.arguments?.getString("ratingId").toString()
             ReplyRatingAndCommentScreen(ratingId)
+        }
+        composable("employee/addproduct") {
+            EmployeeAddProductScreen()
+        }
+        composable("employee/editproduct/{productId}") {
+            var productId = it.arguments?.getString("productId").toString()
+            EmployeeUpdateProductScreen(navController, productId)
+        }
+        composable("employee/reply-rating/ratingId={ratingId}") {
+            var ratingId = it.arguments?.getString("ratingId").toString()
+            EmployeeReplyRatingAndCommentScreen(ratingId)
+        }
+        composable("employee/orderdetail/id={orderId}") {
+            var id = it.arguments?.getString("orderId").toString()
+            EmployeeOrderDetailScreen(id)
         }
     }
 

@@ -118,7 +118,7 @@ fun ItemOrder(order: OrderModel, listStatus: List<String>) {
             .padding(8.dp)
             .clickable(
                 onClick = {
-                    GlobalNavigation.navController.navigate("admin/orderdetail/id=${order.id}")
+                    GlobalNavigation.navController.navigate("employee/orderdetail/id=${order.id}")
                 }
             )
     ) {

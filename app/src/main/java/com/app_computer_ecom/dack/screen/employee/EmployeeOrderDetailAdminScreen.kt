@@ -1,4 +1,4 @@
-package com.app_computer_ecom.dack.screen.admin
+package com.app_computer_ecom.dack.screen.employee
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -58,9 +58,9 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun OrderDetailAdminScreen(orderId: String) {
+fun EmployeeOrderDetailScreen(orderId: String) {
     BackHandler(enabled = true) {
-        GlobalNavigation.navController.navigate("admin/2") {
+        GlobalNavigation.navController.navigate("employee/1") {
             popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
                 inclusive = false
             }
@@ -98,7 +98,7 @@ fun OrderDetailAdminScreen(orderId: String) {
                 .fillMaxWidth()
         ) {
             IconButton(
-                onClick = { GlobalNavigation.navController.navigate("admin/2") },
+                onClick = { GlobalNavigation.navController.navigate("employee/1") },
                 modifier = Modifier.align(Alignment.CenterStart)
             ) {
                 Icon(
