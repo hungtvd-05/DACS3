@@ -5,6 +5,10 @@ import com.app_computer_ecom.dack.model.CommentModel
 import com.app_computer_ecom.dack.model.RatingModel
 import com.app_computer_ecom.dack.repository.RatingAndCommentRepository
 import com.google.firebase.FirebaseException
+import com.google.firebase.firestore.Query
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 class RatingAndCommentRepositoryImpl: RatingAndCommentRepository {
@@ -25,19 +29,21 @@ class RatingAndCommentRepositoryImpl: RatingAndCommentRepository {
         }
     }
 
-    override suspend fun getAllRatingAndComment(): List<RatingModel> {
-        return try {
-            val querySnapshot = dbRating.get().await()
-            if (querySnapshot.isEmpty) {
-                emptyList()
-            } else {
-                querySnapshot.documents.mapNotNull { document ->
-                    document.toObject(RatingModel::class.java)?.copy(id = document.id)
+    override suspend fun getAllRatingAndComment(): Flow<List<RatingModel>> = callbackFlow {
+        val listenerRegistration = dbRating
+            .orderBy("createdAt", Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    return@addSnapshotListener
+                }
+                snapshot?.let {
+                    val ratings = it.documents.mapNotNull { document ->
+                        document.toObject(RatingModel::class.java)?.copy(id = document.id)
+                    }
+                    trySend(ratings).isSuccess
                 }
             }
-        } catch (e: Exception) {
-            emptyList()
-        }
+        awaitClose { listenerRegistration.remove() }
     }
 
     override suspend fun getRatingAndCommentById(id: String): RatingModel? {

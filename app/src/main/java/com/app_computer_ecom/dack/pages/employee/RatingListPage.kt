@@ -1,4 +1,4 @@
-package com.app_computer_ecom.dack.pages.admin
+package com.app_computer_ecom.dack.pages.employee
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -93,7 +93,7 @@ fun CommentItem(
             .clip(RoundedCornerShape(12.dp))
             .clickable(
                 onClick = {
-                    GlobalNavigation.navController.navigate("admin/reply-rating/ratingId=${ratingModel.id}")
+                    GlobalNavigation.navController.navigate("employee/reply-rating/ratingId=${ratingModel.id}")
                 }
             )
             .background(MaterialTheme.colorScheme.surface)

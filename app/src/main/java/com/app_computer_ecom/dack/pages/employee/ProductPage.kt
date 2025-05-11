@@ -259,6 +259,7 @@ fun Items(
                     .align(Alignment.BottomEnd)
                     .offset(0.dp, 8.dp)
             ) {
+                Spacer(modifier = Modifier.weight(1f))
                 IconButton(onClick = { showDialog = true }) {
                     Icon(
                         imageVector = Icons.Default.Delete,

@@ -48,7 +48,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.R
-import com.app_computer_ecom.dack.components.TopBar
 import com.app_computer_ecom.dack.model.OrderModel
 import com.app_computer_ecom.dack.model.Status
 import com.app_computer_ecom.dack.repository.GlobalRepository
@@ -239,10 +238,7 @@ fun OrderStatusItem(status: Status) {
             uid = GLobalAuthViewModel.getAuthViewModel().userModel!!.uid,
             status = status.id
         )
-
-        quantity = orderModels.sumOf { order ->
-            order.listProduct.sumOf { it.quantity }
-        }
+        quantity = orderModels.size
     }
 
 

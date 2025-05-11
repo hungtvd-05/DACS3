@@ -6,10 +6,11 @@ import com.app_computer_ecom.dack.model.OrderModel
 import com.app_computer_ecom.dack.model.ProductInfoModel
 import com.app_computer_ecom.dack.model.ProductSoldInfo
 import com.google.firebase.Timestamp
+import kotlinx.coroutines.flow.Flow
 
 interface OrderRepository {
     suspend fun addOrder(orderModel: OrderModel)
-    suspend fun getOrdersOnAdmin(): List<OrderModel>
+    suspend fun getOrdersOnAdmin(): Flow<List<OrderModel>>
     suspend fun getOrderById(orderId: String): OrderModel?
     suspend fun updateOrderStatus(order: OrderModel, newStatus: Int, finishedAt: Timestamp = Timestamp.now())
     suspend fun updateOrderListProduct(orderId: String, listProduct: List<ProductInfoModel>)

@@ -1,4 +1,4 @@
-package com.app_computer_ecom.dack.pages.admin
+package com.app_computer_ecom.dack.pages.employee
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -124,7 +124,7 @@ fun ItemOrder(order: OrderModel, listStatus: List<String>) {
             .padding(8.dp)
             .clickable(
                 onClick = {
-                    GlobalNavigation.navController.navigate("admin/orderdetail/id=${order.id}")
+                    GlobalNavigation.navController.navigate("employee/orderdetail/id=${order.id}")
                 }
             )
     ) {

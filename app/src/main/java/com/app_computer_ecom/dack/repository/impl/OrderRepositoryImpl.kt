@@ -13,6 +13,9 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -47,20 +50,22 @@ class OrderRepositoryImpl : OrderRepository {
         GlobalRepository.cartRepository.clearCart()
     }
 
-    override suspend fun getOrdersOnAdmin(): List<OrderModel> {
-        return try {
-            val querySnapshot =
-                dbOrder.orderBy("createdAt", Query.Direction.DESCENDING).get().await()
-            if (querySnapshot.isEmpty) {
-                emptyList()
-            } else {
-                querySnapshot.documents.mapNotNull { document ->
-                    document.toObject(OrderModel::class.java)?.copy(id = document.id)
+    override suspend fun getOrdersOnAdmin(): Flow<List<OrderModel>> = callbackFlow {
+        val listenerRegistration = dbOrder
+            .orderBy("createdAt", Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    return@addSnapshotListener
+                }
+                snapshot?.let {
+                    val orders = it.documents.mapNotNull { document ->
+                        document.toObject(OrderModel::class.java)?.copy(id = document.id)
+                    }
+                    trySend(orders).isSuccess
                 }
             }
-        } catch (e: Exception) {
-            emptyList()
-        }
+
+        awaitClose { listenerRegistration.remove() }
     }
 
     override suspend fun getOrderById(orderId: String): OrderModel? {
