@@ -156,7 +156,7 @@ fun AddProductScreen() {
 
             Text(
                 text = "Thêm sản phẩm",
-                fontSize = 16.sp,
+                fontSize = 14.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.align(Alignment.Center),
                 color = MaterialTheme.colorScheme.onBackground
@@ -178,11 +178,11 @@ fun AddProductScreen() {
                         label = {
                             Text(
                                 text = "Tên sản phẩm",
-                                fontSize = 12.sp
+                                fontSize = 10.sp
                             )
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        textStyle = TextStyle(fontSize = 14.sp),
+                        textStyle = TextStyle(fontSize = 12.sp),
                         singleLine = true
                     )
                 }
@@ -198,11 +198,11 @@ fun AddProductScreen() {
                         label = {
                             Text(
                                 text = "Mô tả",
-                                fontSize = 12.sp
+                                fontSize = 10.sp
                             )
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        textStyle = TextStyle(fontSize = 14.sp),
+                        textStyle = TextStyle(fontSize = 12.sp),
                     )
                 }
 
@@ -217,7 +217,7 @@ fun AddProductScreen() {
                     ) {
                         Text(
                             text = "Danh mục",
-                            fontSize = 16.sp,
+                            fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onBackground
                         )
@@ -240,7 +240,7 @@ fun AddProductScreen() {
                     ) {
                         Text(
                             text = "Thương hiệu",
-                            fontSize = 16.sp,
+                            fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onBackground
                         )
@@ -259,7 +259,7 @@ fun AddProductScreen() {
                     ) {
                         Text(
                             text = "Nhãn, Số lượng, Giá",
-                            fontSize = 16.sp,
+                            fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onBackground
                         )
@@ -295,10 +295,10 @@ fun AddProductScreen() {
                                 placeholder = {
                                     Text(
                                         "Nhãn " + (index + 1),
-                                        fontSize = 12.sp
+                                        fontSize = 10.sp
                                     )
                                 },
-                                textStyle = TextStyle(fontSize = 14.sp),
+                                textStyle = TextStyle(fontSize = 12.sp),
                                 singleLine = true,
                                 modifier = Modifier
                                     .weight(2f)
@@ -315,10 +315,10 @@ fun AddProductScreen() {
                                 placeholder = {
                                     Text(
                                         "Số lượng",
-                                        fontSize = 12.sp
+                                        fontSize = 10.sp
                                     )
                                 },
-                                textStyle = TextStyle(fontSize = 14.sp),
+                                textStyle = TextStyle(fontSize = 12.sp),
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Number
@@ -336,7 +336,7 @@ fun AddProductScreen() {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
                                     contentDescription = "delete",
-                                    tint = Color.Red,
+                                    tint = Color(230, 81, 0),
                                 )
                             }
                         }
@@ -352,10 +352,10 @@ fun AddProductScreen() {
                                 placeholder = {
                                     Text(
                                         "Giá",
-                                        fontSize = 12.sp
+                                        fontSize = 10.sp
                                     )
                                 },
-                                textStyle = TextStyle(fontSize = 14.sp),
+                                textStyle = TextStyle(fontSize = 12.sp),
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Number
@@ -378,7 +378,7 @@ fun AddProductScreen() {
                     ) {
                         Text(
                             text = "Ảnh",
-                            fontSize = 16.sp,
+                            fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onBackground
                         )
@@ -520,7 +520,8 @@ fun AddProductScreen() {
                         Text(
                             text = "Xác nhận",
                             color = Color.White,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 12.sp
                         )
                     }
                 }
@@ -563,7 +564,7 @@ fun CategoryDropDownFun(
                     .height(50.dp)
                     .padding(5.dp)
             ) {
-                Text(text = selectedCategory)
+                Text(text = selectedCategory, fontSize = 12.sp)
                 Icon(
                     imageVector = if (dropControl) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                     contentDescription = "Dropdown"
@@ -575,14 +576,14 @@ fun CategoryDropDownFun(
             ) {
                 if (categoryList.isEmpty()) {
                     DropdownMenuItem(
-                        text = { Text("Không có danh mục") },
+                        text = { Text("Không có danh mục", fontSize = 12.sp) },
                         onClick = { /* Không làm gì */ },
                         enabled = false
                     )
                 } else {
                     categoryList.forEach { category ->
                         DropdownMenuItem(
-                            text = { Text(category.name) },
+                            text = { Text(category.name, fontSize = 12.sp) },
                             onClick = {
                                 onCategorySelected(category.id)
                                 dropControl = false
@@ -624,7 +625,7 @@ fun BrandDropDownFun(
                     .height(50.dp)
                     .padding(5.dp)
             ) {
-                Text(text = selectedBrand)
+                Text(text = selectedBrand, fontSize = 12.sp)
                 Icon(
                     imageVector = if (dropControl) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                     contentDescription = "Dropdown"
@@ -636,14 +637,14 @@ fun BrandDropDownFun(
             ) {
                 if (brandList.isEmpty()) {
                     DropdownMenuItem(
-                        text = { Text("Không có thương hiệu") },
+                        text = { Text("Không có thương hiệu", fontSize = 12.sp) },
                         onClick = { /* Không làm gì */ },
                         enabled = false
                     )
                 } else {
                     brandList.forEach { category ->
                         DropdownMenuItem(
-                            text = { Text(category.name) },
+                            text = { Text(category.name, fontSize = 12.sp) },
                             onClick = {
                                 onBrandSelected(category.id)
                                 dropControl = false

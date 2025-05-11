@@ -159,7 +159,7 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
 
             Text(
                 text = "Cập nhật sản phẩm",
-                fontSize = 16.sp,
+                fontSize = 14.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.align(Alignment.Center),
                 color = MaterialTheme.colorScheme.onBackground
@@ -181,11 +181,11 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                         label = {
                             Text(
                                 text = "Tên sản phẩm",
-                                fontSize = 12.sp
+                                fontSize = 10.sp
                             )
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        textStyle = TextStyle(fontSize = 14.sp),
+                        textStyle = TextStyle(fontSize = 12.sp),
                         singleLine = true
                     )
                 }
@@ -201,11 +201,11 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                         label = {
                             Text(
                                 text = "Mô tả",
-                                fontSize = 12.sp
+                                fontSize = 10.sp
                             )
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        textStyle = TextStyle(fontSize = 14.sp),
+                        textStyle = TextStyle(fontSize = 12.sp),
                     )
                 }
 
@@ -220,7 +220,7 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                     ) {
                         Text(
                             text = "Danh mục",
-                            fontSize = 16.sp,
+                            fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onBackground
                         )
@@ -243,7 +243,7 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                     ) {
                         Text(
                             text = "Thương hiệu",
-                            fontSize = 16.sp,
+                            fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onBackground
                         )
@@ -262,7 +262,7 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                     ) {
                         Text(
                             text = "Nhãn, Số lượng, Giá",
-                            fontSize = 16.sp,
+                            fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onBackground
                         )
@@ -298,10 +298,10 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                                 placeholder = {
                                     Text(
                                         "Nhãn " + (index + 1),
-                                        fontSize = 12.sp
+                                        fontSize = 10.sp
                                     )
                                 },
-                                textStyle = TextStyle(fontSize = 14.sp),
+                                textStyle = TextStyle(fontSize = 12.sp),
                                 singleLine = true,
                                 modifier = Modifier
                                     .weight(2f)
@@ -316,10 +316,10 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                                 placeholder = {
                                     Text(
                                         "Số lượng",
-                                        fontSize = 12.sp
+                                        fontSize = 10.sp
                                     )
                                 },
-                                textStyle = TextStyle(fontSize = 14.sp),
+                                textStyle = TextStyle(fontSize = 12.sp),
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Number
@@ -336,7 +336,7 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                                 Icon(
                                     imageVector = Icons.Default.Delete,
                                     contentDescription = "delete",
-                                    tint = Color.Red
+                                    tint = Color(230, 81, 0)
                                 )
                             }
                         }
@@ -353,10 +353,10 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                                 placeholder = {
                                     Text(
                                         "Giá",
-                                        fontSize = 12.sp
+                                        fontSize = 10.sp
                                     )
                                 },
-                                textStyle = TextStyle(fontSize = 14.sp),
+                                textStyle = TextStyle(fontSize = 12.sp),
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Number
@@ -383,7 +383,7 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                     ) {
                         Text(
                             text = "Ảnh",
-                            fontSize = 16.sp,
+                            fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onBackground
                         )
@@ -536,7 +536,8 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                         Text(
                             text = "Xác nhận",
                             color = Color.White,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 12.sp
                         )
                     }
                 }
@@ -560,7 +561,8 @@ fun UpdateProductScreen(navigaController: NavHostController, productId: String) 
                         Text(
                             text = "Xóa sản phẩm",
                             color = Color.White,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 12.sp
                         )
                     }
                 }

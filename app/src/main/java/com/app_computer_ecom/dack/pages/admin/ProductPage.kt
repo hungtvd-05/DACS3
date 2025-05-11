@@ -84,7 +84,7 @@ fun ProductPage() {
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "Không có sản phẩm nào")
+                    Text(text = "Không có sản phẩm nào", fontSize = 14.sp)
                 }
             } else {
                 LazyColumn(
@@ -139,6 +139,7 @@ fun ProductPage() {
                     Text(
                         text = "Thêm sản phẩm",
                         color = Color.White,
+                        fontSize = 12.sp
                     )
                 }
             }
@@ -245,7 +246,7 @@ fun Items(
                             )
                         }" else formatter.format(minPrice),
                         fontSize = 12.sp,
-                        color = Color.Red,
+                        color = Color(230, 81, 0),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         fontWeight = FontWeight.Bold
@@ -264,7 +265,7 @@ fun Items(
                         contentDescription = "",
                         modifier = Modifier
                             .size(22.dp),
-                        tint = Color.Red
+                        tint = Color(230, 81, 0)
                     )
                 }
                 IconButton(onClick = { onClickShowHidden() }) {
@@ -283,18 +284,18 @@ fun Items(
         if (showDialog) {
             AlertDialog(
                 onDismissRequest = { showDialog = false },
-                title = { Text("Xác nhận") },
-                text = { Text("Bạn có chắc chắn muốn xóa sản phẩm này?") },
+                title = { Text("Xác nhận", fontSize = 14.sp) },
+                text = { Text("Bạn có chắc chắn muốn xóa sản phẩm này?", fontSize = 12.sp) },
                 confirmButton = {
                     TextButton(onClick = {
                         delete()
                     }) {
-                        Text("Xóa")
+                        Text("Xóa", fontSize = 12.sp)
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { showDialog = false }) {
-                        Text("Hủy")
+                        Text("Hủy", fontSize = 12.sp)
                     }
                 }
             )

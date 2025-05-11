@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.app_computer_ecom.dack.LoadingScreen
 import com.app_computer_ecom.dack.components.ImagePreviewItem
 import com.app_computer_ecom.dack.model.BannerModel
@@ -104,7 +105,7 @@ fun BannerPage(modifier: Modifier = Modifier) {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Text(text = "Không có banner nào")
+                    Text(text = "Không có banner nào", fontSize = 12.sp)
                 }
             } else {
                 LazyColumn(
@@ -166,7 +167,8 @@ fun BannerPage(modifier: Modifier = Modifier) {
                 ) {
                     Text(
                         text = "Thêm banner",
-                        color = Color.White
+                        color = Color.White,
+                        fontSize = 12.sp
                     )
                 }
             }

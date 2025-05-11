@@ -147,7 +147,7 @@ fun CategoryPage() {
                                 .background(MaterialTheme.colorScheme.surface),
                             contentAlignment = Alignment.Center,
                         ) {
-                            Text("Chọn ảnh")
+                            Text("Chọn ảnh", fontSize = 12.sp)
                         }
                     }
                 }
@@ -159,11 +159,11 @@ fun CategoryPage() {
                             label = {
                                 Text(
                                     text = "Nhập tên danh mục",
-                                    fontSize = 12.sp
+                                    fontSize = 10.sp
                                 )
                             },
                             modifier = Modifier.fillMaxWidth(),
-                            textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
+                            textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp),
                             singleLine = true
                         )
 
@@ -249,7 +249,7 @@ fun CategoryPage() {
                                     }
                                 }
                             }) {
-                                Text(text = "Cập nhật", color = Color.White)
+                                Text(text = "Cập nhật", color = Color.White, fontSize = 12.sp)
                             }
                         } else {
                             Button(onClick = {
@@ -290,7 +290,7 @@ fun CategoryPage() {
                                     }
                                 }
                             }) {
-                                Text(text = "Thêm", color = Color.White)
+                                Text(text = "Thêm", color = Color.White, fontSize = 12.sp)
                             }
                         }
                     }
@@ -384,7 +384,8 @@ fun categoryItem(category: CategoryModel, onClickShowHidden: () -> Unit, onDelet
                 text = category.name,
                 modifier = Modifier.padding(top = 8.dp).padding(horizontal = 8.dp),
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                fontSize = 12.sp
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),

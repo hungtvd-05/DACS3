@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -33,9 +34,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.app_computer_ecom.dack.GlobalNavigation
+import com.app_computer_ecom.dack.LoadingScreen
 import com.app_computer_ecom.dack.R
 import com.app_computer_ecom.dack.model.RatingModel
 import com.app_computer_ecom.dack.repository.GlobalRepository
@@ -43,19 +47,34 @@ import com.app_computer_ecom.dack.repository.GlobalRepository
 @Composable
 fun RatingListPage(modifier: Modifier = Modifier) {
     var ratingList by remember { mutableStateOf(emptyList<RatingModel>()) }
+    var isLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         ratingList = GlobalRepository.ratingAndCommentRepository.getAllRatingAndComment()
+        isLoading = false
     }
 
     Column(
-        modifier = modifier.padding(horizontal = 8.dp)
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 8.dp)
+            .padding(top = 16.dp)
     ) {
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            itemsIndexed(ratingList) { index, item ->
-                CommentItem(ratingModel = item)
+        Text(text = "Đánh giá từ khách hàng", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+        Spacer(modifier = Modifier.height(10.dp))
+        if (isLoading) {
+            LoadingScreen()
+        } else {
+            if (ratingList.isEmpty()) {
+                Text(text = "Không có đánh giá nào !!", fontSize = 14.sp)
+            } else {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    itemsIndexed(ratingList) { index, item ->
+                        CommentItem(ratingModel = item)
+                    }
+                }
             }
         }
     }
@@ -69,13 +88,13 @@ fun CommentItem(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(8.dp)
             .clickable(
                 onClick = {
-
+                    GlobalNavigation.navController.navigate("admin/reply-rating/ratingId=${ratingModel.id}")
                 }
             )
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(8.dp)
     ) {
         Row(
             modifier = Modifier

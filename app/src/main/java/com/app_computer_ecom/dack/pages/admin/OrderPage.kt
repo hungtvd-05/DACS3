@@ -79,13 +79,13 @@ fun OrderPage(modifier: Modifier = Modifier) {
             .padding(horizontal = 8.dp)
             .padding(top = 16.dp)
     ) {
-        Text(text = "Đơn hàng", fontSize = 22.sp, fontWeight = FontWeight.SemiBold)
+        Text(text = "Đơn hàng", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
         Spacer(modifier = Modifier.height(10.dp))
         if (isLoading) {
             LoadingScreen()
         } else {
             if (orderList.isEmpty()) {
-                Text(text = "Không có đơn hàng nào !!")
+                Text(text = "Không có đơn hàng nào !!", fontSize = 14.sp)
             } else {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -327,7 +327,7 @@ fun ItemOrder(order: OrderModel, listStatus: List<String>) {
                     containerColor = MaterialTheme.colorScheme.primary,
                 )
             ) {
-                Text(text = "Cập nhật", color = Color.White)
+                Text(text = "Cập nhật", color = Color.White, fontSize = 12.sp)
             }
         }
     }
@@ -363,7 +363,7 @@ fun StatusDropDownFun(
                     .height(50.dp)
                     .padding(5.dp)
             ) {
-                Text(text = selectedStatus.toString())
+                Text(text = selectedStatus.toString(), fontSize = 12.sp)
                 Icon(
                     imageVector = if (dropControl) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                     contentDescription = ""
@@ -376,14 +376,14 @@ fun StatusDropDownFun(
             ) {
                 if (lastSelected == 3) {
                     DropdownMenuItem(
-                        text = { Text("Đã giao") },
+                        text = { Text("Đã giao", fontSize = 12.sp) },
                         onClick = {
                             dropControl = false
                         },
                     )
                 } else if (lastSelected == 4) {
                     DropdownMenuItem(
-                        text = { Text("Đã hủy") },
+                        text = { Text("Đã hủy", fontSize = 12.sp) },
                         onClick = {
                             dropControl = false
                         },
@@ -391,7 +391,7 @@ fun StatusDropDownFun(
                 } else {
                     statusList.forEachIndexed { index, status ->
                         DropdownMenuItem(
-                            text = { Text(status) },
+                            text = { Text(status, fontSize = 12.sp) },
                             onClick = {
                                 onStatusSelected(index)
                                 dropControl = false

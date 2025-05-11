@@ -1,6 +1,7 @@
 package com.app_computer_ecom.dack.repository.impl
 
 import com.app_computer_ecom.dack.GlobalDatabase
+import com.app_computer_ecom.dack.model.CommentModel
 import com.app_computer_ecom.dack.model.RatingModel
 import com.app_computer_ecom.dack.repository.RatingAndCommentRepository
 import com.google.firebase.FirebaseException
@@ -41,7 +42,12 @@ class RatingAndCommentRepositoryImpl: RatingAndCommentRepository {
 
     override suspend fun getRatingAndCommentById(id: String): RatingModel? {
         return try {
-            dbRating.document(id).get().await().toObject(RatingModel::class.java)
+            val querySnapshot = dbRating.document(id).get().await()
+            if (!querySnapshot.exists()) {
+                null
+            } else {
+                querySnapshot.toObject(RatingModel::class.java)?.copy(id = id)
+            }
         } catch (e: Exception) {
             throw FirebaseException("Failed to get rating: ${e.message}")
         }
@@ -56,8 +62,8 @@ class RatingAndCommentRepositoryImpl: RatingAndCommentRepository {
         }
     }
 
-    override suspend fun updateRatingAndComment(ratingAndCommentModel: RatingModel) {
-        TODO("Not yet implemented")
+    override suspend fun replyRatingAndComment(id: String, commentModel: CommentModel) {
+        dbRating.document(id).update("commentModel", commentModel)
     }
 
 }

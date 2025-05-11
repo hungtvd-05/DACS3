@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.LoadingScreen
 import com.app_computer_ecom.dack.model.UserModel
@@ -98,7 +99,8 @@ fun UserItem(
             .padding(8.dp),
     ) {
         Text(
-            text = "Tên tài khoản: ${user.username}\nEmail: ${user.email}\nRole: ${lastSelected}"
+            text = "Tên tài khoản: ${user.username}\nEmail: ${user.email}\nRole: ${lastSelected}",
+            fontSize = 12.sp
         )
         Spacer(modifier = Modifier.height(10.dp))
         HorizontalDivider(
@@ -127,7 +129,7 @@ fun UserItem(
                     }
                 }
             ) {
-                Text(text = "Cập nhật", color = Color.White)
+                Text(text = "Cập nhật", color = Color.White, fontSize = 12.sp)
             }
         }
     }
@@ -164,6 +166,7 @@ fun RoleDropDownFun(
             ) {
                 Text(
                     text = selectedRole,
+                    fontSize = 12.sp
 //                    color = Color.Black
                 )
                 Icon(
@@ -178,7 +181,7 @@ fun RoleDropDownFun(
             ) {
                 statusList.forEachIndexed { index, role ->
                     DropdownMenuItem(
-                        text = { Text(role) },
+                        text = { Text(role, fontSize = 12.sp) },
                         onClick = {
                             onStatusSelected(role)
                             dropControl = false

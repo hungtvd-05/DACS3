@@ -1,5 +1,6 @@
 package com.app_computer_ecom.dack.repository
 
+import com.app_computer_ecom.dack.model.CommentModel
 import com.app_computer_ecom.dack.model.RatingModel
 
 interface RatingAndCommentRepository {
@@ -7,5 +8,5 @@ interface RatingAndCommentRepository {
     suspend fun getAllRatingAndComment(): List<RatingModel>
     suspend fun getRatingAndCommentById(id: String): RatingModel?
     suspend fun addRatingAndComment(ratingAndCommentModel: RatingModel): String
-    suspend fun updateRatingAndComment(ratingAndCommentModel: RatingModel)
+    suspend fun replyRatingAndComment(id: String, commentModel: CommentModel)
 }

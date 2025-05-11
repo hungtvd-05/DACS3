@@ -1,5 +1,6 @@
 package com.app_computer_ecom.dack.screen.admin
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +17,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -28,12 +31,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -44,26 +49,40 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.app_computer_ecom.dack.AppUtil
 import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.LoadingScreen
 import com.app_computer_ecom.dack.R
 import com.app_computer_ecom.dack.components.TopBar
-import com.app_computer_ecom.dack.model.ProductModel
 import com.app_computer_ecom.dack.model.RatingModel
 import com.app_computer_ecom.dack.repository.GlobalRepository
+import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
 
 @Composable
 fun ReplyRatingAndCommentScreen(ratingId: String) {
+    BackHandler(enabled = true) {
+        GlobalNavigation.navController.navigate("admin/3") {
+            popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                inclusive = false
+            }
+            launchSingleTop = true
+        }
+    }
+
     var isLoading by remember { mutableStateOf(true) }
-    var product by remember { mutableStateOf<ProductModel?>(null) }
     var ratingModel by remember { mutableStateOf<RatingModel?>(null) }
     val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
+    var reply by remember { mutableStateOf("") }
+    var isReply by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         ratingModel = GlobalRepository.ratingAndCommentRepository.getRatingAndCommentById(ratingId)
-        product = GlobalRepository.productRepository.getProductById(ratingModel!!.pid)
+        reply = ratingModel!!.commentModel!!.reply
+        isReply = reply.isNotEmpty()
         isLoading = false
     }
 
@@ -73,7 +92,7 @@ fun ReplyRatingAndCommentScreen(ratingId: String) {
             .background(MaterialTheme.colorScheme.background)
     ) {
         TopBar(title = "Đánh giá sản phẩm") {
-            GlobalNavigation.navController.popBackStack()
+            GlobalNavigation.navController.navigate("admin/3")
         }
         if (isLoading) {
             LoadingScreen()
@@ -191,7 +210,33 @@ fun ReplyRatingAndCommentScreen(ratingId: String) {
                         )
                     }
                 }
-                if (ratingModel!!.commentModel!!.reply.isNotEmpty()) {
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(MaterialTheme.colorScheme.surface)
+                            .padding(8.dp)
+                    ) {
+                        OutlinedTextField(
+                            value = reply,
+                            onValueChange = {
+                                reply = it
+                            },
+                            label = {
+                                Text(
+                                    text = "Phản hồi của shop",
+                                    fontSize = 12.sp
+                                )
+                            },
+                            readOnly = isReply,
+                            modifier = Modifier.fillMaxWidth(),
+                            textStyle = TextStyle(fontSize = 14.sp),
+                            minLines = 3
+                        )
+                    }
+                }
+                if (!isReply) {
                     item {
                         Column(
                             modifier = Modifier
@@ -200,22 +245,37 @@ fun ReplyRatingAndCommentScreen(ratingId: String) {
                                 .background(MaterialTheme.colorScheme.surface)
                                 .padding(8.dp)
                         ) {
-                            OutlinedTextField(
-                                value = ratingModel!!.commentModel!!.reply,
-                                onValueChange = {
+                            Button(
+                                onClick = {
+                                    if (reply.isEmpty()) {
+                                        AppUtil.showToast(context, "Bạn chưa phản hồi đánh giá !!!")
+                                    } else {
+                                        isLoading = true
+                                        scope.launch {
+                                            try {
+                                                var commentModel = ratingModel?.commentModel?.copy(reply = reply)
+                                                GlobalRepository.ratingAndCommentRepository.replyRatingAndComment(ratingModel!!.id, commentModel!!)
+                                            } catch (e: Exception) {
 
+                                            } finally {
+                                                GlobalNavigation.navController.navigate("admin/3")
+                                            }
+                                        }
+                                    }
                                 },
-                                label = {
-                                    Text(
-                                        text = "Phản hồi của shop",
-                                        fontSize = 12.sp
-                                    )
-                                },
-                                modifier = Modifier.fillMaxWidth(),
-                                textStyle = TextStyle(fontSize = 14.sp),
-                                readOnly = true,
-                                minLines = 3
-                            )
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primary,
+                                    contentColor = MaterialTheme.colorScheme.onPrimary
+                                ),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = "Phản hồi",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
                         }
                     }
                 }

@@ -83,7 +83,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         composable("admin/{indexValue}") {
             var indexValue = it.arguments?.getString("indexValue")
             AdminScreen(
-                indexValue = indexValue.toString().toInt()
+                indexValue = indexValue!!.toInt()
             )
         }
         composable("loading") {

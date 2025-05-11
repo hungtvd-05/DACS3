@@ -117,7 +117,8 @@ fun Dashboard(modifier: Modifier) {
             extras { it[LegendLabelKey] = orders.keys }
         }
 
-        productSoldQuantities = GlobalRepository.orderRepository.getProductSoldQuantities().sortedByDescending { it.totalSold }
+        productSoldQuantities = GlobalRepository.orderRepository.getProductSoldQuantities()
+            .sortedByDescending { it.totalSold }
 
         isLoading = false
     }
@@ -140,6 +141,7 @@ fun Dashboard(modifier: Modifier) {
                     extras { it[LegendLabelKey] = orders.keys }
                 }
             }
+
             selectTypeSales == 1 -> {
                 monthlySales = GlobalRepository.orderRepository.getMonthlySalesCurrentYear()
                 labelSales = monthlySales.map { it.month.substring(0, 2).toInt() }
@@ -166,10 +168,13 @@ fun Dashboard(modifier: Modifier) {
     LaunchedEffect(selectTypeSold) {
         when {
             selectTypeSold == 0 -> {
-                productSoldQuantities = GlobalRepository.orderRepository.getProductSoldQuantities().sortedByDescending { it.totalSold }
+                productSoldQuantities = GlobalRepository.orderRepository.getProductSoldQuantities()
+                    .sortedByDescending { it.totalSold }
             }
+
             selectTypeSold == 1 -> {
-                productSoldQuantities = GlobalRepository.orderRepository.getProductSoldQuantities().sortedByDescending { it.revenue }
+                productSoldQuantities = GlobalRepository.orderRepository.getProductSoldQuantities()
+                    .sortedByDescending { it.revenue }
             }
         }
     }
@@ -182,7 +187,7 @@ fun Dashboard(modifier: Modifier) {
     ) {
         Text(
             text = "Thống kê",
-            fontSize = 22.sp, fontWeight = FontWeight.SemiBold,
+            fontSize = 16.sp, fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(vertical = 16.dp)
         )
 
@@ -196,7 +201,8 @@ fun Dashboard(modifier: Modifier) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Doanh thu"
+                            text = "Doanh thu",
+                            fontSize = 14.sp
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         StatusFilterDropDownFun(
@@ -222,7 +228,8 @@ fun Dashboard(modifier: Modifier) {
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = "Sản phẩm"
+                            text = "Sản phẩm",
+                            fontSize = 14.sp
                         )
                         Spacer(modifier = Modifier.weight(1f))
                         StatusFilterDropDownFun(
@@ -238,7 +245,7 @@ fun Dashboard(modifier: Modifier) {
                     Spacer(modifier = Modifier.height(16.dp))
                 }
                 items(productSoldQuantities.size) {
-                    Column (
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 8.dp)
@@ -246,11 +253,11 @@ fun Dashboard(modifier: Modifier) {
                             .background(MaterialTheme.colorScheme.onTertiary)
                             .padding(8.dp),
                     ) {
-                        Text(text = productSoldQuantities[it].name)
+                        Text(text = productSoldQuantities[it].name, fontSize = 12.sp)
                         Row {
-                            Text(text = "Đã bán : ${productSoldQuantities[it].totalSold}")
+                            Text(text = "Đã bán : ${productSoldQuantities[it].totalSold}", fontSize = 12.sp)
                             Spacer(modifier = Modifier.weight(1f))
-                            Text(text = "Doanh thu : ${formatter.format(productSoldQuantities[it].revenue)}")
+                            Text(text = "Doanh thu : ${formatter.format(productSoldQuantities[it].revenue)}", fontSize = 12.sp)
                         }
                     }
                 }
@@ -289,7 +296,7 @@ fun StatusFilterDropDownFun(
                     .height(50.dp)
                     .padding(5.dp)
             ) {
-                Text(text = selectedStatus.toString())
+                Text(text = selectedStatus.toString(), fontSize = 12.sp)
                 Icon(
                     imageVector = if (dropControl) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                     contentDescription = ""
@@ -302,7 +309,7 @@ fun StatusFilterDropDownFun(
             ) {
                 statusList.forEachIndexed { index, status ->
                     DropdownMenuItem(
-                        text = { Text(status) },
+                        text = { Text(status, fontSize = 12.sp) },
                         onClick = {
                             onStatusSelected(index)
                             dropControl = false
@@ -325,7 +332,7 @@ fun SalesChart(
     val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter.default(YDecimalFormat)
 
     val columnColors = listOf(Color(0xff6438a7), Color(0xff3490de), Color(0xff73e8dc))
-    val legendItemLabelComponent = rememberTextComponent(MaterialTheme.colorScheme.onBackground)
+    val legendItemLabelComponent = rememberTextComponent(MaterialTheme.colorScheme.onBackground, textSize = 12.sp)
     CartesianChartHost(
         chart =
             rememberCartesianChart(
@@ -351,14 +358,22 @@ fun SalesChart(
                         label = legendItemLabelComponent
                     ),
                 marker = rememberMarker(MarkerValueFormatter),
-                layerPadding = { cartesianLayerPadding(scalableStart = 16.dp, scalableEnd = 16.dp) },
+                layerPadding = {
+                    cartesianLayerPadding(
+                        scalableStart = 16.dp,
+                        scalableEnd = 16.dp
+                    )
+                },
                 legend =
                     rememberHorizontalLegend(
                         items = { extraStore ->
                             extraStore[LegendLabelKey].forEachIndexed { index, label ->
                                 add(
                                     LegendItem(
-                                        shapeComponent(fill(columnColors[index]), CorneredShape.Pill),
+                                        shapeComponent(
+                                            fill(columnColors[index]),
+                                            CorneredShape.Pill
+                                        ),
                                         legendItemLabelComponent,
                                         label,
                                     )
@@ -385,7 +400,7 @@ fun OrderChart(
     val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter.default(YDecimalFormat)
 
     val columnColors = listOf(Color(0xff6438a7), Color(0xff3490de), Color(0xff73e8dc))
-    val legendItemLabelComponent = rememberTextComponent(MaterialTheme.colorScheme.onBackground)
+    val legendItemLabelComponent = rememberTextComponent(color = MaterialTheme.colorScheme.onBackground, textSize = 12.sp)
     CartesianChartHost(
         chart =
             rememberCartesianChart(
@@ -408,17 +423,25 @@ fun OrderChart(
                 bottomAxis =
                     HorizontalAxis.rememberBottom(
                         itemPlacer = remember { HorizontalAxis.ItemPlacer.segmented() },
-                        label = legendItemLabelComponent
+                        label = legendItemLabelComponent,
                     ),
                 marker = rememberMarker(MarkerValueFormatter),
-                layerPadding = { cartesianLayerPadding(scalableStart = 16.dp, scalableEnd = 16.dp) },
+                layerPadding = {
+                    cartesianLayerPadding(
+                        scalableStart = 16.dp,
+                        scalableEnd = 16.dp
+                    )
+                },
                 legend =
                     rememberHorizontalLegend(
                         items = { extraStore ->
                             extraStore[LegendLabelKey].forEachIndexed { index, label ->
                                 add(
                                     LegendItem(
-                                        shapeComponent(fill(columnColors[index]), CorneredShape.Pill),
+                                        shapeComponent(
+                                            fill(columnColors[index]),
+                                            CorneredShape.Pill
+                                        ),
                                         legendItemLabelComponent,
                                         label,
                                     )
