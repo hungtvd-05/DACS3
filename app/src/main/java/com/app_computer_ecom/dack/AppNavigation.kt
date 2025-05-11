@@ -45,6 +45,7 @@ import com.app_computer_ecom.dack.screen.user.OrderStatusScreen
 import com.app_computer_ecom.dack.screen.user.OrderSuccessScreen
 import com.app_computer_ecom.dack.screen.user.ProductDetailsScreen
 import com.app_computer_ecom.dack.screen.user.RatingAndCommentScreen
+import com.app_computer_ecom.dack.screen.user.ReviewScreen
 import com.app_computer_ecom.dack.screen.user.SearchScreen
 import com.app_computer_ecom.dack.screen.user.TermsScreen
 import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
@@ -188,6 +189,10 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         composable("employee/orderdetail/id={orderId}") {
             var id = it.arguments?.getString("orderId").toString()
             EmployeeOrderDetailScreen(id)
+        }
+        composable("review/{productId}") {
+            val productId = it.arguments?.getString("productId").toString()
+            ReviewScreen(productId)
         }
     }
 

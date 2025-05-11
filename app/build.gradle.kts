@@ -80,11 +80,15 @@ dependencies {
 
 //    Room SQLite
     implementation(libs.androidx.room.runtime)
-    implementation(fileTree(mapOf(
-        "dir" to "/home/vien/AndroidStudioProjects/DACK/ZaloPayLib",
-        "include" to listOf("*.aar", "*.jar"),
-        "exclude" to listOf("")
-    )))
+    implementation(
+        fileTree(
+            mapOf(
+                "dir" to "../ZaloPayLib",
+                "include" to listOf("*.aar", "*.jar"),
+                "exclude" to listOf("")
+            )
+        )
+    )
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 

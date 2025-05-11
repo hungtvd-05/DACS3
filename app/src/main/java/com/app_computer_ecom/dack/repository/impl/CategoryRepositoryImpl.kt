@@ -27,10 +27,6 @@ class CategoryRepositoryImpl : CategoryRepository {
         }
     }
 
-    override suspend fun getCategorybyName(): CategoryModel {
-        TODO("Not yet implemented")
-    }
-
     override suspend fun getCategorybyId(categoryId: String): CategoryModel? {
         return try {
             val querySnapshot = dbCategory.document(categoryId).get().await()

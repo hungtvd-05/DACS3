@@ -11,6 +11,5 @@ interface CartRepository {
     suspend fun updateCart(context: Context, cart: CartModel)
     suspend fun deleteCart(context: Context, cart: CartModel)
     suspend fun deleteCartByPid(pid: String)
-    suspend fun totalPriceByUid(): Double
     suspend fun clearCart()
 }

@@ -3,7 +3,6 @@ package com.app_computer_ecom.dack.repository.impl
 import android.content.Context
 import com.app_computer_ecom.dack.AppUtil
 import com.app_computer_ecom.dack.GlobalDatabase
-import com.app_computer_ecom.dack.model.BrandModel
 import com.app_computer_ecom.dack.model.CartModel
 import com.app_computer_ecom.dack.model.PriceInfo
 import com.app_computer_ecom.dack.repository.CartRepository
@@ -111,9 +110,5 @@ class CartRepositoryImpl : CartRepository {
         for (document in querySnapshot.documents) {
             dbCart.document(document.id).delete()
         }
-    }
-
-    override suspend fun totalPriceByUid(): Double {
-        TODO("Not yet implemented")
     }
 }

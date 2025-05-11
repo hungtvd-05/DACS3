@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,6 +31,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Star
@@ -76,11 +78,13 @@ import com.app_computer_ecom.dack.model.PriceInfo
 import com.app_computer_ecom.dack.model.ProductModel
 import com.app_computer_ecom.dack.model.RatingModel
 import com.app_computer_ecom.dack.repository.GlobalRepository
+import com.app_computer_ecom.dack.ui.theme.ThemeManager
 import com.tbuonomo.viewpagerdotsindicator.compose.DotsIndicator
 import com.tbuonomo.viewpagerdotsindicator.compose.model.DotGraphic
 import com.tbuonomo.viewpagerdotsindicator.compose.type.ShiftIndicatorType
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
 import java.util.Locale
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -526,7 +530,9 @@ fun CommentSection(product: ProductModel) {
                     color = MaterialTheme.colorScheme.onBackground
                 )
             }
-            TextButton(onClick = {}, contentPadding = PaddingValues(0.dp)) {
+            TextButton(onClick = {
+                GlobalNavigation.navController.navigate("review/${product.id}")
+            }, contentPadding = PaddingValues(0.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text("Tất cả", fontSize = 10.sp, lineHeight = 12.sp)
                     Icon(
@@ -560,9 +566,13 @@ fun CommentSection(product: ProductModel) {
 fun CommentItem(
     ratingModel: RatingModel
 ) {
+
+    var showReply by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surface)
             .padding(16.dp)
     ) {
         Row(
@@ -636,6 +646,66 @@ fun CommentItem(
                         placeholder = painterResource(id = R.drawable.loading_svgrepo_com)
                     )
                 }
+            }
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                SimpleDateFormat("dd-MM-yyyy HH:mm").format(ratingModel.createdAt.toDate()),
+                fontSize = 8.sp,
+                lineHeight = 8.sp,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            if (ratingModel.commentModel.reply != "") {
+                TextButton(
+                    onClick = { showReply = !showReply },
+                    contentPadding = PaddingValues(0.dp),
+                    modifier = Modifier.height(IntrinsicSize.Min)
+                ) {
+                    Row {
+                        Text(
+                            text = "Phản hồi người bán",
+                            fontSize = 8.sp,
+                            lineHeight = 8.sp
+                        )
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowDown,
+                            contentDescription = "",
+                            modifier = Modifier.size(10.dp),
+                        )
+                    }
+                }
+            }
+        }
+        if (showReply) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(2.dp)
+                    .background(
+                        if (ThemeManager.isDarkTheme) {
+                            Color(0xFF1A1A1A)
+                        } else {
+                            Color(0xFFF3F0F0)
+                        }
+                    )
+                    .padding(8.dp)
+            ) {
+                Text(
+                    "Phản hồi của người bán",
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    ratingModel.commentModel.reply,
+                    fontSize = 10.sp,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             }
         }
     }
