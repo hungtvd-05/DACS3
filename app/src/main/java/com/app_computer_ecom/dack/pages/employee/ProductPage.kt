@@ -98,7 +98,9 @@ fun ProductPage() {
                         Items(
                             product = product,
                             onClick = {
-                                GlobalNavigation.navController.navigate("employee/editproduct/${product.id}")
+                                GlobalNavigation.navController.navigate("employee/editproduct/${product.id}") {
+                                    popUpTo(GlobalNavigation.navController.graph.startDestinationId) { inclusive = false }
+                                }
                             },
                             delete = {
                                 scope.launch {

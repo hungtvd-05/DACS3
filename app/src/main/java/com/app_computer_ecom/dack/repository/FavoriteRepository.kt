@@ -9,4 +9,5 @@ interface FavoriteRepository {
     suspend fun isFavorite(pid: String): Boolean
     suspend fun addToFavorite(context: Context, productId: String)
     suspend fun deleteFavorite(context: Context, productId: String)
+    suspend fun deleteFavoriteByPid(pid: String)
 }

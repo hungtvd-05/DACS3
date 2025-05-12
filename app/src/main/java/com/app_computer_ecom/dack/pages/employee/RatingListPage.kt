@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,10 +20,12 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,7 +47,9 @@ import com.app_computer_ecom.dack.LoadingScreen
 import com.app_computer_ecom.dack.R
 import com.app_computer_ecom.dack.model.RatingModel
 import com.app_computer_ecom.dack.repository.GlobalRepository
+import com.app_computer_ecom.dack.ui.theme.ThemeManager
 import kotlinx.coroutines.flow.collectLatest
+import java.text.SimpleDateFormat
 
 @Composable
 fun RatingListPage(modifier: Modifier = Modifier) {
@@ -87,6 +93,7 @@ fun RatingListPage(modifier: Modifier = Modifier) {
 fun CommentItem(
     ratingModel: RatingModel
 ) {
+    var showReply by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -170,6 +177,66 @@ fun CommentItem(
                         placeholder = painterResource(id = R.drawable.loading_svgrepo_com)
                     )
                 }
+            }
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                SimpleDateFormat("dd-MM-yyyy HH:mm").format(ratingModel.createdAt.toDate()),
+                fontSize = 8.sp,
+                lineHeight = 8.sp,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            if (ratingModel.commentModel.reply != "") {
+                TextButton(
+                    onClick = { showReply = !showReply },
+                    contentPadding = PaddingValues(0.dp),
+                    modifier = Modifier.height(IntrinsicSize.Min)
+                ) {
+                    Row {
+                        Text(
+                            text = "Phản hồi người bán",
+                            fontSize = 8.sp,
+                            lineHeight = 8.sp
+                        )
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowDown,
+                            contentDescription = "",
+                            modifier = Modifier.size(10.dp),
+                        )
+                    }
+                }
+            }
+        }
+        if (showReply) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(2.dp)
+                    .background(
+                        if (ThemeManager.isDarkTheme) {
+                            Color(0xFF1A1A1A)
+                        } else {
+                            Color(0xFFF3F0F0)
+                        }
+                    )
+                    .padding(8.dp)
+            ) {
+                Text(
+                    "Phản hồi của người bán",
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    ratingModel.commentModel.reply,
+                    fontSize = 10.sp,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             }
         }
     }

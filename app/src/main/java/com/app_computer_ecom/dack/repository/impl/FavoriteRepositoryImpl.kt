@@ -71,4 +71,13 @@ class FavoriteRepositoryImpl : FavoriteRepository {
         }
     }
 
+    override suspend fun deleteFavoriteByPid(pid: String) {
+        val querySnapshot = dbFavorite
+            .whereEqualTo("pid", pid)
+            .get()
+            .await()
+        for (document in querySnapshot.documents) {
+            dbFavorite.document(document.id).delete()
+        }
+    }
 }

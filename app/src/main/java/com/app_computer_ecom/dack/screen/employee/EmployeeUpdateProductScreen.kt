@@ -77,7 +77,7 @@ import java.util.UUID
 @Composable
 fun EmployeeUpdateProductScreen(navigaController: NavHostController, productId: String) {
     BackHandler(enabled = true) {
-        GlobalNavigation.navController.navigate("admin/1") {
+        GlobalNavigation.navController.navigate("employee/0") {
             popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
                 inclusive = false
             }
@@ -147,7 +147,13 @@ fun EmployeeUpdateProductScreen(navigaController: NavHostController, productId: 
                 .fillMaxWidth()
         ) {
             IconButton(
-                onClick = { navigaController.navigate("admin/1") },
+                onClick = {
+                    navigaController.navigate("employee/0") {
+                        popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                            inclusive = false
+                        }
+                    }
+                },
                 modifier = Modifier.align(Alignment.CenterStart)
             ) {
                 Icon(
@@ -269,7 +275,11 @@ fun EmployeeUpdateProductScreen(navigaController: NavHostController, productId: 
                         Spacer(modifier = Modifier.weight(1f))
                         androidx.compose.material.IconButton(
                             onClick = {
-                                productPrices.add(PriceInfo.create(id = UUID.randomUUID().toString().replace("-", "").take(6)))
+                                productPrices.add(
+                                    PriceInfo.create(
+                                        id = UUID.randomUUID().toString().replace("-", "").take(6)
+                                    )
+                                )
                             },
                         ) {
                             Icon(
@@ -515,7 +525,9 @@ fun EmployeeUpdateProductScreen(navigaController: NavHostController, productId: 
                                             product?.let { productRepository.updateProduct(it) }
 
                                             withContext(Dispatchers.Main) {
-                                                navigaController.navigate("admin/1")
+                                                navigaController.navigate("employee/0") {
+                                                    popUpTo(GlobalNavigation.navController.graph.startDestinationId) { inclusive = false }
+                                                }
                                                 isLoading = false
                                             }
 
@@ -550,7 +562,11 @@ fun EmployeeUpdateProductScreen(navigaController: NavHostController, productId: 
                             isLoading = true
                             scope.launch {
                                 productRepository.deleteProduct(product!!)
-                                GlobalNavigation.navController.navigate("admin/1")
+                                GlobalNavigation.navController.navigate("employee/0") {
+                                    popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                                        inclusive = false
+                                    }
+                                }
                             }
                         },
                         modifier = Modifier.fillMaxWidth(),

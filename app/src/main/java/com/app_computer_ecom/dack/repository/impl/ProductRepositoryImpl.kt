@@ -25,11 +25,13 @@ class ProductRepositoryImpl : ProductRepository {
 
     override suspend fun showHiddenProduct(product: ProductModel) {
         GlobalRepository.cartRepository.deleteCartByPid(product.id)
+        GlobalRepository.favoriteRepository.deleteFavoriteByPid(product.id)
         dbProduct.document(product.id).set(product.copy(show = !product.show))
     }
 
     override suspend fun deleteProduct(product: ProductModel) {
         GlobalRepository.cartRepository.deleteCartByPid(product.id)
+        GlobalRepository.favoriteRepository.deleteFavoriteByPid(product.id)
         dbProduct.document(product.id).delete()
     }
 

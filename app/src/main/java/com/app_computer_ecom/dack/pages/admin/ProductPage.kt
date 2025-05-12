@@ -289,6 +289,7 @@ fun Items(
                 text = { Text("Bạn có chắc chắn muốn xóa sản phẩm này?", fontSize = 12.sp) },
                 confirmButton = {
                     TextButton(onClick = {
+                        showDialog = false
                         delete()
                     }) {
                         Text("Xóa", fontSize = 12.sp)
