@@ -155,7 +155,7 @@ class AuthViewModel(private val application: Application) : AndroidViewModel(app
         val userRef = firestore.collection("users").document(firebaseUser.uid)
         val document = userRef.get().await()
         if (!document.exists()) {
-            val newUser = UserModel(
+            val newUser = UserModel.create(
                 name = firebaseUser.displayName ?: "",
                 username = firebaseUser.email ?: "",
                 email = firebaseUser.email ?: "",
@@ -207,7 +207,7 @@ class AuthViewModel(private val application: Application) : AndroidViewModel(app
                 val userId = result.user?.uid ?: throw Exception("Lỗi tạo tài khoản")
 
                 auth.currentUser?.sendEmailVerification()?.await()
-                val userModel = UserModel(
+                val userModel = UserModel.create(
                     name,
                     username,
                     email = email,

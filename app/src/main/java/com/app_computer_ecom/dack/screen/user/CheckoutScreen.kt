@@ -331,7 +331,7 @@ fun CheckoutScreen() {
                                                                 val newProductList = mutableListOf<ProductInfoModel>()
                                                                 listProduct.forEachIndexed { index, it ->
                                                                     newProductList.add(
-                                                                        ProductInfoModel(
+                                                                        ProductInfoModel.create(
                                                                             id = it.id,
                                                                             name = it.name,
                                                                             imageUrl = it.imageUrls.firstOrNull()?.imageUrl ?: "",
@@ -341,7 +341,7 @@ fun CheckoutScreen() {
                                                                     )
                                                                 }
                                                                 GlobalRepository.orderRepository.addOrder(
-                                                                    OrderModel(
+                                                                    OrderModel.create(
                                                                         uid = address!!.uid,
                                                                         address = address!!,
                                                                         listProduct = newProductList,
@@ -400,7 +400,7 @@ fun CheckoutScreen() {
                                         val newProductList = mutableListOf<ProductInfoModel>()
                                         listProduct.forEachIndexed { index, it ->
                                             newProductList.add(
-                                                ProductInfoModel(
+                                                ProductInfoModel.create(
                                                     id = it.id,
                                                     name = it.name,
                                                     imageUrl = it.imageUrls.firstOrNull()!!.imageUrl,
@@ -410,7 +410,7 @@ fun CheckoutScreen() {
                                             )
                                         }
                                         GlobalRepository.orderRepository.addOrder(
-                                            OrderModel(
+                                            OrderModel.create(
                                                 uid = address!!.uid,
                                                 address = address!!,
                                                 listProduct = newProductList,

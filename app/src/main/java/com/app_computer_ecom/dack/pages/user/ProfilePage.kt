@@ -149,22 +149,22 @@ fun OrderStatusSection(
 ) {
 
     val statusList = listOf(
-        Status(
+        Status.create(
             id = 0,
             title = "Chờ xác nhận",
             idPainterResource = R.drawable.outline_wallet_24
         ),
-        Status(
+        Status.create(
             id = 1,
             title = "Chờ lấy hàng",
             idPainterResource = R.drawable.outline_package_2_24
         ),
-        Status(
+        Status.create(
             id = 2,
             title = "Chờ giao hàng",
             idPainterResource = R.drawable.outline_local_shipping_24
         ),
-        Status(
+        Status.create(
             id = 4,
             title = "Đã huỷ",
             idPainterResource = R.drawable.outline_cancel_24

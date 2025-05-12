@@ -207,7 +207,7 @@ fun BrandPage() {
                                                 val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
                                                 val result = ImageCloudinary.uploadImage(context, bitmap)
                                                 result.onSuccess { url ->
-                                                    brandRepository.updateBrand(BrandModel(
+                                                    brandRepository.updateBrand(BrandModel.create(
                                                         id = brandId.value,
                                                         name = brandName.value,
                                                         imageUrl = url,
@@ -217,7 +217,7 @@ fun BrandPage() {
                                                     Log.e("Cloudinary", "Không thể tải ảnh: ${exception.message}")
                                                 }
                                             } else {
-                                                brandRepository.updateBrand(BrandModel(
+                                                brandRepository.updateBrand(BrandModel.create(
                                                     id = brandId.value,
                                                     name = brandName.value,
                                                     imageUrl = imageUrl.toString(),
@@ -259,7 +259,7 @@ fun BrandPage() {
                                             val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
                                             val result = ImageCloudinary.uploadImage(context, bitmap)
                                             result.onSuccess { url ->
-                                                brandRepository.addBrand(BrandModel(
+                                                brandRepository.addBrand(BrandModel.create(
                                                     name = brandName.value,
                                                     imageUrl = url,
                                                     enable = true

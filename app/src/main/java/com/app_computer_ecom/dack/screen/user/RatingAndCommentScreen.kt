@@ -303,7 +303,7 @@ fun RatingAndCommentScreen(orderId: String, selectedProduct: Int) {
                                                     imageUrls.add(url)
                                                 }
                                             }
-                                            var ratingModel = RatingModel(
+                                            var ratingModel = RatingModel.create(
                                                 pid = productInfoModel!!.id,
                                                 pname = productInfoModel!!.name,
                                                 pimageUrl = productInfoModel!!.imageUrl,
@@ -314,8 +314,8 @@ fun RatingAndCommentScreen(orderId: String, selectedProduct: Int) {
                                                 avatar = GLobalAuthViewModel.getAuthViewModel().userModel!!.avatar,
                                                 oid = order!!.id,
                                                 rating = rating,
-                                                commentModel = CommentModel(
-                                                    content = comment,
+                                                commentModel = CommentModel.create(
+                                                    content = comment.trim(),
                                                     imageUrls = imageUrls
                                                 )
                                             )

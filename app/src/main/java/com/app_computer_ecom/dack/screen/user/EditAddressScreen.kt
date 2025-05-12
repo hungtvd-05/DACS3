@@ -345,7 +345,7 @@ fun EditAddressScreen(addressId: String) {
                             isLoading = true
                             scope.launch {
                                 GlobalRepository.addressRepository.updateAddress(
-                                    AddressModel(
+                                    AddressModel.create(
                                         id = address!!.id,
                                         uid = address!!.uid,
                                         name = name.trim(),

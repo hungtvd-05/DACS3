@@ -269,7 +269,7 @@ fun EmployeeUpdateProductScreen(navigaController: NavHostController, productId: 
                         Spacer(modifier = Modifier.weight(1f))
                         androidx.compose.material.IconButton(
                             onClick = {
-                                productPrices.add(PriceInfo(id = UUID.randomUUID().toString().replace("-", "").take(6)))
+                                productPrices.add(PriceInfo.create(id = UUID.randomUUID().toString().replace("-", "").take(6)))
                             },
                         ) {
                             Icon(

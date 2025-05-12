@@ -336,7 +336,7 @@ fun AddAddressScreen() {
                             isLoading = true
                             scope.launch {
                                 GlobalRepository.addressRepository.addAddress(
-                                    AddressModel(
+                                    AddressModel.create(
                                         uid = FirebaseAuth.getInstance().currentUser?.uid.toString(),
                                         name = name.trim(),
                                         phoneNum = phoneNum,

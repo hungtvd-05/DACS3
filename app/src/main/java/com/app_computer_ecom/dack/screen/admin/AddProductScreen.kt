@@ -122,7 +122,7 @@ fun AddProductScreen() {
 
 
     if (productPrices.isEmpty()) {
-        productPrices.add(PriceInfo(id = UUID.randomUUID().toString().replace("-", "").take(6)))
+        productPrices.add(PriceInfo.create(id = UUID.randomUUID().toString().replace("-", "").take(6)))
     }
 
     val launcher = rememberLauncherForActivityResult(
@@ -266,7 +266,7 @@ fun AddProductScreen() {
                         Spacer(modifier = Modifier.weight(1f))
                         IconButton(
                             onClick = {
-                                productPrices.add(PriceInfo(id = UUID.randomUUID().toString().replace("-", "").take(6)))
+                                productPrices.add(PriceInfo.create(id = UUID.randomUUID().toString().replace("-", "").take(6)))
                             },
                         ) {
                             Icon(
@@ -487,7 +487,7 @@ fun AddProductScreen() {
                                                 }
                                             }
 
-                                            var product = ProductModel(
+                                            var product = ProductModel.create(
                                                 name = productName.value,
                                                 categoryId = productCategory.value,
                                                 brandId = productBrand.value,

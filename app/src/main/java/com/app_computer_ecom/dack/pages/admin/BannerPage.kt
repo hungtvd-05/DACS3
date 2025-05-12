@@ -72,7 +72,7 @@ fun BannerPage(modifier: Modifier = Modifier) {
                         val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
                         val result = ImageCloudinary.uploadImage(context, bitmap)
                         result.onSuccess { url ->
-                            bannerRepository.addBanner(BannerModel(imageUrl = url))
+                            bannerRepository.addBanner(BannerModel.create(imageUrl = url))
                         }.onFailure { exception ->
                             Log.e("Cloudinary", "Upload failed for one image: ${exception.message}")
                         }

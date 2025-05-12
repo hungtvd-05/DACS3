@@ -141,7 +141,7 @@ class OrderRepositoryImpl : OrderRepository {
                 val doanhthudukiendatthem = orders.sumOf { it.totalPrice.toDouble() / 1000000 } - doanhthudatduoc
                 val donhanhhoanthanh = orders.filter { it.status == 3 }.size.toDouble()
                 val donhangdangcho = orders.size.toDouble() - donhanhhoanthanh
-                DailySales(
+                DailySales.create(
                     date,
                     donhangdangcho,
                     donhanhhoanthanh,
@@ -156,7 +156,7 @@ class OrderRepositoryImpl : OrderRepository {
             calendar.add(Calendar.DAY_OF_MONTH, i)
             val dateStr = formatter.format(calendar.time)
             val dailySales = salesByDate.find { it.date == dateStr }
-                ?: DailySales(
+                ?: DailySales.create(
                     dateStr,
                     totalOrders = 0.0,
                     totalOrdersCompleted = 0.0,
@@ -191,7 +191,7 @@ class OrderRepositoryImpl : OrderRepository {
             val doanhthudukiendatthem = orders.sumOf { it.totalPrice.toDouble() / 1000000 } - doanhthudatduoc
             val donhanhhoanthanh = orders.filter { it.status == 3 }.size.toDouble()
             val donhangdangcho = orders.size.toDouble() - donhanhhoanthanh
-            MonthlySales(
+            MonthlySales.create(
                 month = month,
                 totalOrders = donhangdangcho,
                 totalOrdersCompleted = donhanhhoanthanh,
@@ -206,7 +206,7 @@ class OrderRepositoryImpl : OrderRepository {
             calendar.add(Calendar.MONTH, i)
             val monthStr = formatter.format(calendar.time)
             val monthlySales = salesByMonth.find { it.month == monthStr }
-                ?: MonthlySales(
+                ?: MonthlySales.create(
                     month = monthStr,
                     totalOrders = 0.0,
                     totalOrdersCompleted = 0.0,
@@ -223,7 +223,7 @@ class OrderRepositoryImpl : OrderRepository {
         try {
             var productList = GlobalRepository.productRepository.getProducts()
             val productSoldInfoList = productList.map {
-                ProductSoldInfo(
+                ProductSoldInfo.create(
                     id = it.id,
                     name = it.name,
                     totalSold = it.prices.sumOf { priceInfo -> priceInfo.sold },

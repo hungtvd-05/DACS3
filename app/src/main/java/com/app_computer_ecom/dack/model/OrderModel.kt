@@ -2,7 +2,7 @@ package com.app_computer_ecom.dack.model
 
 import com.google.firebase.Timestamp
 
-data class OrderModel(
+data class OrderModel private constructor(
     val id: String = "",
     val uid: String = "",
     val address: AddressModel = AddressModel(),
@@ -12,4 +12,32 @@ data class OrderModel(
     val createdAt: Timestamp = Timestamp.now(),
     val finishedAt: Timestamp = Timestamp.now(),
     var status: Int = 0,
-)
+) {
+    companion object {
+        fun create(
+            id: String = "",
+            uid: String = "",
+            address: AddressModel = AddressModel(),
+            listProduct: List<ProductInfoModel> = emptyList(),
+            totalPrice: Int = 0,
+            paymentMethod: String = "",
+            createdAt: Timestamp = Timestamp.now(),
+            finishedAt: Timestamp = Timestamp.now(),
+            status: Int = 0,
+        ): OrderModel {
+            return OrderModel(
+                id = id,
+                uid = uid,
+                address = address,
+                listProduct = listProduct,
+                totalPrice = totalPrice,
+                paymentMethod = paymentMethod,
+                createdAt = createdAt,
+                finishedAt = finishedAt,
+                status = status,
+            )
+        }
+    }
+
+    constructor(): this("", "", AddressModel(), emptyList(), 0, "", Timestamp.now(), Timestamp.now(), 0)
+}

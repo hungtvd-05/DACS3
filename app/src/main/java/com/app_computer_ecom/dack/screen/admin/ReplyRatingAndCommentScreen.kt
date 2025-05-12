@@ -272,13 +272,13 @@ fun ReplyRatingAndCommentScreen(ratingId: String) {
                         ) {
                             Button(
                                 onClick = {
-                                    if (reply.isEmpty()) {
+                                    if (reply.trim().isEmpty()) {
                                         AppUtil.showToast(context, "Bạn chưa phản hồi đánh giá !!!")
                                     } else {
                                         isLoading = true
                                         scope.launch {
                                             try {
-                                                var commentModel = ratingModel?.commentModel?.copy(reply = reply)
+                                                var commentModel = ratingModel?.commentModel?.copy(reply = reply.trim())
                                                 GlobalRepository.ratingAndCommentRepository.replyRatingAndComment(ratingModel!!.id, commentModel!!)
                                             } catch (e: Exception) {
 

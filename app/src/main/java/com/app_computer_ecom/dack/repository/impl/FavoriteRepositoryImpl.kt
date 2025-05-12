@@ -46,7 +46,7 @@ class FavoriteRepositoryImpl : FavoriteRepository {
 
     override suspend fun addToFavorite(context: Context, productId: String) {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        dbFavorite.add(FavoriteModel(uid = uid, pid = productId))
+        dbFavorite.add(FavoriteModel.create(uid = uid, pid = productId))
         AppUtil.showToast(context, "Thêm vào danh sách yêu thích thành công")
     }
 

@@ -212,7 +212,7 @@ fun CategoryPage() {
                                                 val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
                                                 val result = ImageCloudinary.uploadImage(context, bitmap)
                                                 result.onSuccess { url ->
-                                                    categoryRepository.updateCategory(CategoryModel(
+                                                    categoryRepository.updateCategory(CategoryModel.create(
                                                         id = categoryId.value,
                                                         name = categoryName.value,
                                                         imageUrl = url,
@@ -222,7 +222,7 @@ fun CategoryPage() {
                                                     Log.e("Cloudinary", "Upload failed for one image: ${exception.message}")
                                                 }
                                             } else {
-                                                categoryRepository.updateCategory(CategoryModel(
+                                                categoryRepository.updateCategory(CategoryModel.create(
                                                     id = categoryId.value,
                                                     name = categoryName.value,
                                                     imageUrl = imageUrl.toString(),
@@ -264,7 +264,7 @@ fun CategoryPage() {
                                             val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
                                             val result = ImageCloudinary.uploadImage(context, bitmap)
                                             result.onSuccess { url ->
-                                                categoryRepository.addCategory(CategoryModel(
+                                                categoryRepository.addCategory(CategoryModel.create(
                                                     name = categoryName.value,
                                                     imageUrl = url,
                                                     enable = true

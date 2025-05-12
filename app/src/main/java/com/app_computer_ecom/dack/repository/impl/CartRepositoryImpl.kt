@@ -61,7 +61,7 @@ class CartRepositoryImpl : CartRepository {
             dbCart.document(cart.id).set(cart.copy(quantity = cart.quantity + 1))
         } else {
             dbCart.add(
-                CartModel(
+                CartModel.create(
                     uid = FirebaseAuth.getInstance().currentUser?.uid!!,
                     pid = productId,
                     selectType = selectType,

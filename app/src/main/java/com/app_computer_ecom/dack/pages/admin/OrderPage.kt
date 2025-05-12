@@ -70,13 +70,10 @@ fun OrderPage(modifier: Modifier = Modifier) {
     var listStatus = listOf("Chờ xác nhận", "Chờ lấy hàng", "Chờ giao hàng", "Đã giao", "Đã hủy")
 
     LaunchedEffect(Unit) {
-//        orderList = GlobalRepository.orderRepository.getOrdersOnAdmin()
         GlobalRepository.orderRepository.getOrdersOnAdmin().collectLatest { orders ->
             orderList = orders
             isLoading = false
-//            errorMessage = null
         }
-//        isLoading = false
     }
 
     Column(
@@ -336,6 +333,7 @@ fun ItemOrder(order: OrderModel, listStatus: List<String>) {
                 Text(text = "Cập nhật", color = Color.White, fontSize = 12.sp)
             }
         }
+
     }
 }
 
