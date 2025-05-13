@@ -29,6 +29,7 @@ class MainActivity : ComponentActivity() {
         GLobalAuthViewModel.initialize(application)
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
+        
 
         ZaloPaySDK.init(553, Environment.SANDBOX)
         setContent {
