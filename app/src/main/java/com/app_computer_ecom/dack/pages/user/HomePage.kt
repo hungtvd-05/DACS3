@@ -238,7 +238,7 @@ fun HomePage(modifier: Modifier = Modifier) {
                 }
                 productsByBrand.forEachIndexed { index, product ->
                     item {
-                        ProductItem(product = product)
+                        ProductItem(product = product, lastIndexPage = 0)
                     }
                 }
             }
@@ -261,7 +261,7 @@ fun HomePage(modifier: Modifier = Modifier) {
             } else {
                 products.forEachIndexed { index, product ->
                     item {
-                        ProductItem(product = product)
+                        ProductItem(product = product, lastIndexPage = 0)
                     }
                 }
             }

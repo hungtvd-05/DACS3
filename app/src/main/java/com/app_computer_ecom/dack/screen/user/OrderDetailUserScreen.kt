@@ -319,7 +319,7 @@ fun ProductItemOrder(
                 .padding(bottom = 8.dp)
                 .clickable(
                     onClick = {
-                        GlobalNavigation.navController.navigate("product-details/productId=${productInfoModel.id}")
+                        GlobalNavigation.navController.navigate("product-details/productId=${productInfoModel.id}&lastIndexPage=${-1}")
                     }
                 )
         ) {

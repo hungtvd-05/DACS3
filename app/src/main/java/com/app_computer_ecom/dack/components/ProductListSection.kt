@@ -120,7 +120,7 @@ fun ProductListSection(
                                     .fillMaxHeight()
                                     .padding(4.dp)
                             ) {
-                                ProductItem(product)
+//                                ProductItem(product)
                             }
                         }
                         if (it.size == 1) {

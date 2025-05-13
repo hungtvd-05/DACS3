@@ -1,5 +1,6 @@
 package com.app_computer_ecom.dack.screen.user
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -89,7 +90,20 @@ import java.util.Locale
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun ProductDetailsScreen(productId: String) {
+fun ProductDetailsScreen(productId: String, lastIndexPage: Int) {
+    BackHandler(enabled = true) {
+        if (lastIndexPage == -1) {
+            GlobalNavigation.navController.popBackStack()
+        } else {
+            GlobalNavigation.navController.navigate("home/${lastIndexPage}") {
+                popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                    inclusive = false
+                }
+                launchSingleTop = true
+            }
+        }
+    }
+
     var product by remember { mutableStateOf<ProductModel?>(null) }
     var category by remember { mutableStateOf<CategoryModel?>(null) }
     var brand by remember { mutableStateOf<BrandModel?>(null) }
@@ -459,7 +473,7 @@ fun ProductDetailsScreen(productId: String) {
                     ortherProducts.forEach { product ->
                         if (product.id != productId) {
                             item {
-                                ProductItem(product = product)
+                                ProductItem(product = product, lastIndexPage = -1)
                             }
                         }
                     }

@@ -177,7 +177,7 @@ fun ProductHistoryList(productModels: List<ProductModel>, onClearProductHistory:
                         modifier = Modifier
                             .weight(1f)
                     ) {
-                        ProductItem(product)
+                        ProductItem(product, lastIndexPage = -1)
                     }
                 }
 
@@ -201,7 +201,9 @@ fun SearchBar(
     onSearch: () -> Unit,
     isLoadingSearch: Boolean
 ) {
-    Column {
+    Column(
+        modifier = Modifier.background(MaterialTheme.colorScheme.background)
+    ) {
         Spacer(modifier = Modifier.height(8.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically,

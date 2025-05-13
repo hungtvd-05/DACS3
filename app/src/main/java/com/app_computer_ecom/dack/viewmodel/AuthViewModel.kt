@@ -12,10 +12,14 @@ import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.app_computer_ecom.dack.AppUtil
 import com.app_computer_ecom.dack.model.UserModel
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.Firebase
+import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
@@ -62,6 +66,49 @@ class AuthViewModel(private val application: Application) : AndroidViewModel(app
                 }
             } catch (e: Exception) {
                 onResult(false, e.localizedMessage)
+            }
+        }
+    }
+
+    fun changePassword(
+        currentPassword: String,
+        newPassword1: String,
+        newPassword2: String,
+        context: Context,
+        onResult: (Boolean, String?) -> Unit
+    ) {
+        if (currentPassword.isEmpty()) {
+            AppUtil.showToast(context, "Vui lòng nhập mật khẩu hiện tại")
+        } else if (newPassword1.isEmpty()) {
+            AppUtil.showToast(context, "Vui lòng nhập mật khẩu mới")
+        } else if (newPassword1 != newPassword2) {
+            AppUtil.showToast(context, "Mật khẩu mới không khớp")
+        } else if (currentPassword == newPassword2) {
+            AppUtil.showToast(context, "Mật khẩu mới không được trùng với mật khẩu hiện tại")
+        } else {
+            viewModelScope.launch {
+                try {
+                    // Xác thực lại người dùng với mật khẩu hiện tại
+                    val credential = EmailAuthProvider.getCredential(user!!.email!!, currentPassword)
+                    user!!.reauthenticate(credential).await()
+
+                    // Đổi mật khẩu
+                    user!!.updatePassword(newPassword1).await()
+                    AppUtil.showToast(context, "Đổi mật khẩu thành công")
+                    onResult(true, "Đổi mật khẩu thành công.")
+                } catch (e: Exception) {
+                    when (e) {
+                        is FirebaseAuthWeakPasswordException -> {
+                            onResult(false, "Mật khẩu mới quá yếu. Vui lòng chọn mật khẩu mạnh hơn.")
+                        }
+                        is FirebaseAuthInvalidCredentialsException -> {
+                            onResult(false, "Mật khẩu hiện tại không đúng.")
+                        }
+                        else -> {
+                            onResult(false, e.localizedMessage ?: "Lỗi khi đổi mật khẩu.")
+                        }
+                    }
+                }
             }
         }
     }

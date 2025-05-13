@@ -91,7 +91,7 @@ fun FavoritePage(modifier: Modifier = Modifier) {
 
                 }
                 items(productList.size) {
-                    ProductItem(product = productList[it])
+                    ProductItem(product = productList[it], lastIndexPage = 1)
                 }
                 item(span = { GridItemSpan(2) }) {
 

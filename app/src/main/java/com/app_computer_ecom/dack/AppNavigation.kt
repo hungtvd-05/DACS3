@@ -110,9 +110,10 @@ fun AppNavigation(modifier: Modifier = Modifier) {
             var searchQuery = it.arguments?.getString("searchQuery").toString()
             ListProductScreen(categoryId = categoryId, brandId = brandId, searchQuery = searchQuery)
         }
-        composable("product-details/productId={productId}") {
+        composable("product-details/productId={productId}&lastIndexPage={lastIndexPage}") {
             var productId = it.arguments?.getString("productId").toString()
-            ProductDetailsScreen(productId = productId)
+            var lastIndexPage = it.arguments?.getString("lastIndexPage").toString()
+            ProductDetailsScreen(productId = productId, lastIndexPage.toInt())
         }
         composable("search") {
             SearchScreen(modifier = modifier)

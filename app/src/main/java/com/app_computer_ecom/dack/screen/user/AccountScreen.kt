@@ -287,6 +287,8 @@ fun ChangePasswordSection() {
 
     val focusManager = LocalFocusManager.current
 
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -386,7 +388,19 @@ fun ChangePasswordSection() {
         Button(
             onClick = {
                 focusManager.clearFocus()
-                println("Xác nhận đổi mật khẩu")
+                GLobalAuthViewModel.getAuthViewModel().changePassword(
+                    currentPassword,
+                    newPassword,
+                    confirmPassword,
+                    context,
+                ) { success, message ->
+                    if (success) {
+                        currentPassword = ""
+                        newPassword = ""
+                        confirmPassword = ""
+                        GlobalNavigation.navController.popBackStack()
+                    }
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()

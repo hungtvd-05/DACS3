@@ -41,7 +41,7 @@ import java.text.NumberFormat
 import java.util.Locale
 
 @Composable
-fun ProductItem(product: ProductModel) {
+fun ProductItem(product: ProductModel, lastIndexPage: Int) {
 
     val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
     var minPrice by remember { mutableStateOf(0) }
@@ -58,7 +58,9 @@ fun ProductItem(product: ProductModel) {
 
     Card(
         onClick = {
-            GlobalNavigation.navController.navigate("product-details/productId=${product.id}")
+            GlobalNavigation.navController.navigate("product-details/productId=${product.id}&lastIndexPage=${lastIndexPage}") {
+                popUpTo(GlobalNavigation.navController.graph.startDestinationId) { inclusive = false }
+            }
         },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
