@@ -14,7 +14,9 @@ interface ProductRepository {
         brandIds: List<String> = emptyList<String>(),
         minPrice: Int = 0,
         maxPrice: Int = Int.MAX_VALUE,
-        limit: Int = Int.MAX_VALUE
+        limit: Int = Int.MAX_VALUE,
+        rating: Int = 0,
+        isEnable: Int = 1
     ): List<ProductModel>
 
     suspend fun getProductById(productId: String): ProductModel?
@@ -24,6 +26,8 @@ interface ProductRepository {
         brandIds: List<String> = emptyList<String>(),
         minPrice: Int = 0,
         maxPrice: Int = Int.MAX_VALUE,
-        limit: Long = Long.MAX_VALUE
+        limit: Int = Int.MAX_VALUE,
+        rating: Int = 0,
+        isEnable: Int = 1
     ): List<ProductModel>
 }

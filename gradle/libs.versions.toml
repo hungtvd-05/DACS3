@@ -1,4 +1,6 @@
 [versions]
+androidActivationVersion = "1.6.7"
+androidMail = "1.6.7"
 converterGsonVersion = "2.11.0"
 datastorePreferencesVersion = "1.1.6"
 vico = "2.1.2"
@@ -44,6 +46,7 @@ roomRuntimeVersion = "2.7.0"
 
 [libraries]
 algolia-algoliasearch-client-kotlin = { module = "com.algolia:algoliasearch-client-kotlin", version.ref = "algoliasearchClientKotlinVersion" }
+android-activation = { module = "com.sun.mail:android-activation", version.ref = "androidActivationVersion" }
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferencesVersion" }
@@ -78,6 +81,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktorClientAndroid" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktorClientCio" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktorClientOkhttp" }
+mail-android-mail = { module = "com.sun.mail:android-mail", version.ref = "androidMail" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }

@@ -49,8 +49,8 @@ fun ProductListSection(
     LaunchedEffect(Unit) {
         products = GlobalRepository.productRepository.getProductsWithFilter(
             searchQuery = "",
-            brandIds = if (!brandId.isNullOrEmpty()) listOf(brandId) else emptyList(),
             categoryIds = if (!categoryId.isNullOrEmpty()) listOf(categoryId) else emptyList(),
+            brandIds = if (!brandId.isNullOrEmpty()) listOf(brandId) else emptyList(),
             limit = 8
         )
     }

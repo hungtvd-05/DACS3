@@ -85,30 +85,56 @@ class ProductRepositoryImpl : ProductRepository {
         brandIds: List<String>,
         minPrice: Int,
         maxPrice: Int,
-        limit: Long
+        limit: Int,
+        rating: Int,
+        isEnable: Int
     ): List<ProductModel> {
         return try {
-            val querySnapshot =
-                dbProduct.orderBy("createdAt", Query.Direction.DESCENDING).limit(limit).get()
-                    .await()
-            if (querySnapshot.isEmpty) {
-                emptyList()
-            } else {
-                querySnapshot.documents.mapNotNull { document ->
-                    document.toObject(ProductModel::class.java)?.copy(id = document.id)?.takeIf {
-                        it.show
-                    }.takeIf {
-                        categoryIds.isEmpty() || categoryIds.contains(it?.categoryId)
-                    }.takeIf {
-                        brandIds.isEmpty() || brandIds.contains(it?.brandId)
-                    }?.takeIf {
-                        it.prices.any { priceInfo ->
+//            val querySnapshot =
+//                dbProduct.orderBy("createdAt", Query.Direction.DESCENDING).limit(limit).get()
+//                    .await()
+//            if (querySnapshot.isEmpty) {
+//                emptyList()
+//            } else {
+//                querySnapshot.documents.mapNotNull { document ->
+//                    document.toObject(ProductModel::class.java)?.copy(id = document.id)?.takeIf {
+//                        it.show
+//                    }.takeIf {
+//                        categoryIds.isEmpty() || categoryIds.contains(it?.categoryId)
+//                    }.takeIf {
+//                        brandIds.isEmpty() || brandIds.contains(it?.brandId)
+//                    }?.takeIf {
+//                        it.prices.any { priceInfo ->
+//                            val price = (priceInfo.price as? Number)?.toInt() ?: 0
+//                            price in minPrice..maxPrice
+//                        }
+//                    }
+//                }
+//            }
+            val querySnapshot = dbProduct
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .get()
+                .await()
+
+            cachedProducts = querySnapshot.documents.mapNotNull { document ->
+                document.toObject(ProductModel::class.java)
+                    ?.copy(id = document.id)
+            }
+
+            val filteredProducts = cachedProducts.orEmpty().filter { product ->
+                ((product.show && isEnable == 1) || (!product.show && isEnable == 0) || isEnable == -1) &&
+                        ((rating == 0) || (product.rating >= rating)) &&
+                        (categoryIds.isEmpty() || categoryIds.contains(product.categoryId)) &&
+                        (brandIds.isEmpty() || brandIds.contains(product.brandId)) &&
+                        (product.prices.any { priceInfo ->
                             val price = (priceInfo.price as? Number)?.toInt() ?: 0
                             price in minPrice..maxPrice
-                        }
-                    }
-                }
+                        })
             }
+
+            val limitedProducts = filteredProducts.take(limit)
+
+            limitedProducts
         } catch (e: Exception) {
             emptyList()
         }
@@ -120,7 +146,9 @@ class ProductRepositoryImpl : ProductRepository {
         brandIds: List<String>,
         minPrice: Int,
         maxPrice: Int,
-        limit: Int
+        limit: Int,
+        rating: Int,
+        isEnable: Int
     ): List<ProductModel> {
         return try {
             loadProductsCacheIfNeeded()
@@ -128,7 +156,8 @@ class ProductRepositoryImpl : ProductRepository {
             val trimmedQuery = searchQuery.trim().lowercase()
 
             val filteredProducts = cachedProducts.orEmpty().filter { product ->
-                product.show &&
+                ((product.show && isEnable == 1) || (!product.show && isEnable == 0) || isEnable == -1) &&
+                        ((rating == 0) || (product.rating >= rating)) &&
                         (trimmedQuery.isEmpty() || product.name.lowercase()
                             .contains(trimmedQuery)) &&
                         (categoryIds.isEmpty() || categoryIds.contains(product.categoryId)) &&

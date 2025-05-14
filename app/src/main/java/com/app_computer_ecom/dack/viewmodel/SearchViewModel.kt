@@ -78,9 +78,7 @@ class SearchViewModel(
             val results = GlobalRepository.productRepository.getProductsWithFilter(
                 searchQuery = query,
                 categoryIds = emptyList(),
-                brandIds = emptyList(),
-                minPrice = 0,
-                maxPrice = Int.MAX_VALUE
+                brandIds = emptyList()
             )
             _suggestions.value = results
         }

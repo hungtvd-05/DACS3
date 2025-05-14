@@ -5,6 +5,7 @@ import com.google.firebase.Timestamp
 data class OrderModel private constructor(
     val id: String = "",
     val uid: String = "",
+    val email: String = "",
     val address: AddressModel = AddressModel(),
     val listProduct: List<ProductInfoModel> = emptyList(),
     val totalPrice: Int = 0,
@@ -17,6 +18,7 @@ data class OrderModel private constructor(
         fun create(
             id: String = "",
             uid: String = "",
+            email: String = "",
             address: AddressModel = AddressModel(),
             listProduct: List<ProductInfoModel> = emptyList(),
             totalPrice: Int = 0,
@@ -28,6 +30,7 @@ data class OrderModel private constructor(
             return OrderModel(
                 id = id,
                 uid = uid,
+                email = email,
                 address = address,
                 listProduct = listProduct,
                 totalPrice = totalPrice,
@@ -39,5 +42,5 @@ data class OrderModel private constructor(
         }
     }
 
-    constructor(): this("", "", AddressModel(), emptyList(), 0, "", Timestamp.now(), Timestamp.now(), 0)
+    constructor(): this("", "", "", AddressModel(), emptyList(), 0, "", Timestamp.now(), Timestamp.now(), 0)
 }

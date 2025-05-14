@@ -54,6 +54,7 @@ import com.app_computer_ecom.dack.model.ProductInfoModel
 import com.app_computer_ecom.dack.model.ProductModel
 import com.app_computer_ecom.dack.pages.user.Loading
 import com.app_computer_ecom.dack.repository.GlobalRepository
+import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
 import com.app_computer_ecom.dack.zalopay.Api.CreateOrder
 import kotlinx.coroutines.launch
 import vn.zalopay.sdk.ZaloPayError
@@ -350,6 +351,7 @@ fun CheckoutScreen() {
                                                                 GlobalRepository.orderRepository.addOrder(
                                                                     OrderModel.create(
                                                                         uid = address!!.uid,
+                                                                        email = GLobalAuthViewModel.getAuthViewModel().userModel!!.email,
                                                                         address = address!!,
                                                                         listProduct = newProductList,
                                                                         totalPrice = totalPrice,
@@ -419,6 +421,7 @@ fun CheckoutScreen() {
                                         GlobalRepository.orderRepository.addOrder(
                                             OrderModel.create(
                                                 uid = address!!.uid,
+                                                email = GLobalAuthViewModel.getAuthViewModel().userModel!!.email,
                                                 address = address!!,
                                                 listProduct = newProductList,
                                                 totalPrice = totalPrice,

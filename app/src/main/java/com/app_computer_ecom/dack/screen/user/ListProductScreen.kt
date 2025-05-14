@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -29,6 +31,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -43,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -82,6 +86,10 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "", searchQuery
     var tempMinPrice by remember { mutableStateOf(0) }
     var tempMaxPrice by remember { mutableStateOf(0) }
 
+    val showOptionsStar = listOf("Tất cả", "5 sao", "4 sao trở lên", "3 sao trở lên", "2 sao trở lên", "1 sao trở lên")
+    var (tempSelectedOptionStar, onOptionSelectedStar) = remember { mutableStateOf(showOptionsStar[0]) }
+    var selectedOptionStar by remember { mutableStateOf(showOptionsStar[0]) }
+
     var isLoading by remember { mutableStateOf(true) }
 
     val interactionSource = remember { MutableInteractionSource() }
@@ -102,14 +110,15 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "", searchQuery
 
     }
 
-    LaunchedEffect(selectedCategoryIds, selectedBrandIds, minPrice, maxPrice, searchQuery) {
+    LaunchedEffect(selectedCategoryIds, selectedBrandIds, minPrice, maxPrice, searchQuery, selectedOptionStar) {
         isLoading = true
         products = GlobalRepository.productRepository.getProductsWithFilter(
             searchQuery = searchQuery,
             categoryIds = selectedCategoryIds.toList(),
             brandIds = selectedBrandIds.toList(),
             minPrice = minPrice.toInt(),
-            maxPrice = if (maxPrice == 0) Int.MAX_VALUE else maxPrice.toInt()
+            maxPrice = if (maxPrice == 0) Int.MAX_VALUE else maxPrice.toInt(),
+            rating = if (selectedOptionStar == "Tất cả") 0 else selectedOptionStar.split(" ")[0].toInt(),
         )
         isLoading = false
     }
@@ -121,7 +130,9 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "", searchQuery
     val context = LocalContext.current
 
     Column(
-        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Row(
             modifier = Modifier
@@ -166,7 +177,9 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "", searchQuery
                             indication = null, // Tắt hiệu ứng ripple mặc định
                             onClick = {
                                 GlobalNavigation.navController.navigate("search") {
-                                    popUpTo(GlobalNavigation.navController.graph.startDestinationId) { inclusive = false }
+                                    popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                                        inclusive = false
+                                    }
                                     launchSingleTop = true
                                 }
                             }
@@ -188,6 +201,8 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "", searchQuery
                         tempSelectedBrandIds = selectedBrandIds
                         tempMaxPrice = maxPrice
                         tempMinPrice = minPrice
+                        tempSelectedOptionStar = selectedOptionStar
+                        onOptionSelectedStar(selectedOptionStar)
                         scope.launch { showSheet = true }
                     },
                     modifier = Modifier.padding(end = 4.dp)
@@ -296,6 +311,38 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "", searchQuery
                         }
                     }
                     item(span = { GridItemSpan(2) }) {
+                        Text(text = "Đánh giá sản phẩm")
+                    }
+                    item(span = { GridItemSpan(2) }) {
+                        Column(modifier = Modifier.selectableGroup()) {
+                            showOptionsStar.forEach { text ->
+                                Row(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .height(40.dp)
+                                        .selectable(
+                                            selected = (text == tempSelectedOptionStar),
+                                            onClick = { onOptionSelectedStar(text) },
+                                            role = Role.RadioButton
+                                        )
+                                        .padding(horizontal = 12.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    RadioButton(
+                                        selected = (text == tempSelectedOptionStar),
+                                        onClick = null
+                                    )
+                                    Text(
+                                        text = text,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        modifier = Modifier.padding(start = 16.dp)
+                                    )
+                                }
+                            }
+                        }
+
+                    }
+                    item(span = { GridItemSpan(2) }) {
                         Spacer(
                             modifier = Modifier.height(8.dp)
                         )
@@ -363,6 +410,7 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "", searchQuery
                                 }
                                 selectedBrandIds = tempSelectedBrandIds
                                 selectedCategoryIds = tempSelectedCategoryIds
+                                selectedOptionStar = tempSelectedOptionStar
                                 scope.launch {
                                     sheetState.hide()
                                 }
@@ -382,6 +430,7 @@ fun ListProductScreen(categoryId: String = "", brandId: String = "", searchQuery
                                 maxPrice = 0
                                 selectedBrandIds = setOf()
                                 selectedCategoryIds = setOf()
+                                selectedOptionStar = showOptionsStar[0]
                                 scope.launch {
                                     sheetState.hide()
                                 }

@@ -1,5 +1,6 @@
 package com.app_computer_ecom.dack.repository.impl
 
+import com.app_computer_ecom.dack.AppUtil
 import com.app_computer_ecom.dack.GlobalDatabase
 import com.app_computer_ecom.dack.model.DailySales
 import com.app_computer_ecom.dack.model.MonthlySales
@@ -8,6 +9,7 @@ import com.app_computer_ecom.dack.model.ProductInfoModel
 import com.app_computer_ecom.dack.model.ProductSoldInfo
 import com.app_computer_ecom.dack.repository.GlobalRepository
 import com.app_computer_ecom.dack.repository.OrderRepository
+import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.CollectionReference
@@ -19,6 +21,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 class OrderRepositoryImpl : OrderRepository {
@@ -48,6 +51,33 @@ class OrderRepositoryImpl : OrderRepository {
     override suspend fun addOrder(orderModel: OrderModel) {
         dbOrder.add(orderModel)
         GlobalRepository.cartRepository.clearCart()
+        val recipient = GLobalAuthViewModel.getAuthViewModel().userModel?.email
+        if (!recipient.isNullOrEmpty()) {
+            AppUtil.sendEmail(
+                subject = "Xác nhận đặt hàng thành công",
+                AppUtil.generateOrderConfirmationEmailBody(
+                    orderId = orderModel.id,
+                    products = orderModel.listProduct,
+                    orderedAt = SimpleDateFormat(
+                        "dd/MM/yyyy HH:mm:ss",
+                        Locale.getDefault()
+                    ).format(Date(orderModel.createdAt.seconds * 1000))
+                ),
+                recipient = orderModel.email
+            )
+//            AppUtil.sendEmail(
+//                subject = "Xác nhận đặt hàng thành công",
+//                AppUtil.generateOrderConfirmationEmailBody(
+//                    orderId = orderModel.id,
+//                    products = orderModel.listProduct,
+//                    orderedAt = SimpleDateFormat(
+//                        "dd/MM/yyyy HH:mm:ss",
+//                        Locale.getDefault()
+//                    ).format(Date(orderModel.createdAt.seconds * 1000))
+//                ),
+//                recipient = "vienduyhungtran@gmail.com"
+//            )
+        }
     }
 
     override suspend fun getOrdersOnAdmin(): Flow<List<OrderModel>> = callbackFlow {
@@ -111,6 +141,27 @@ class OrderRepositoryImpl : OrderRepository {
                 batch.set(productRef, product)
             }
         }
+
+
+        val recipient = GLobalAuthViewModel.getAuthViewModel().userModel?.email
+
+
+        if (!recipient.isNullOrEmpty()) {
+            AppUtil.sendEmail(
+                "Cập nhật trạng thái đơn hàng",
+                AppUtil.generateOrderStatusEmailBody(
+                    orderId = order.id,
+                    newStatus = newStatus,
+                    products = order.listProduct,
+                    finishedAt = SimpleDateFormat(
+                        "dd/MM/yyyy HH:mm:ss",
+                        Locale.getDefault()
+                    ).format(Date(finishedAt.seconds * 1000))
+                ),
+                order.email
+            )
+        }
+
         batch.commit().await()
     }
 
@@ -137,8 +188,10 @@ class OrderRepositoryImpl : OrderRepository {
         val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val salesByDate = orders.groupBy { formatter.format(it.createdAt.toDate()) }
             .map { (date, orders) ->
-                val doanhthudatduoc = orders.filter { it.status == 3 }.sumOf { it.totalPrice.toDouble() / 1000000 }
-                val doanhthudukiendatthem = orders.sumOf { it.totalPrice.toDouble() / 1000000 } - doanhthudatduoc
+                val doanhthudatduoc =
+                    orders.filter { it.status == 3 }.sumOf { it.totalPrice.toDouble() / 1000000 }
+                val doanhthudukiendatthem =
+                    orders.sumOf { it.totalPrice.toDouble() / 1000000 } - doanhthudatduoc
                 val donhanhhoanthanh = orders.filter { it.status == 3 }.size.toDouble()
                 val donhangdangcho = orders.size.toDouble() - donhanhhoanthanh
                 DailySales.create(
@@ -187,8 +240,10 @@ class OrderRepositoryImpl : OrderRepository {
         val salesByMonth = orders.groupBy { order ->
             formatter.format(order.createdAt.toDate())
         }.map { (month, orders) ->
-            val doanhthudatduoc = orders.filter { it.status == 3 }.sumOf { it.totalPrice.toDouble() / 1000000 }
-            val doanhthudukiendatthem = orders.sumOf { it.totalPrice.toDouble() / 1000000 } - doanhthudatduoc
+            val doanhthudatduoc =
+                orders.filter { it.status == 3 }.sumOf { it.totalPrice.toDouble() / 1000000 }
+            val doanhthudukiendatthem =
+                orders.sumOf { it.totalPrice.toDouble() / 1000000 } - doanhthudatduoc
             val donhanhhoanthanh = orders.filter { it.status == 3 }.size.toDouble()
             val donhangdangcho = orders.size.toDouble() - donhanhhoanthanh
             MonthlySales.create(

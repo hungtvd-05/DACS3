@@ -13,6 +13,11 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/DEPENDENCIES"
+            excludes += "/META-INF/LICENSE.md"
+            excludes += "/META-INF/LICENSE"
+            excludes += "/META-INF/NOTICE"
+            excludes += "/META-INF/NOTICE.md"
+
         }
     }
 
@@ -116,6 +121,9 @@ dependencies {
 //    implementation(libs.vico.views)
 
     implementation(libs.androidx.datastore.preferences)
+
+    implementation(libs.mail.android.mail)
+    implementation(libs.android.activation)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
