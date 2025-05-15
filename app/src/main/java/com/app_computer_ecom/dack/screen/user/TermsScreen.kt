@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,35 +25,38 @@ import com.app_computer_ecom.dack.components.TopBar
 
 @Composable
 fun TermsScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        TopBar(title = "Điều khoản ứng dụng", isShowCard = false) {
-            GlobalNavigation.navController.navigate("home/3")
-        }
-
-        LazyColumn(
+    Scaffold { paddingValues ->
+        Column(
             modifier = Modifier
+                .padding(paddingValues)
                 .fillMaxSize()
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+                .background(MaterialTheme.colorScheme.background)
         ) {
-            item { Spacer(modifier = Modifier.height(16.dp)) }
-
-            terms.forEachIndexed { index, term ->
-                item {
-                    TermsSection(
-                        title = "${index + 1}. ${term.title}",
-                        content = term.content
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
+            TopBar(title = "Điều khoản ứng dụng", isShowCard = false) {
+                GlobalNavigation.navController.navigate("home/3")
             }
 
-            item { Spacer(modifier = Modifier.height(32.dp)) }
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                item { Spacer(modifier = Modifier.height(16.dp)) }
+
+                terms.forEachIndexed { index, term ->
+                    item {
+                        TermsSection(
+                            title = "${index + 1}. ${term.title}",
+                            content = term.content
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                }
+
+                item { Spacer(modifier = Modifier.height(32.dp)) }
+            }
         }
     }
 }

@@ -30,6 +30,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -70,117 +71,120 @@ fun AccountScreen() {
     var userModel = GLobalAuthViewModel.getAuthViewModel().userModel ?: UserModel()
     var showChangePassword by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        TopBar(isShowCard = false) {
-            GlobalNavigation.navController.navigate("home/3")
-        }
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
+    Scaffold { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
         ) {
-
-            item {
-                AvatarPicker()
-
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 2.dp)
-                        .background(MaterialTheme.colorScheme.surface)
-                        .padding(horizontal = 8.dp, vertical = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Tên người dùng",
-                        fontSize = 12.sp,
-                        lineHeight = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Text(
-                        text = userModel.username,
-                        fontSize = 10.sp,
-                        lineHeight = 12.sp,
-                        fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 2.dp)
-                        .background(MaterialTheme.colorScheme.surface)
-                        .padding(horizontal = 8.dp, vertical = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Họ và tên",
-                        fontSize = 12.sp,
-                        lineHeight = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Text(
-                        text = userModel.name,
-                        fontSize = 10.sp,
-                        lineHeight = 12.sp,
-                        fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 2.dp)
-                        .background(MaterialTheme.colorScheme.surface)
-                        .padding(horizontal = 8.dp, vertical = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Mail",
-                        fontSize = 12.sp,
-                        lineHeight = 14.sp,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Text(
-                        text = userModel.email,
-                        fontSize = 10.sp,
-                        lineHeight = 12.sp,
-                        fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 2.dp)
-                        .clickable {
-                            showChangePassword = !showChangePassword
-                        }
-                        .background(MaterialTheme.colorScheme.surface)
-                        .padding(horizontal = 8.dp, vertical = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = "Đổi mật khẩu", fontSize = 12.sp, lineHeight = 14.sp)
-                    Icon(
-                        imageVector = if (showChangePassword) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowRight,
-                        contentDescription = "",
-                        tint = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-
-                if (showChangePassword) {
-                    ChangePasswordSection()
-                }
+            TopBar(isShowCard = false) {
+                GlobalNavigation.navController.navigate("home/3")
             }
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
+
+                item {
+                    AvatarPicker()
 
 
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 2.dp)
+                            .background(MaterialTheme.colorScheme.surface)
+                            .padding(horizontal = 8.dp, vertical = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Tên người dùng",
+                            fontSize = 12.sp,
+                            lineHeight = 14.sp,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = userModel.username,
+                            fontSize = 10.sp,
+                            lineHeight = 12.sp,
+                            fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 2.dp)
+                            .background(MaterialTheme.colorScheme.surface)
+                            .padding(horizontal = 8.dp, vertical = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Họ và tên",
+                            fontSize = 12.sp,
+                            lineHeight = 14.sp,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = userModel.name,
+                            fontSize = 10.sp,
+                            lineHeight = 12.sp,
+                            fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 2.dp)
+                            .background(MaterialTheme.colorScheme.surface)
+                            .padding(horizontal = 8.dp, vertical = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Mail",
+                            fontSize = 12.sp,
+                            lineHeight = 14.sp,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = userModel.email,
+                            fontSize = 10.sp,
+                            lineHeight = 12.sp,
+                            fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 2.dp)
+                            .clickable {
+                                showChangePassword = !showChangePassword
+                            }
+                            .background(MaterialTheme.colorScheme.surface)
+                            .padding(horizontal = 8.dp, vertical = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = "Đổi mật khẩu", fontSize = 12.sp, lineHeight = 14.sp)
+                        Icon(
+                            imageVector = if (showChangePassword) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowRight,
+                            contentDescription = "",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+
+                    if (showChangePassword) {
+                        ChangePasswordSection()
+                    }
+                }
+
+
+            }
         }
     }
 }

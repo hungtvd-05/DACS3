@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -28,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -56,7 +58,6 @@ import com.app_computer_ecom.dack.AppUtil
 import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.LoadingScreen
 import com.app_computer_ecom.dack.R
-import com.app_computer_ecom.dack.components.TopBar
 import com.app_computer_ecom.dack.model.RatingModel
 import com.app_computer_ecom.dack.repository.GlobalRepository
 import kotlinx.coroutines.launch
@@ -89,179 +90,48 @@ fun ReplyRatingAndCommentScreen(ratingId: String) {
         isLoading = false
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        TopBar(title = "Đánh giá sản phẩm") {
-            GlobalNavigation.navController.navigate("admin/3")
-        }
-        if (isLoading) {
-            LoadingScreen()
-        } else {
-            LazyColumn (
-                modifier = Modifier.padding(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+    Scaffold { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.primary)
+                    .padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(MaterialTheme.colorScheme.surface)
-                            .padding(8.dp)
-                    ) {
-                        ProductItemRating(
-                            ratingModel = ratingModel!!,
-                        )
-                        Text(
-                            text = buildAnnotatedString {
-                                append("Tổng số tiền : ")
-                                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                    append(formatter.format(ratingModel!!.quantity * ratingModel!!.selectType.price))
-                                }
-                            },
-                            fontSize = 12.sp,
-                            lineHeight = 14.sp,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.align(Alignment.End)
-                        )
-                    }
-                }
-                item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(MaterialTheme.colorScheme.surface)
-                            .padding(8.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(max = 24.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            AsyncImage(
-                                model = ratingModel!!.avatar,
-                                contentDescription = "avatar",
-                                modifier = Modifier
-                                    .size(28.dp)
-                                    .clip(RoundedCornerShape(50)),
-                                contentScale = ContentScale.Crop,
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                ratingModel!!.uname,
-                                fontSize = 12.sp,
-                                lineHeight = 14.sp,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
+                IconButton(onClick = {
+                    GlobalNavigation.navController.navigate("admin/3") {
+                        popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                            inclusive = false
                         }
-                        Row {
-
-                            IconButton(
-                                onClick = {
-
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Star,
-                                    contentDescription = null,
-                                    tint = if (ratingModel!!.rating >= 1) MaterialTheme.colorScheme.surfaceTint else MaterialTheme.colorScheme.scrim
-                                )
-                            }
-                            IconButton(
-                                onClick = {
-
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Star,
-                                    contentDescription = null,
-                                    tint = if (ratingModel!!.rating >= 2) MaterialTheme.colorScheme.surfaceTint else MaterialTheme.colorScheme.scrim
-                                )
-                            }
-                            IconButton(
-                                onClick = {
-
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Star,
-                                    contentDescription = null,
-                                    tint = if (ratingModel!!.rating >= 3) MaterialTheme.colorScheme.surfaceTint else MaterialTheme.colorScheme.scrim
-                                )
-                            }
-                            IconButton(
-                                onClick = {
-
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Star,
-                                    contentDescription = null,
-                                    tint = if (ratingModel!!.rating >= 4) MaterialTheme.colorScheme.surfaceTint else MaterialTheme.colorScheme.scrim
-                                )
-                            }
-                            IconButton(
-                                onClick = {
-
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Star,
-                                    contentDescription = null,
-                                    tint = if (ratingModel!!.rating == 5) MaterialTheme.colorScheme.surfaceTint else MaterialTheme.colorScheme.scrim
-                                )
-                            }
-                        }
-                        OutlinedTextField(
-                            value = ratingModel!!.commentModel!!.content,
-                            onValueChange = {
-
-                            },
-                            label = {
-                                Text(
-                                    text = "Mô tả, đánh giá sản phẩm",
-                                    fontSize = 12.sp
-                                )
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            textStyle = TextStyle(fontSize = 14.sp),
-                            readOnly = true,
-                            minLines = 3
-                        )
+                        launchSingleTop = true
                     }
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
                 }
-                item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(MaterialTheme.colorScheme.surface)
-                            .padding(8.dp)
-                    ) {
-                        OutlinedTextField(
-                            value = reply,
-                            onValueChange = {
-                                reply = it
-                            },
-                            label = {
-                                Text(
-                                    text = "Phản hồi của shop",
-                                    fontSize = 12.sp
-                                )
-                            },
-                            readOnly = isReply,
-                            modifier = Modifier.fillMaxWidth(),
-                            textStyle = TextStyle(fontSize = 14.sp),
-                            minLines = 3
-                        )
-                    }
-                }
-                if (!isReply) {
+                Text(
+                    text = "Đánh giá - Phản hồi",
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+            if (isLoading) {
+                LoadingScreen()
+            } else {
+                LazyColumn (
+                    modifier = Modifier.padding(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     item {
                         Column(
                             modifier = Modifier
@@ -270,36 +140,195 @@ fun ReplyRatingAndCommentScreen(ratingId: String) {
                                 .background(MaterialTheme.colorScheme.surface)
                                 .padding(8.dp)
                         ) {
-                            Button(
-                                onClick = {
-                                    if (reply.trim().isEmpty()) {
-                                        AppUtil.showToast(context, "Bạn chưa phản hồi đánh giá !!!")
-                                    } else {
-                                        isLoading = true
-                                        scope.launch {
-                                            try {
-                                                var commentModel = ratingModel?.commentModel?.copy(reply = reply.trim())
-                                                GlobalRepository.ratingAndCommentRepository.replyRatingAndComment(ratingModel!!.id, commentModel!!)
-                                            } catch (e: Exception) {
-
-                                            } finally {
-                                                GlobalNavigation.navController.navigate("admin/3")
-                                            }
-                                        }
+                            ProductItemRating(
+                                ratingModel = ratingModel!!,
+                            )
+                            Text(
+                                text = buildAnnotatedString {
+                                    append("Tổng số tiền : ")
+                                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                        append(formatter.format(ratingModel!!.quantity * ratingModel!!.selectType.price))
                                     }
                                 },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.primary,
-                                    contentColor = MaterialTheme.colorScheme.onPrimary
-                                ),
-                                modifier = Modifier.fillMaxWidth()
+                                fontSize = 12.sp,
+                                lineHeight = 14.sp,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.align(Alignment.End)
+                            )
+                        }
+                    }
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(MaterialTheme.colorScheme.surface)
+                                .padding(8.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .heightIn(max = 24.dp),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(
-                                    text = "Phản hồi",
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White
+                                AsyncImage(
+                                    model = ratingModel!!.avatar,
+                                    contentDescription = "avatar",
+                                    modifier = Modifier
+                                        .size(28.dp)
+                                        .clip(RoundedCornerShape(50)),
+                                    contentScale = ContentScale.Crop,
                                 )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    ratingModel!!.uname,
+                                    fontSize = 12.sp,
+                                    lineHeight = 14.sp,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                            }
+                            Row {
+
+                                IconButton(
+                                    onClick = {
+
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Star,
+                                        contentDescription = null,
+                                        tint = if (ratingModel!!.rating >= 1) MaterialTheme.colorScheme.surfaceTint else MaterialTheme.colorScheme.scrim
+                                    )
+                                }
+                                IconButton(
+                                    onClick = {
+
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Star,
+                                        contentDescription = null,
+                                        tint = if (ratingModel!!.rating >= 2) MaterialTheme.colorScheme.surfaceTint else MaterialTheme.colorScheme.scrim
+                                    )
+                                }
+                                IconButton(
+                                    onClick = {
+
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Star,
+                                        contentDescription = null,
+                                        tint = if (ratingModel!!.rating >= 3) MaterialTheme.colorScheme.surfaceTint else MaterialTheme.colorScheme.scrim
+                                    )
+                                }
+                                IconButton(
+                                    onClick = {
+
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Star,
+                                        contentDescription = null,
+                                        tint = if (ratingModel!!.rating >= 4) MaterialTheme.colorScheme.surfaceTint else MaterialTheme.colorScheme.scrim
+                                    )
+                                }
+                                IconButton(
+                                    onClick = {
+
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Star,
+                                        contentDescription = null,
+                                        tint = if (ratingModel!!.rating == 5) MaterialTheme.colorScheme.surfaceTint else MaterialTheme.colorScheme.scrim
+                                    )
+                                }
+                            }
+                            OutlinedTextField(
+                                value = ratingModel!!.commentModel!!.content,
+                                onValueChange = {
+
+                                },
+                                label = {
+                                    Text(
+                                        text = "Mô tả, đánh giá sản phẩm",
+                                        fontSize = 12.sp
+                                    )
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                textStyle = TextStyle(fontSize = 14.sp),
+                                readOnly = true,
+                                minLines = 3
+                            )
+                        }
+                    }
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(MaterialTheme.colorScheme.surface)
+                                .padding(8.dp)
+                        ) {
+                            OutlinedTextField(
+                                value = reply,
+                                onValueChange = {
+                                    reply = it
+                                },
+                                label = {
+                                    Text(
+                                        text = "Phản hồi của shop",
+                                        fontSize = 12.sp
+                                    )
+                                },
+                                readOnly = isReply,
+                                modifier = Modifier.fillMaxWidth(),
+                                textStyle = TextStyle(fontSize = 14.sp),
+                                minLines = 3
+                            )
+                        }
+                    }
+                    if (!isReply) {
+                        item {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(MaterialTheme.colorScheme.surface)
+                                    .padding(8.dp)
+                            ) {
+                                Button(
+                                    onClick = {
+                                        if (reply.trim().isEmpty()) {
+                                            AppUtil.showToast(context, "Bạn chưa phản hồi đánh giá !!!")
+                                        } else {
+                                            isLoading = true
+                                            scope.launch {
+                                                try {
+                                                    var commentModel = ratingModel?.commentModel?.copy(reply = reply.trim())
+                                                    GlobalRepository.ratingAndCommentRepository.replyRatingAndComment(ratingModel!!.id, commentModel!!)
+                                                } catch (e: Exception) {
+
+                                                } finally {
+                                                    GlobalNavigation.navController.navigate("admin/3")
+                                                }
+                                            }
+                                        }
+                                    },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.primary,
+                                        contentColor = MaterialTheme.colorScheme.onPrimary
+                                    ),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text = "Phản hồi",
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White
+                                    )
+                                }
                             }
                         }
                     }

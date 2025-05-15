@@ -70,16 +70,16 @@ fun AppNavigation(modifier: Modifier = Modifier) {
 
     NavHost(navController = navController, startDestination = firstPage) {
         composable("auth") {
-            AuthScreen(modifier, navController)
+            AuthScreen(modifier)
         }
         composable("login") {
-            LoginScreen(modifier, navController)
+            LoginScreen(modifier)
         }
         composable("signup") {
-            SignupScreen(modifier, navController)
+            SignupScreen(modifier)
         }
         composable("reset") {
-            ResetPasswordScreen(modifier, navController)
+            ResetPasswordScreen(modifier)
         }
         composable("home/{indexValue}") {
             var indexValue = it.arguments?.getString("indexValue")
@@ -108,12 +108,12 @@ fun AppNavigation(modifier: Modifier = Modifier) {
             var categoryId = it.arguments?.getString("categoryId").toString()
             var brandId = it.arguments?.getString("brandId").toString()
             var searchQuery = it.arguments?.getString("searchQuery").toString()
-            ListProductScreen(categoryId = categoryId, brandId = brandId, searchQuery = searchQuery)
+            ListProductScreen(categoryId = categoryId, brandId = brandId, searchQuery = searchQuery, modifier)
         }
         composable("product-details/productId={productId}&lastIndexPage={lastIndexPage}") {
             var productId = it.arguments?.getString("productId").toString()
             var lastIndexPage = it.arguments?.getString("lastIndexPage").toString()
-            ProductDetailsScreen(productId = productId, lastIndexPage.toInt())
+            ProductDetailsScreen(productId = productId, lastIndexPage.toInt(), modifier)
         }
         composable("search") {
             SearchScreen(modifier = modifier)
@@ -121,8 +121,9 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         composable("checkout") {
             CheckoutScreen()
         }
-        composable("menuaddress") {
-            AddressMenuScreen()
+        composable("menuaddress/{lastIndex}") {
+            var lastIndex = it.arguments?.getString("lastIndex")!!.toInt()
+            AddressMenuScreen(lastIndex)
         }
         composable("addaddress") {
             AddAddressScreen()

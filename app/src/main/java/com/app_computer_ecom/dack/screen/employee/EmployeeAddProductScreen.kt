@@ -37,6 +37,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -126,402 +127,404 @@ fun EmployeeAddProductScreen() {
         }
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
+    Scaffold { paddingValues ->
+        Column(
+            modifier = Modifier.padding(paddingValues).fillMaxSize().background(MaterialTheme.colorScheme.background)
         ) {
-            IconButton(
-                onClick = { GlobalNavigation.navController.popBackStack() },
-                modifier = Modifier.align(Alignment.CenterStart)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
             ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
-                    tint = MaterialTheme.colorScheme.onBackground
+                IconButton(
+                    onClick = { GlobalNavigation.navController.popBackStack() },
+                    modifier = Modifier.align(Alignment.CenterStart)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+
+                Text(
+                    text = "Thêm sản phẩm",
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.align(Alignment.Center),
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
 
-            Text(
-                text = "Thêm sản phẩm",
-                fontSize = 14.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.align(Alignment.Center),
-                color = MaterialTheme.colorScheme.onBackground
-            )
-        }
-
-        if (isLoading) {
-            LoadingScreen()
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            ) {
-                item {
-                    OutlinedTextField(
-                        value = productName.value,
-                        onValueChange = { productName.value = it },
-                        label = {
-                            Text(
-                                text = "Tên sản phẩm",
-                                fontSize = 10.sp
-                            )
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        textStyle = TextStyle(fontSize = 12.sp),
-                        singleLine = true
-                    )
-                }
-
-                item {
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-
-                item {
-                    OutlinedTextField(
-                        value = productDescription.value,
-                        onValueChange = { productDescription.value = it },
-                        label = {
-                            Text(
-                                text = "Mô tả",
-                                fontSize = 10.sp
-                            )
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        textStyle = TextStyle(fontSize = 12.sp),
-                    )
-                }
-
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-
-                item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Danh mục",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                        CategoryDropDownFun(
-                            categoryList = categoryList,
-                            selectedCategoryId = productCategory.value,
-                            onCategorySelected = { productCategory.value = it }
-                        )
-                    }
-                }
-
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-
-                item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Thương hiệu",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                        BrandDropDownFun(
-                            brandList = brandList,
-                            selectedBrandId = productBrand.value,
-                            onBrandSelected = { productBrand.value = it }
-                        )
-                    }
-                }
-
-                item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Nhãn, Số lượng, Giá",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                        Spacer(modifier = Modifier.weight(1f))
-                        IconButton(
-                            onClick = {
-                                productPrices.add(PriceInfo.create(id = UUID.randomUUID().toString().replace("-", "").take(6)))
+            if (isLoading) {
+                LoadingScreen()
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    item {
+                        OutlinedTextField(
+                            value = productName.value,
+                            onValueChange = { productName.value = it },
+                            label = {
+                                Text(
+                                    text = "Tên sản phẩm",
+                                    fontSize = 10.sp
+                                )
                             },
+                            modifier = Modifier.fillMaxWidth(),
+                            textStyle = TextStyle(fontSize = 12.sp),
+                            singleLine = true
+                        )
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+
+                    item {
+                        OutlinedTextField(
+                            value = productDescription.value,
+                            onValueChange = { productDescription.value = it },
+                            label = {
+                                Text(
+                                    text = "Mô tả",
+                                    fontSize = 10.sp
+                                )
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            textStyle = TextStyle(fontSize = 12.sp),
+                        )
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Add"
+                            Text(
+                                text = "Danh mục",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                            CategoryDropDownFun(
+                                categoryList = categoryList,
+                                selectedCategoryId = productCategory.value,
+                                onCategorySelected = { productCategory.value = it }
                             )
                         }
                     }
-                }
 
+                    item {
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
 
-                itemsIndexed(productPrices) { index, item ->
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp)
-                    ) {
+                    item {
                         Row(
-                            modifier = Modifier.padding(bottom = 4.dp)
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            OutlinedTextField(
-                                value = item.type,
-                                onValueChange = { newValue ->
-                                    productPrices[index] = item.copy(type = newValue)
-                                },
-                                placeholder = {
-                                    Text(
-                                        "Nhãn " + (index + 1),
-                                        fontSize = 10.sp
-                                    )
-                                },
-                                textStyle = TextStyle(fontSize = 12.sp),
-                                singleLine = true,
-                                modifier = Modifier
-                                    .weight(2f)
+                            Text(
+                                text = "Thương hiệu",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onBackground
                             )
-
-                            Spacer(modifier = Modifier.width(4.dp))
-
-                            OutlinedTextField(
-                                value = item.quantity.toString(),
-                                onValueChange = { newValue ->
-                                    productPrices[index] =
-                                        item.copy(quantity = newValue.toIntOrNull() ?: 0)
-                                },
-                                placeholder = {
-                                    Text(
-                                        "Số lượng",
-                                        fontSize = 10.sp
-                                    )
-                                },
-                                textStyle = TextStyle(fontSize = 12.sp),
-                                singleLine = true,
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Number
-                                ),
-                                modifier = Modifier
-                                    .weight(1f)
-
+                            BrandDropDownFun(
+                                brandList = brandList,
+                                selectedBrandId = productBrand.value,
+                                onBrandSelected = { productBrand.value = it }
                             )
+                        }
+                    }
 
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Nhãn, Số lượng, Giá",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
                             IconButton(
                                 onClick = {
-                                    if (productPrices.size > 1) productPrices.remove(item)
-                                }
+                                    productPrices.add(PriceInfo.create(id = UUID.randomUUID().toString().replace("-", "").take(6)))
+                                },
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = "delete",
-                                    tint = Color(230, 81, 0),
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = "Add"
                                 )
                             }
                         }
-                        Row(
-                            horizontalArrangement = Arrangement.SpaceBetween
+                    }
+
+
+                    itemsIndexed(productPrices) { index, item ->
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp)
                         ) {
-                            OutlinedTextField(
-                                value = item.price.toString(),
-                                onValueChange = { newValue ->
-                                    productPrices[index] =
-                                        item.copy(price = newValue.toIntOrNull() ?: 0)
-                                },
-                                placeholder = {
-                                    Text(
-                                        "Giá",
-                                        fontSize = 10.sp
+                            Row(
+                                modifier = Modifier.padding(bottom = 4.dp)
+                            ) {
+                                OutlinedTextField(
+                                    value = item.type,
+                                    onValueChange = { newValue ->
+                                        productPrices[index] = item.copy(type = newValue)
+                                    },
+                                    placeholder = {
+                                        Text(
+                                            "Nhãn " + (index + 1),
+                                            fontSize = 10.sp
+                                        )
+                                    },
+                                    textStyle = TextStyle(fontSize = 12.sp),
+                                    singleLine = true,
+                                    modifier = Modifier
+                                        .weight(2f)
+                                )
+
+                                Spacer(modifier = Modifier.width(4.dp))
+
+                                OutlinedTextField(
+                                    value = item.quantity.toString(),
+                                    onValueChange = { newValue ->
+                                        productPrices[index] =
+                                            item.copy(quantity = newValue.toIntOrNull() ?: 0)
+                                    },
+                                    placeholder = {
+                                        Text(
+                                            "Số lượng",
+                                            fontSize = 10.sp
+                                        )
+                                    },
+                                    textStyle = TextStyle(fontSize = 12.sp),
+                                    singleLine = true,
+                                    keyboardOptions = KeyboardOptions(
+                                        keyboardType = KeyboardType.Number
+                                    ),
+                                    modifier = Modifier
+                                        .weight(1f)
+
+                                )
+
+                                IconButton(
+                                    onClick = {
+                                        if (productPrices.size > 1) productPrices.remove(item)
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = "delete",
+                                        tint = Color(230, 81, 0),
                                     )
-                                },
-                                textStyle = TextStyle(fontSize = 12.sp),
-                                singleLine = true,
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Number
-                                ),
-                                modifier = Modifier
-                                    .weight(1f)
-
-                            )
-                            Spacer(modifier = Modifier.width(48.dp))
-                        }
-                    }
-
-
-                }
-
-                item {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Ảnh",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                        Spacer(modifier = Modifier.weight(1f))
-                        IconButton(
-                            onClick = {
-                                launcher.launch("image/*")
-                            },
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Add",
-                                tint = MaterialTheme.colorScheme.onBackground
-                            )
-                        }
-                    }
-                }
-
-                item {
-                    LazyRow {
-                        itemsIndexed(productImages.value) { index, imageInfo ->
-                            ImagePreviewItem(
-                                uri = imageUris[index].toString(),
-                                onClick = {
-                                    imageUris -= imageUris[index]
-                                    productImages.value =
-                                        productImages.value.toMutableList().apply {
-                                            remove(imageInfo)
-                                        }
-                                },
-                                onClickShowHidden = {
-                                    if (productImages.value.size > 1) {
-                                        productImages.value =
-                                            productImages.value.toMutableList().apply {
-                                                this[index] =
-                                                    imageInfo.copy(isHidden = !imageInfo.isHidden)
-                                            }
-                                    }
-                                },
-                                isEnable = !imageInfo.isHidden,
-                                modifier = Modifier.height(150.dp)
-                            )
-                        }
-                    }
-                }
-
-                item {
-                    Spacer(modifier = Modifier.height(4.dp))
-                }
-
-                item {
-                    Button(
-                        onClick = {
-                            when {
-                                TextUtils.isEmpty(productName.value.toString()) -> {
-                                    Toast.makeText(
-                                        context,
-                                        "Bạn chưa nhập tên sản phẩm",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-
-                                TextUtils.isEmpty(productBrand.value.toString()) -> {
-                                    Toast.makeText(
-                                        context,
-                                        "Bạn chưa chọn thương hiệu",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-
-                                TextUtils.isEmpty(productCategory.value.toString()) -> {
-                                    Toast.makeText(
-                                        context,
-                                        "Bạn chưa chọn danh mục",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-
-                                productImages.value.isEmpty() -> {
-                                    Toast.makeText(context, "Bạn chưa chọn ảnh", Toast.LENGTH_SHORT)
-                                        .show()
-                                }
-
-                                productPrices.any { it.type.isEmpty() } -> {
-                                    Toast.makeText(
-                                        context,
-                                        "Có giá sản phẩm chưa nhập loại",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-
-                                else -> {
-                                    isLoading = true
-                                    CoroutineScope(Dispatchers.IO).launch {
-                                        try {
-                                            productImages.value.forEachIndexed { index, imageInfo ->
-                                                val bitmap = MediaStore.Images.Media.getBitmap(
-                                                    context.contentResolver,
-                                                    imageUris[index]
-                                                )
-                                                val result =
-                                                    ImageCloudinary.uploadImage(context, bitmap)
-                                                result.onSuccess { url ->
-                                                    productImages.value[index] =
-                                                        imageInfo.copy(imageUrl = url)
-                                                }
-                                            }
-
-                                            var product = ProductModel.create(
-                                                name = productName.value,
-                                                categoryId = productCategory.value,
-                                                brandId = productBrand.value,
-                                                description = productDescription.value,
-                                                prices = productPrices.toMutableList(),
-                                                imageUrls = productImages.value
-                                            )
-
-                                            productRepository.addProduct(product)
-
-                                            withContext(Dispatchers.Main) {
-                                                GlobalNavigation.navController.popBackStack()
-                                                isLoading = false
-                                            }
-
-                                        } catch (e: Exception) {
-                                            withContext(Dispatchers.Main) {
-                                                isLoading = false
-                                            }
-                                        }
-                                    }
                                 }
                             }
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary
-                        )
-                    ) {
-                        Text(
-                            text = "Xác nhận",
-                            color = Color.White,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 12.sp
-                        )
+                            Row(
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                OutlinedTextField(
+                                    value = item.price.toString(),
+                                    onValueChange = { newValue ->
+                                        productPrices[index] =
+                                            item.copy(price = newValue.toIntOrNull() ?: 0)
+                                    },
+                                    placeholder = {
+                                        Text(
+                                            "Giá",
+                                            fontSize = 10.sp
+                                        )
+                                    },
+                                    textStyle = TextStyle(fontSize = 12.sp),
+                                    singleLine = true,
+                                    keyboardOptions = KeyboardOptions(
+                                        keyboardType = KeyboardType.Number
+                                    ),
+                                    modifier = Modifier
+                                        .weight(1f)
+
+                                )
+                                Spacer(modifier = Modifier.width(48.dp))
+                            }
+                        }
+
+
                     }
-                }
-                item {
-                    Spacer(modifier = Modifier.height(4.dp))
-                }
 
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Ảnh",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            IconButton(
+                                onClick = {
+                                    launcher.launch("image/*")
+                                },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = "Add",
+                                    tint = MaterialTheme.colorScheme.onBackground
+                                )
+                            }
+                        }
+                    }
+
+                    item {
+                        LazyRow {
+                            itemsIndexed(productImages.value) { index, imageInfo ->
+                                ImagePreviewItem(
+                                    uri = imageUris[index].toString(),
+                                    onClick = {
+                                        imageUris -= imageUris[index]
+                                        productImages.value =
+                                            productImages.value.toMutableList().apply {
+                                                remove(imageInfo)
+                                            }
+                                    },
+                                    onClickShowHidden = {
+                                        if (productImages.value.size > 1) {
+                                            productImages.value =
+                                                productImages.value.toMutableList().apply {
+                                                    this[index] =
+                                                        imageInfo.copy(isHidden = !imageInfo.isHidden)
+                                                }
+                                        }
+                                    },
+                                    isEnable = !imageInfo.isHidden,
+                                    modifier = Modifier.height(150.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(4.dp))
+                    }
+
+                    item {
+                        Button(
+                            onClick = {
+                                when {
+                                    TextUtils.isEmpty(productName.value.toString()) -> {
+                                        Toast.makeText(
+                                            context,
+                                            "Bạn chưa nhập tên sản phẩm",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+
+                                    TextUtils.isEmpty(productBrand.value.toString()) -> {
+                                        Toast.makeText(
+                                            context,
+                                            "Bạn chưa chọn thương hiệu",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+
+                                    TextUtils.isEmpty(productCategory.value.toString()) -> {
+                                        Toast.makeText(
+                                            context,
+                                            "Bạn chưa chọn danh mục",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+
+                                    productImages.value.isEmpty() -> {
+                                        Toast.makeText(context, "Bạn chưa chọn ảnh", Toast.LENGTH_SHORT)
+                                            .show()
+                                    }
+
+                                    productPrices.any { it.type.isEmpty() } -> {
+                                        Toast.makeText(
+                                            context,
+                                            "Có giá sản phẩm chưa nhập loại",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+
+                                    else -> {
+                                        isLoading = true
+                                        CoroutineScope(Dispatchers.IO).launch {
+                                            try {
+                                                productImages.value.forEachIndexed { index, imageInfo ->
+                                                    val bitmap = MediaStore.Images.Media.getBitmap(
+                                                        context.contentResolver,
+                                                        imageUris[index]
+                                                    )
+                                                    val result =
+                                                        ImageCloudinary.uploadImage(context, bitmap)
+                                                    result.onSuccess { url ->
+                                                        productImages.value[index] =
+                                                            imageInfo.copy(imageUrl = url)
+                                                    }
+                                                }
+
+                                                var product = ProductModel.create(
+                                                    name = productName.value,
+                                                    categoryId = productCategory.value,
+                                                    brandId = productBrand.value,
+                                                    description = productDescription.value,
+                                                    prices = productPrices.toMutableList(),
+                                                    imageUrls = productImages.value
+                                                )
+
+                                                productRepository.addProduct(product)
+
+                                                withContext(Dispatchers.Main) {
+                                                    GlobalNavigation.navController.popBackStack()
+                                                    isLoading = false
+                                                }
+
+                                            } catch (e: Exception) {
+                                                withContext(Dispatchers.Main) {
+                                                    isLoading = false
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary
+                            )
+                        ) {
+                            Text(
+                                text = "Xác nhận",
+                                color = Color.White,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 12.sp
+                            )
+                        }
+                    }
+                    item {
+                        Spacer(modifier = Modifier.height(4.dp))
+                    }
+
+                }
             }
-        }
 
+        }
     }
 }
 

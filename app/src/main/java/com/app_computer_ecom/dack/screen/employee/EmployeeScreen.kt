@@ -21,9 +21,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 import com.app_computer_ecom.dack.pages.admin.InfoAppScreen
+import com.app_computer_ecom.dack.pages.employee.Menu
 import com.app_computer_ecom.dack.pages.employee.OrderPage
 import com.app_computer_ecom.dack.pages.employee.RatingListPage
-import com.app_computer_ecom.dack.pages.employee.Menu
 import com.app_computer_ecom.dack.screen.user.NavItem
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -75,6 +75,6 @@ fun ContentEmployeeScreen(modifier: Modifier = Modifier, selectedIndex: Int) {
         0 -> Menu(modifier)
         1 -> OrderPage(modifier)
         2 -> RatingListPage(modifier)
-        3 -> InfoAppScreen()
+        3 -> InfoAppScreen(modifier)
     }
 }

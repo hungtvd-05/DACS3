@@ -28,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -115,331 +116,333 @@ fun CheckoutScreen() {
         isLoading = false
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 4.dp)
+    Scaffold { paddingValues ->
+        Column(
+            modifier = Modifier.padding(paddingValues).fillMaxSize().background(MaterialTheme.colorScheme.background)
         ) {
-            IconButton(
-                onClick = { GlobalNavigation.navController.navigate("home/2") },
-                modifier = Modifier.align(Alignment.CenterStart)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
-                    tint = MaterialTheme.colorScheme.onBackground
+                IconButton(
+                    onClick = { GlobalNavigation.navController.navigate("home/2") },
+                    modifier = Modifier.align(Alignment.CenterStart)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+
+                Text(
+                    text = "Thanh toán",
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.align(Alignment.Center),
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
 
-            Text(
-                text = "Thanh toán",
-                fontSize = 20.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.align(Alignment.Center),
-                color = MaterialTheme.colorScheme.onBackground
-            )
-        }
+            if (isLoading || isCreatingOrder) {
+                Loading()
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(horizontal = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    item {
 
-        if (isLoading || isCreatingOrder) {
-            Loading()
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(horizontal = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                item {
-
-                }
-                item {
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surface
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = CardDefaults.cardElevation(8.dp),
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = {
-                            GlobalNavigation.navController.navigate("menuaddress")
-                        }
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(8.dp)
+                    }
+                    item {
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surface
+                            ),
+                            shape = RoundedCornerShape(12.dp),
+                            elevation = CardDefaults.cardElevation(8.dp),
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = {
+                                GlobalNavigation.navController.navigate("menuaddress/2")
+                            }
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.LocationOn,
-                                contentDescription = "Location"
-                            )
-                            if (address != null) {
-                                Column {
+                            Row(
+                                modifier = Modifier.padding(8.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.LocationOn,
+                                    contentDescription = "Location"
+                                )
+                                if (address != null) {
+                                    Column {
+                                        Text(
+                                            text = "${address!!.name} | ${address!!.phoneNum}",
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.SemiBold
+                                        )
+                                        Text(
+                                            text = "${address!!.street}, ${address!!.ward}, ${address!!.district}, ${address!!.province}",
+                                            fontSize = 12.sp
+                                        )
+                                    }
+                                } else {
                                     Text(
-                                        text = "${address!!.name} | ${address!!.phoneNum}",
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.SemiBold
-                                    )
-                                    Text(
-                                        text = "${address!!.street}, ${address!!.ward}, ${address!!.district}, ${address!!.province}",
+                                        text = "Vui lòng chọn địa chỉ !!",
                                         fontSize = 12.sp
                                     )
                                 }
-                            } else {
+                            }
+
+                        }
+                    }
+
+                    item {
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surface
+                            ),
+                            shape = RoundedCornerShape(12.dp),
+                            elevation = CardDefaults.cardElevation(8.dp),
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(horizontal = 8.dp)
+                                    .padding(top = 8.dp)
+                            ) {
+                                cartList.forEachIndexed { index, it ->
+                                    CartItemViewOnCheckOut(
+                                        product = listProduct[index],
+                                        quantity = it.quantity,
+                                        selectType = it.selectType
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    item {
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surface
+                            ),
+                            shape = RoundedCornerShape(12.dp),
+                            elevation = CardDefaults.cardElevation(8.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(8.dp)
+                            ) {
                                 Text(
-                                    text = "Vui lòng chọn địa chỉ !!",
-                                    fontSize = 12.sp
+                                    text = "Phương thức thanh toán : "
                                 )
-                            }
-                        }
-
-                    }
-                }
-
-                item {
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surface
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = CardDefaults.cardElevation(8.dp),
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .padding(horizontal = 8.dp)
-                                .padding(top = 8.dp)
-                        ) {
-                            cartList.forEachIndexed { index, it ->
-                                CartItemViewOnCheckOut(
-                                    product = listProduct[index],
-                                    quantity = it.quantity,
-                                    selectType = it.selectType
-                                )
-                            }
-                        }
-                    }
-                }
-
-                item {
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surface
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = CardDefaults.cardElevation(8.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(8.dp)
-                        ) {
-                            Text(
-                                text = "Phương thức thanh toán : "
-                            )
-                            Column(modifier = Modifier.selectableGroup()) {
-                                Row(
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .height(40.dp)
-                                        .padding(horizontal = 16.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    RadioButton(
-                                        selected = !selectPayment,
-                                        onClick = {
-                                            selectPayment = false
-                                        }
-                                    )
-                                    Text(
-                                        text = "Thanh toán khi nhận hàng",
-                                        fontSize = 14.sp,
-                                        modifier = Modifier.padding(start = 16.dp)
-                                    )
-                                }
-                                Row(
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .height(40.dp)
-                                        .padding(horizontal = 16.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    RadioButton(
-                                        selected = selectPayment,
-                                        onClick = {
-                                            selectPayment = true
-                                        }
-                                    )
-                                    Text(
-                                        text = "Thanh toán bằng thẻ tín dụng",
-                                        fontSize = 14.sp,
-                                        modifier = Modifier.padding(start = 16.dp)
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-                item { }
-            }
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = "Tổng cộng: ", fontSize = 14.sp)
-                    Text(
-                        text = formatter.format(totalPrice),
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(25, 118, 210)
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    Button(
-                        onClick = {
-                            if (address == null) {
-                                AppUtil.showToast(context, "Vui lòng chọn địa chỉ !!")
-                            } else {
-                                if (selectPayment) {
-                                    if (activity == null) {
-                                        AppUtil.showToast(context, "Không thể truy cập Activity")
-                                        Log.e("ZaloPay", "Activity is null")
-                                        return@Button
+                                Column(modifier = Modifier.selectableGroup()) {
+                                    Row(
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .height(40.dp)
+                                            .padding(horizontal = 16.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        RadioButton(
+                                            selected = !selectPayment,
+                                            onClick = {
+                                                selectPayment = false
+                                            }
+                                        )
+                                        Text(
+                                            text = "Thanh toán khi nhận hàng",
+                                            fontSize = 14.sp,
+                                            modifier = Modifier.padding(start = 16.dp)
+                                        )
                                     }
-                                    isCreatingOrder = true
-                                    scope.launch {
+                                    Row(
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .height(40.dp)
+                                            .padding(horizontal = 16.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        RadioButton(
+                                            selected = selectPayment,
+                                            onClick = {
+                                                selectPayment = true
+                                            }
+                                        )
+                                        Text(
+                                            text = "Thanh toán bằng thẻ tín dụng",
+                                            fontSize = 14.sp,
+                                            modifier = Modifier.padding(start = 16.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    item { }
+                }
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = "Tổng cộng: ", fontSize = 14.sp)
+                        Text(
+                            text = formatter.format(totalPrice),
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(25, 118, 210)
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Button(
+                            onClick = {
+                                if (address == null) {
+                                    AppUtil.showToast(context, "Vui lòng chọn địa chỉ !!")
+                                } else {
+                                    if (selectPayment) {
+                                        if (activity == null) {
+                                            AppUtil.showToast(context, "Không thể truy cập Activity")
+                                            Log.e("ZaloPay", "Activity is null")
+                                            return@Button
+                                        }
+                                        isCreatingOrder = true
+                                        scope.launch {
 
-                                        try {
-                                            val orderApi = CreateOrder()
-                                            val data = orderApi.createOrder(totalPrice.toString())
-                                            val code = data.getString("returncode")
+                                            try {
+                                                val orderApi = CreateOrder()
+                                                val data = orderApi.createOrder(totalPrice.toString())
+                                                val code = data.getString("returncode")
 //                                            Log.d("ZaloPay", "CreateOrder response: $data")
-                                            if (code == "1") {
-                                                zpTransToken = data.getString("zptranstoken")
-                                                // Gọi thanh toán ngay sau khi tạo đơn hàng
-                                                ZaloPaySDK.getInstance().payOrder(
-                                                    activity,
-                                                    zpTransToken!!,
-                                                    "demozpdk://app",
-                                                    object : PayOrderListener {
-                                                        override fun onPaymentSucceeded(
-                                                            transactionId: String,
-                                                            transToken: String,
-                                                            appTransID: String
-                                                        ) {
-                                                            AppUtil.showToast(
-                                                                context,
-                                                                "Thanh toán thành công: TransactionId=$transactionId"
-                                                            )
-                                                            scope.launch {
-                                                                val newProductList = mutableListOf<ProductInfoModel>()
-                                                                listProduct.forEachIndexed { index, it ->
-                                                                    newProductList.add(
-                                                                        ProductInfoModel.create(
-                                                                            id = it.id,
-                                                                            name = it.name,
-                                                                            imageUrl = it.imageUrls.firstOrNull()?.imageUrl ?: "",
-                                                                            selectType = cartList[index].selectType,
-                                                                            quantity = cartList[index].quantity
+                                                if (code == "1") {
+                                                    zpTransToken = data.getString("zptranstoken")
+                                                    // Gọi thanh toán ngay sau khi tạo đơn hàng
+                                                    ZaloPaySDK.getInstance().payOrder(
+                                                        activity,
+                                                        zpTransToken!!,
+                                                        "demozpdk://app",
+                                                        object : PayOrderListener {
+                                                            override fun onPaymentSucceeded(
+                                                                transactionId: String,
+                                                                transToken: String,
+                                                                appTransID: String
+                                                            ) {
+                                                                AppUtil.showToast(
+                                                                    context,
+                                                                    "Thanh toán thành công: TransactionId=$transactionId"
+                                                                )
+                                                                scope.launch {
+                                                                    val newProductList = mutableListOf<ProductInfoModel>()
+                                                                    listProduct.forEachIndexed { index, it ->
+                                                                        newProductList.add(
+                                                                            ProductInfoModel.create(
+                                                                                id = it.id,
+                                                                                name = it.name,
+                                                                                imageUrl = it.imageUrls.firstOrNull()?.imageUrl ?: "",
+                                                                                selectType = cartList[index].selectType,
+                                                                                quantity = cartList[index].quantity
+                                                                            )
+                                                                        )
+                                                                    }
+                                                                    GlobalRepository.orderRepository.addOrder(
+                                                                        OrderModel.create(
+                                                                            uid = address!!.uid,
+                                                                            email = GLobalAuthViewModel.getAuthViewModel().userModel!!.email,
+                                                                            address = address!!,
+                                                                            listProduct = newProductList,
+                                                                            totalPrice = totalPrice,
+                                                                            paymentMethod = "ZaloPay"
                                                                         )
                                                                     )
+                                                                    GlobalNavigation.navController.navigate("order-success")
                                                                 }
-                                                                GlobalRepository.orderRepository.addOrder(
-                                                                    OrderModel.create(
-                                                                        uid = address!!.uid,
-                                                                        email = GLobalAuthViewModel.getAuthViewModel().userModel!!.email,
-                                                                        address = address!!,
-                                                                        listProduct = newProductList,
-                                                                        totalPrice = totalPrice,
-                                                                        paymentMethod = "ZaloPay"
-                                                                    )
-                                                                )
-                                                                GlobalNavigation.navController.navigate("order-success")
+                                                                isCreatingOrder = false
                                                             }
-                                                            isCreatingOrder = false
-                                                        }
 
-                                                        override fun onPaymentCanceled(
-                                                            zpTransToken: String,
-                                                            appTransID: String
-                                                        ) {
-                                                            AppUtil.showToast(
-                                                                context,
-                                                                "Thanh toán bị hủy"
-                                                            )
-                                                            isCreatingOrder = false
-                                                        }
+                                                            override fun onPaymentCanceled(
+                                                                zpTransToken: String,
+                                                                appTransID: String
+                                                            ) {
+                                                                AppUtil.showToast(
+                                                                    context,
+                                                                    "Thanh toán bị hủy"
+                                                                )
+                                                                isCreatingOrder = false
+                                                            }
 
-                                                        override fun onPaymentError(
-                                                            zaloPayError: ZaloPayError,
-                                                            zpTransToken: String,
-                                                            appTransID: String
-                                                        ) {
-                                                            AppUtil.showToast(
-                                                                context,
-                                                                "Thanh toán thất bại: ${zaloPayError.name}"
-                                                            )
+                                                            override fun onPaymentError(
+                                                                zaloPayError: ZaloPayError,
+                                                                zpTransToken: String,
+                                                                appTransID: String
+                                                            ) {
+                                                                AppUtil.showToast(
+                                                                    context,
+                                                                    "Thanh toán thất bại: ${zaloPayError.name}"
+                                                                )
 //                                                            Log.e(
 //                                                                "ZaloPay",
 //                                                                "Payment error: ${zaloPayError.name}, zpTransToken: $zpTransToken"
 //                                                            )
-                                                            isCreatingOrder = false
+                                                                isCreatingOrder = false
+                                                            }
                                                         }
-                                                    }
-                                                )
-                                            } else {
-                                                val message = data.optString("returnmessage", "Lỗi không xác định")
-                                                AppUtil.showToast(context, "Tạo đơn hàng thất bại: $message")
+                                                    )
+                                                } else {
+                                                    val message = data.optString("returnmessage", "Lỗi không xác định")
+                                                    AppUtil.showToast(context, "Tạo đơn hàng thất bại: $message")
 //                                                Log.e("ZaloPay", "CreateOrder failed with code: $code, message: $message")
+                                                    isCreatingOrder = false
+                                                }
+                                            } catch (e: Exception) {
+                                                AppUtil.showToast(context, "Lỗi khi tạo đơn hàng: ${e.message}")
+                                                Log.e("ZaloPay", "CreateOrder error: ${e.message}")
                                                 isCreatingOrder = false
                                             }
-                                        } catch (e: Exception) {
-                                            AppUtil.showToast(context, "Lỗi khi tạo đơn hàng: ${e.message}")
-                                            Log.e("ZaloPay", "CreateOrder error: ${e.message}")
-                                            isCreatingOrder = false
                                         }
-                                    }
-                                } else {
-                                    isLoading = true
-                                    scope.launch {
-                                        val newProductList = mutableListOf<ProductInfoModel>()
-                                        listProduct.forEachIndexed { index, it ->
-                                            newProductList.add(
-                                                ProductInfoModel.create(
-                                                    id = it.id,
-                                                    name = it.name,
-                                                    imageUrl = it.imageUrls.firstOrNull()!!.imageUrl,
-                                                    selectType = cartList.get(index).selectType,
-                                                    quantity = cartList.get(index).quantity
+                                    } else {
+                                        isLoading = true
+                                        scope.launch {
+                                            val newProductList = mutableListOf<ProductInfoModel>()
+                                            listProduct.forEachIndexed { index, it ->
+                                                newProductList.add(
+                                                    ProductInfoModel.create(
+                                                        id = it.id,
+                                                        name = it.name,
+                                                        imageUrl = it.imageUrls.firstOrNull()!!.imageUrl,
+                                                        selectType = cartList.get(index).selectType,
+                                                        quantity = cartList.get(index).quantity
+                                                    )
+                                                )
+                                            }
+                                            GlobalRepository.orderRepository.addOrder(
+                                                OrderModel.create(
+                                                    uid = address!!.uid,
+                                                    email = GLobalAuthViewModel.getAuthViewModel().userModel!!.email,
+                                                    address = address!!,
+                                                    listProduct = newProductList,
+                                                    totalPrice = totalPrice,
+                                                    paymentMethod = "COD"
                                                 )
                                             )
                                         }
-                                        GlobalRepository.orderRepository.addOrder(
-                                            OrderModel.create(
-                                                uid = address!!.uid,
-                                                email = GLobalAuthViewModel.getAuthViewModel().userModel!!.email,
-                                                address = address!!,
-                                                listProduct = newProductList,
-                                                totalPrice = totalPrice,
-                                                paymentMethod = "COD"
-                                            )
-                                        )
+                                        GlobalNavigation.navController.navigate("order-success")
                                     }
-                                    GlobalNavigation.navController.navigate("order-success")
                                 }
-                            }
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(25, 118, 210),
-                        )
-                    ) {
-                        Text(
-                            text = "Đặt hàng"
-                        )
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(25, 118, 210),
+                            )
+                        ) {
+                            Text(
+                                text = "Đặt hàng"
+                            )
+                        }
                     }
                 }
             }

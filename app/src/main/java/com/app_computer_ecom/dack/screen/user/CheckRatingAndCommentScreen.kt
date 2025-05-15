@@ -15,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,131 +58,23 @@ fun CheckRatingAndCommentScreen(orderId: String, selectedProduct: Int) {
         isLoading = false
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        TopBar(title = "Đánh giá sản phẩm") {
-            GlobalNavigation.navController.popBackStack()
-        }
-        if (isLoading) {
-            LoadingScreen()
-        } else {
-            LazyColumn (
-                modifier = Modifier.padding(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(MaterialTheme.colorScheme.surface)
-                            .padding(8.dp)
-                    ) {
-                        ProductItemOrder(
-                            productInfoModel = productInfoModel!!,
-                        )
-                        Text(
-                            text = buildAnnotatedString {
-                                append("Tổng số tiền : ")
-                                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                    append(formatter.format(productInfoModel!!.quantity * productInfoModel!!.selectType.price))
-                                }
-                            },
-                            fontSize = 12.sp,
-                            lineHeight = 14.sp,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.align(Alignment.End)
-                        )
-                    }
-                }
-                item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(MaterialTheme.colorScheme.surface)
-                            .padding(8.dp)
-                    ) {
-                        Row {
-
-                            IconButton(
-                                onClick = {
-
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Star,
-                                    contentDescription = null,
-                                    tint = if (ratingModel!!.rating >= 1) MaterialTheme.colorScheme.surfaceTint else MaterialTheme.colorScheme.scrim
-                                )
-                            }
-                            IconButton(
-                                onClick = {
-
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Star,
-                                    contentDescription = null,
-                                    tint = if (ratingModel!!.rating >= 2) MaterialTheme.colorScheme.surfaceTint else MaterialTheme.colorScheme.scrim
-                                )
-                            }
-                            IconButton(
-                                onClick = {
-
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Star,
-                                    contentDescription = null,
-                                    tint = if (ratingModel!!.rating >= 3) MaterialTheme.colorScheme.surfaceTint else MaterialTheme.colorScheme.scrim
-                                )
-                            }
-                            IconButton(
-                                onClick = {
-
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Star,
-                                    contentDescription = null,
-                                    tint = if (ratingModel!!.rating >= 4) MaterialTheme.colorScheme.surfaceTint else MaterialTheme.colorScheme.scrim
-                                )
-                            }
-                            IconButton(
-                                onClick = {
-
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Star,
-                                    contentDescription = null,
-                                    tint = if (ratingModel!!.rating == 5) MaterialTheme.colorScheme.surfaceTint else MaterialTheme.colorScheme.scrim
-                                )
-                            }
-                        }
-                        OutlinedTextField(
-                            value = ratingModel!!.commentModel!!.content,
-                            onValueChange = {
-
-                            },
-                            label = {
-                                Text(
-                                    text = "Mô tả, đánh giá sản phẩm",
-                                    fontSize = 12.sp
-                                )
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            textStyle = TextStyle(fontSize = 14.sp),
-                            readOnly = true,
-                            minLines = 3
-                        )
-                    }
-                }
-                if (ratingModel!!.commentModel!!.reply.isNotEmpty()) {
+    Scaffold { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            TopBar(title = "Đánh giá sản phẩm") {
+                GlobalNavigation.navController.popBackStack()
+            }
+            if (isLoading) {
+                LoadingScreen()
+            } else {
+                LazyColumn (
+                    modifier = Modifier.padding(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     item {
                         Column(
                             modifier = Modifier
@@ -190,14 +83,97 @@ fun CheckRatingAndCommentScreen(orderId: String, selectedProduct: Int) {
                                 .background(MaterialTheme.colorScheme.surface)
                                 .padding(8.dp)
                         ) {
+                            ProductItemOrder(
+                                productInfoModel = productInfoModel!!,
+                            )
+                            Text(
+                                text = buildAnnotatedString {
+                                    append("Tổng số tiền : ")
+                                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                        append(formatter.format(productInfoModel!!.quantity * productInfoModel!!.selectType.price))
+                                    }
+                                },
+                                fontSize = 12.sp,
+                                lineHeight = 14.sp,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.align(Alignment.End)
+                            )
+                        }
+                    }
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(MaterialTheme.colorScheme.surface)
+                                .padding(8.dp)
+                        ) {
+                            Row {
+
+                                IconButton(
+                                    onClick = {
+
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Star,
+                                        contentDescription = null,
+                                        tint = if (ratingModel!!.rating >= 1) MaterialTheme.colorScheme.surfaceTint else MaterialTheme.colorScheme.scrim
+                                    )
+                                }
+                                IconButton(
+                                    onClick = {
+
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Star,
+                                        contentDescription = null,
+                                        tint = if (ratingModel!!.rating >= 2) MaterialTheme.colorScheme.surfaceTint else MaterialTheme.colorScheme.scrim
+                                    )
+                                }
+                                IconButton(
+                                    onClick = {
+
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Star,
+                                        contentDescription = null,
+                                        tint = if (ratingModel!!.rating >= 3) MaterialTheme.colorScheme.surfaceTint else MaterialTheme.colorScheme.scrim
+                                    )
+                                }
+                                IconButton(
+                                    onClick = {
+
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Star,
+                                        contentDescription = null,
+                                        tint = if (ratingModel!!.rating >= 4) MaterialTheme.colorScheme.surfaceTint else MaterialTheme.colorScheme.scrim
+                                    )
+                                }
+                                IconButton(
+                                    onClick = {
+
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Star,
+                                        contentDescription = null,
+                                        tint = if (ratingModel!!.rating == 5) MaterialTheme.colorScheme.surfaceTint else MaterialTheme.colorScheme.scrim
+                                    )
+                                }
+                            }
                             OutlinedTextField(
-                                value = ratingModel!!.commentModel!!.reply,
+                                value = ratingModel!!.commentModel!!.content,
                                 onValueChange = {
 
                                 },
                                 label = {
                                     Text(
-                                        text = "Phản hồi của shop",
+                                        text = "Mô tả, đánh giá sản phẩm",
                                         fontSize = 12.sp
                                     )
                                 },
@@ -206,6 +182,34 @@ fun CheckRatingAndCommentScreen(orderId: String, selectedProduct: Int) {
                                 readOnly = true,
                                 minLines = 3
                             )
+                        }
+                    }
+                    if (ratingModel!!.commentModel!!.reply.isNotEmpty()) {
+                        item {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(MaterialTheme.colorScheme.surface)
+                                    .padding(8.dp)
+                            ) {
+                                OutlinedTextField(
+                                    value = ratingModel!!.commentModel!!.reply,
+                                    onValueChange = {
+
+                                    },
+                                    label = {
+                                        Text(
+                                            text = "Phản hồi của shop",
+                                            fontSize = 12.sp
+                                        )
+                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textStyle = TextStyle(fontSize = 14.sp),
+                                    readOnly = true,
+                                    minLines = 3
+                                )
+                            }
                         }
                     }
                 }

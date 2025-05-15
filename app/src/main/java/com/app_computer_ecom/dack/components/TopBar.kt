@@ -76,7 +76,12 @@ fun TopBar(title: String = "", isShowCard: Boolean = true, onBack: () -> Unit) {
             if (isShowCard) {
                 IconButton(
                     onClick = {
-                        GlobalNavigation.navController.navigate("home/2")
+                        GlobalNavigation.navController.navigate("home/2") {
+                            popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                        }
                     }
                 ) {
                     Box(
@@ -111,7 +116,12 @@ fun TopBar(title: String = "", isShowCard: Boolean = true, onBack: () -> Unit) {
 
             IconButton(
                 onClick = {
-                    GlobalNavigation.navController.navigate("home/0")
+                    GlobalNavigation.navController.navigate("home/0") {
+                        popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                            inclusive = false
+                        }
+                        launchSingleTop = true
+                    }
                 }
             ) {
                 Icon(

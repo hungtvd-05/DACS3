@@ -2,10 +2,13 @@ package com.app_computer_ecom.dack.screen.user
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,23 +30,26 @@ fun ReviewScreen(productId: String) {
             GlobalRepository.ratingAndCommentRepository.getRatingAndComment(productId)
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background)
-    )
-    {
-        TopBar(title = "Đánh giá sản phẩm") {
-            GlobalNavigation.navController.popBackStack()
-        }
+    Scaffold { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        )
+        {
+            TopBar(title = "Đánh giá sản phẩm") {
+                GlobalNavigation.navController.popBackStack()
+            }
 
-        LazyColumn {
-            items(listRatingModel.size) {
-                CommentItem(listRatingModel[it])
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.background,
-                    modifier = Modifier.fillMaxWidth()
-                )
+            LazyColumn {
+                items(listRatingModel.size) {
+                    CommentItem(listRatingModel[it])
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.background,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
         }
     }

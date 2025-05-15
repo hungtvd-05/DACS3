@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,10 +47,10 @@ import com.app_computer_ecom.dack.repository.GlobalRepository
 import kotlinx.coroutines.launch
 
 @Composable
-fun AddressMenuScreen() {
+fun AddressMenuScreen(lastIndex: Int) {
 
     BackHandler(enabled = true) {
-        GlobalNavigation.navController.navigate("home/3") {
+        GlobalNavigation.navController.navigate(if (lastIndex == 2) "checkout" else "home/3") {
             popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
                 inclusive = false
             }
@@ -67,111 +68,120 @@ fun AddressMenuScreen() {
         isLoading = false
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth().padding(top = 4.dp)
+    Scaffold { paddingValues ->
+        Column(
+            modifier = Modifier.padding(paddingValues).fillMaxSize().background(MaterialTheme.colorScheme.background)
         ) {
-            IconButton(
-                onClick = { GlobalNavigation.navController.popBackStack() },
-                modifier = Modifier.align(Alignment.CenterStart)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth().padding(top = 4.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
-                    tint = MaterialTheme.colorScheme.onBackground
+                IconButton(
+                    onClick = {
+                        GlobalNavigation.navController.navigate(if (lastIndex == 2) "checkout" else "home/3") {
+                            popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                        }
+                    },
+                    modifier = Modifier.align(Alignment.CenterStart)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+
+                Text(
+                    text = "Chọn địa chỉ nhận hàng",
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.align(Alignment.Center),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontWeight = FontWeight.SemiBold
                 )
             }
 
-            Text(
-                text = "Chọn địa chỉ nhận hàng",
-                fontSize = 16.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.align(Alignment.Center),
-                color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
-
-        if (isLoading) {
-            LoadingScreen()
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .selectableGroup(),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                item {  }
-                items(addresses.size) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
+            if (isLoading) {
+                LoadingScreen()
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .selectableGroup(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    item {  }
+                    items(addresses.size) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
 //                            .padding(bottom = 8.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(MaterialTheme.colorScheme.surface)
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(8.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(MaterialTheme.colorScheme.surface)
                         ) {
-                            RadioButton(
-                                selected = (addresses[it].default),
-                                onClick = {
-                                    isLoading = true
-                                    scope.launch {
-                                        GlobalRepository.addressRepository.updateAddress(addresses[it].copy(default = !addresses[it].default))
-                                        GlobalNavigation.navController.popBackStack()
-                                    }
-                                }
-                            )
-                            Column(
-
+                            Row(
+                                modifier = Modifier.padding(8.dp)
                             ) {
-                                Row {
-                                    Text(
-                                        text = "${addresses[it].name} | ${addresses[it].phoneNum}",
-                                        fontWeight = FontWeight.SemiBold,
-                                        fontSize = 12.sp,
-                                        color = MaterialTheme.colorScheme.onBackground
-                                    )
-                                    Spacer(modifier = Modifier.weight(1f))
-                                    Text(
-                                        text = "Sửa",
-                                        modifier = Modifier.clickable(onClick = {
-                                            GlobalNavigation.navController.navigate("editaddress/${addresses[it].id}")
-                                        }),
-                                        fontSize = 12.sp,
-                                        color = MaterialTheme.colorScheme.onBackground
-                                    )
-                                }
-                                Row {
-                                    Text(
-                                        text = "${addresses[it].street}, ${addresses[it].ward}, ${addresses[it].district}, ${addresses[it].province}",
-                                        fontSize = 12.sp,
-                                        color = MaterialTheme.colorScheme.onBackground
-                                    )
+                                RadioButton(
+                                    selected = (addresses[it].default),
+                                    onClick = {
+                                        isLoading = true
+                                        scope.launch {
+                                            GlobalRepository.addressRepository.updateAddress(addresses[it].copy(default = !addresses[it].default))
+                                            GlobalNavigation.navController.popBackStack()
+                                        }
+                                    }
+                                )
+                                Column(
+
+                                ) {
+                                    Row {
+                                        Text(
+                                            text = "${addresses[it].name} | ${addresses[it].phoneNum}",
+                                            fontWeight = FontWeight.SemiBold,
+                                            fontSize = 12.sp,
+                                            color = MaterialTheme.colorScheme.onBackground
+                                        )
+                                        Spacer(modifier = Modifier.weight(1f))
+                                        Text(
+                                            text = "Sửa",
+                                            modifier = Modifier.clickable(onClick = {
+                                                GlobalNavigation.navController.navigate("editaddress/${addresses[it].id}")
+                                            }),
+                                            fontSize = 12.sp,
+                                            color = MaterialTheme.colorScheme.onBackground
+                                        )
+                                    }
+                                    Row {
+                                        Text(
+                                            text = "${addresses[it].street}, ${addresses[it].ward}, ${addresses[it].district}, ${addresses[it].province}",
+                                            fontSize = 12.sp,
+                                            color = MaterialTheme.colorScheme.onBackground
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                item {
-                    Button(
-                        onClick = {
-                            GlobalNavigation.navController.navigate("addAddress")
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                        ),
-                        modifier = Modifier.fillMaxWidth().height(40.dp)
-                    ) {
-                        Text(
-                            text = "Thêm địa chỉ",
-                            color = Color.White,
-                            fontWeight = FontWeight.SemiBold
-                        )
+                    item {
+                        Button(
+                            onClick = {
+                                GlobalNavigation.navController.navigate("addAddress")
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            ),
+                            modifier = Modifier.fillMaxWidth().height(40.dp)
+                        ) {
+                            Text(
+                                text = "Thêm địa chỉ",
+                                color = Color.White,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
                     }
                 }
             }

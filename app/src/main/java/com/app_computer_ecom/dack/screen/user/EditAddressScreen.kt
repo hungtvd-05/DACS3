@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -22,6 +23,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -88,312 +90,318 @@ fun EditAddressScreen(addressId: String) {
     }
 
 
-    Column {
-        Box(
+    Scaffold { paddingValues ->
+        Column(
             modifier = Modifier
-                .fillMaxWidth().padding(top = 4.dp)
+                .padding(paddingValues)
+                .fillMaxSize()
         ) {
-            IconButton(
-                onClick = { GlobalNavigation.navController.popBackStack() },
-                modifier = Modifier.align(Alignment.CenterStart)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth().padding(top = 4.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back"
+                IconButton(
+                    onClick = { GlobalNavigation.navController.popBackStack() },
+                    modifier = Modifier.align(Alignment.CenterStart)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back"
+                    )
+                }
+
+                Text(
+                    text = "Sửa địa chỉ",
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.align(Alignment.Center)
                 )
             }
 
-            Text(
-                text = "Sửa địa chỉ",
-                fontSize = 20.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }
-
-        if (isLoading) {
-            LoadingScreen()
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                item { }
-                item {
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color.White
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = CardDefaults.cardElevation(8.dp),
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp)
+            if (isLoading) {
+                LoadingScreen()
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    item { }
+                    item {
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color.White
+                            ),
+                            shape = RoundedCornerShape(12.dp),
+                            elevation = CardDefaults.cardElevation(8.dp),
                         ) {
-                            Text(
-                                text = "Địa chỉ",
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 16.sp
-                            )
-                            TextField(
-                                value = name,
-                                onValueChange = { name = it },
-                                label = {
-                                    Text(
-                                        text = "Họ và tên",
-                                    )
-                                },
-                                modifier = Modifier.fillMaxWidth(),
-                                textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
-                                singleLine = true,
-                                colors = TextFieldDefaults.colors(
-                                    unfocusedContainerColor = Color.White,
-                                    focusedContainerColor = Color.White
-                                )
-                            )
-                            TextField(
-                                value = phoneNum,
-                                onValueChange = { phoneNum = it },
-                                label = {
-                                    Text(
-                                        text = "Số điện thoại",
-                                    )
-                                },
-                                modifier = Modifier.fillMaxWidth(),
-                                textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
-                                singleLine = true,
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Number
-                                ),
-                                colors = TextFieldDefaults.colors(
-                                    unfocusedContainerColor = Color.White,
-                                    focusedContainerColor = Color.White
-                                )
-                            )
-                            ExposedDropdownMenuBox(
-                                expanded = expandedProvince,
-                                onExpandedChange = { expandedProvince = !expandedProvince }
+                            Column(
+                                modifier = Modifier.padding(16.dp)
                             ) {
-                                TextField(
-                                    value = selectedProvince?.Name ?: "Chọn tỉnh/thành phố",
-                                    onValueChange = {},
-                                    readOnly = true,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .menuAnchor(),
-                                    colors = TextFieldDefaults.colors(
-                                        unfocusedContainerColor = Color.White,
-                                        focusedContainerColor = Color.White
-                                    )
+                                Text(
+                                    text = "Địa chỉ",
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 16.sp
                                 )
-                                ExposedDropdownMenu(
-                                    expanded = expandedProvince,
-                                    onDismissRequest = { expandedProvince = false },
-                                    containerColor = Color.White
-                                ) {
-                                    provinces.forEach { province ->
-                                        DropdownMenuItem(
-                                            text = {
-                                                Text(text = province.Name)
-                                            },
-                                            onClick = {
-                                                selectedProvince = province
-                                                selectedDistrict = null
-                                                selectedWard = null
-                                                expandedProvince = false
-                                            }
+                                TextField(
+                                    value = name,
+                                    onValueChange = { name = it },
+                                    label = {
+                                        Text(
+                                            text = "Họ và tên",
                                         )
-                                    }
-                                }
-                            }
-                            ExposedDropdownMenuBox(
-                                expanded = expandedDistrict,
-                                onExpandedChange = { expandedDistrict = !expandedDistrict }
-                            ) {
-                                TextField(
-                                    value = selectedDistrict?.Name ?: "Chọn quận/huyện",
-                                    onValueChange = {},
-                                    readOnly = true,
-                                    enabled = selectedProvince != null,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .menuAnchor(),
-                                    colors = TextFieldDefaults.colors(
-                                        unfocusedContainerColor = Color.White,
-                                        focusedContainerColor = Color.White,
-                                    )
-                                )
-                                ExposedDropdownMenu(
-                                    expanded = expandedDistrict,
-                                    onDismissRequest = { expandedDistrict = false },
-                                    containerColor = Color.White
-                                ) {
-                                    selectedProvince?.Districts?.forEach { district ->
-                                        androidx.compose.material.DropdownMenuItem(
-                                            onClick = {
-                                                selectedDistrict = district
-                                                selectedWard = null
-                                                expandedDistrict = false
-                                            }
-                                        ) {
-                                            Text(district.Name)
-                                        }
-                                    }
-                                }
-                            }
-                            ExposedDropdownMenuBox(
-                                expanded = expandedWard,
-                                onExpandedChange = { expandedWard = !expandedWard }
-                            ) {
-                                TextField(
-                                    value = selectedWard?.Name ?: "Chọn phường/xã",
-                                    onValueChange = {},
-                                    readOnly = true,
-                                    enabled = selectedDistrict != null,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .menuAnchor(),
+                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
+                                    singleLine = true,
                                     colors = TextFieldDefaults.colors(
                                         unfocusedContainerColor = Color.White,
                                         focusedContainerColor = Color.White
                                     )
                                 )
-                                ExposedDropdownMenu(
-                                    expanded = expandedWard,
-                                    onDismissRequest = { expandedWard = false },
-                                    containerColor = Color.White
+                                TextField(
+                                    value = phoneNum,
+                                    onValueChange = { phoneNum = it },
+                                    label = {
+                                        Text(
+                                            text = "Số điện thoại",
+                                        )
+                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
+                                    singleLine = true,
+                                    keyboardOptions = KeyboardOptions(
+                                        keyboardType = KeyboardType.Number
+                                    ),
+                                    colors = TextFieldDefaults.colors(
+                                        unfocusedContainerColor = Color.White,
+                                        focusedContainerColor = Color.White
+                                    )
+                                )
+                                ExposedDropdownMenuBox(
+                                    expanded = expandedProvince,
+                                    onExpandedChange = { expandedProvince = !expandedProvince }
                                 ) {
-                                    selectedDistrict?.Wards?.forEach { ward ->
-                                        androidx.compose.material.DropdownMenuItem(
-                                            onClick = {
-                                                selectedWard = ward
-                                                expandedWard = false
-                                            }
-                                        ) {
-                                            Text(ward.Name)
+                                    TextField(
+                                        value = selectedProvince?.Name ?: "Chọn tỉnh/thành phố",
+                                        onValueChange = {},
+                                        readOnly = true,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .menuAnchor(),
+                                        colors = TextFieldDefaults.colors(
+                                            unfocusedContainerColor = Color.White,
+                                            focusedContainerColor = Color.White
+                                        )
+                                    )
+                                    ExposedDropdownMenu(
+                                        expanded = expandedProvince,
+                                        onDismissRequest = { expandedProvince = false },
+                                        containerColor = Color.White
+                                    ) {
+                                        provinces.forEach { province ->
+                                            DropdownMenuItem(
+                                                text = {
+                                                    Text(text = province.Name)
+                                                },
+                                                onClick = {
+                                                    selectedProvince = province
+                                                    selectedDistrict = null
+                                                    selectedWard = null
+                                                    expandedProvince = false
+                                                }
+                                            )
                                         }
                                     }
                                 }
+                                ExposedDropdownMenuBox(
+                                    expanded = expandedDistrict,
+                                    onExpandedChange = { expandedDistrict = !expandedDistrict }
+                                ) {
+                                    TextField(
+                                        value = selectedDistrict?.Name ?: "Chọn quận/huyện",
+                                        onValueChange = {},
+                                        readOnly = true,
+                                        enabled = selectedProvince != null,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .menuAnchor(),
+                                        colors = TextFieldDefaults.colors(
+                                            unfocusedContainerColor = Color.White,
+                                            focusedContainerColor = Color.White,
+                                        )
+                                    )
+                                    ExposedDropdownMenu(
+                                        expanded = expandedDistrict,
+                                        onDismissRequest = { expandedDistrict = false },
+                                        containerColor = Color.White
+                                    ) {
+                                        selectedProvince?.Districts?.forEach { district ->
+                                            androidx.compose.material.DropdownMenuItem(
+                                                onClick = {
+                                                    selectedDistrict = district
+                                                    selectedWard = null
+                                                    expandedDistrict = false
+                                                }
+                                            ) {
+                                                Text(district.Name)
+                                            }
+                                        }
+                                    }
+                                }
+                                ExposedDropdownMenuBox(
+                                    expanded = expandedWard,
+                                    onExpandedChange = { expandedWard = !expandedWard }
+                                ) {
+                                    TextField(
+                                        value = selectedWard?.Name ?: "Chọn phường/xã",
+                                        onValueChange = {},
+                                        readOnly = true,
+                                        enabled = selectedDistrict != null,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .menuAnchor(),
+                                        colors = TextFieldDefaults.colors(
+                                            unfocusedContainerColor = Color.White,
+                                            focusedContainerColor = Color.White
+                                        )
+                                    )
+                                    ExposedDropdownMenu(
+                                        expanded = expandedWard,
+                                        onDismissRequest = { expandedWard = false },
+                                        containerColor = Color.White
+                                    ) {
+                                        selectedDistrict?.Wards?.forEach { ward ->
+                                            androidx.compose.material.DropdownMenuItem(
+                                                onClick = {
+                                                    selectedWard = ward
+                                                    expandedWard = false
+                                                }
+                                            ) {
+                                                Text(ward.Name)
+                                            }
+                                        }
+                                    }
+                                }
+                                TextField(
+                                    value = street,
+                                    onValueChange = { street = it },
+                                    label = {
+                                        Text(
+                                            text = "Tên đường, Tòa nhà, Số nhà",
+                                        )
+                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
+                                    singleLine = true,
+                                    colors = TextFieldDefaults.colors(
+                                        unfocusedContainerColor = Color.White,
+                                        focusedContainerColor = Color.White
+                                    )
+                                )
                             }
-                            TextField(
-                                value = street,
-                                onValueChange = { street = it },
-                                label = {
-                                    Text(
-                                        text = "Tên đường, Tòa nhà, Số nhà",
-                                    )
-                                },
-                                modifier = Modifier.fillMaxWidth(),
-                                textStyle = TextStyle(color = Color.Black, fontSize = 15.sp),
-                                singleLine = true,
-                                colors = TextFieldDefaults.colors(
-                                    unfocusedContainerColor = Color.White,
-                                    focusedContainerColor = Color.White
-                                )
-                            )
                         }
                     }
-                }
-                item {
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = Color.White
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = CardDefaults.cardElevation(8.dp),
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(16.dp)
+                    item {
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color.White
+                            ),
+                            shape = RoundedCornerShape(12.dp),
+                            elevation = CardDefaults.cardElevation(8.dp),
                         ) {
-                            Text(
-                                text = "Đặt làm địa chỉ mặc định"
-                            )
-                            Spacer(modifier = Modifier.weight(1f))
-                            Switch(
-                                checked = defaultAddress,
-                                onCheckedChange = {
-                                    defaultAddress = it
-                                },
-                                modifier = Modifier,
-                                colors = SwitchDefaults.colors(
-                                    checkedThumbColor = Color(25, 118, 210),
-                                    uncheckedThumbColor = Color(25, 118, 210),
-                                    checkedTrackColor = Color.White,
-                                    uncheckedTrackColor = Color.White,
-                                    checkedBorderColor = Color.Gray,
-                                    uncheckedBorderColor = Color.Gray
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(16.dp)
+                            ) {
+                                Text(
+                                    text = "Đặt làm địa chỉ mặc định"
                                 )
-                            )
-                        }
-                    }
-                }
-                item { }
-                item { }
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 4.dp),
-            ) {
-                Button(
-                    onClick = {
-                        if (name.isNotEmpty() && phoneNum.isNotEmpty() && selectedProvince != null && selectedDistrict != null && selectedWard != null && street.isNotEmpty()) {
-                            isLoading = true
-                            scope.launch {
-                                GlobalRepository.addressRepository.updateAddress(
-                                    AddressModel.create(
-                                        id = address!!.id,
-                                        uid = address!!.uid,
-                                        name = name.trim(),
-                                        phoneNum = phoneNum,
-                                        province = selectedProvince!!.Name,
-                                        district = selectedDistrict!!.Name,
-                                        ward = selectedWard!!.Name,
-                                        street = street.trim(),
-                                        default = defaultAddress
+                                Spacer(modifier = Modifier.weight(1f))
+                                Switch(
+                                    checked = defaultAddress,
+                                    onCheckedChange = {
+                                        defaultAddress = it
+                                    },
+                                    modifier = Modifier,
+                                    colors = SwitchDefaults.colors(
+                                        checkedThumbColor = Color(25, 118, 210),
+                                        uncheckedThumbColor = Color(25, 118, 210),
+                                        checkedTrackColor = Color.White,
+                                        uncheckedTrackColor = Color.White,
+                                        checkedBorderColor = Color.Gray,
+                                        uncheckedBorderColor = Color.Gray
                                     )
                                 )
+                            }
+                        }
+                    }
+                    item { }
+                    item { }
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                ) {
+                    Button(
+                        onClick = {
+                            if (name.isNotEmpty() && phoneNum.isNotEmpty() && selectedProvince != null && selectedDistrict != null && selectedWard != null && street.isNotEmpty()) {
+                                isLoading = true
+                                scope.launch {
+                                    GlobalRepository.addressRepository.updateAddress(
+                                        AddressModel.create(
+                                            id = address!!.id,
+                                            uid = address!!.uid,
+                                            name = name.trim(),
+                                            phoneNum = phoneNum,
+                                            province = selectedProvince!!.Name,
+                                            district = selectedDistrict!!.Name,
+                                            ward = selectedWard!!.Name,
+                                            street = street.trim(),
+                                            default = defaultAddress
+                                        )
+                                    )
+                                    delay(200)
+                                    GlobalNavigation.navController.popBackStack()
+                                }
+                            } else {
+                                AppUtil.showToast(context, "Vui lòng điền đầy đủ thông tin !!!")
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(25, 118, 210),
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Hoàn thành",
+                            fontSize = 18.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                GlobalRepository.addressRepository.deleteAddress(address!!)
                                 delay(200)
                                 GlobalNavigation.navController.popBackStack()
                             }
-                        } else {
-                            AppUtil.showToast(context, "Vui lòng điền đầy đủ thông tin !!!")
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(25, 118, 210),
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Hoàn thành",
-                        fontSize = 18.sp
-                    )
-                }
-                Spacer(modifier = Modifier.height(5.dp))
-                Button(
-                    onClick = {
-                        scope.launch {
-                            GlobalRepository.addressRepository.deleteAddress(address!!)
-                            delay(200)
-                            GlobalNavigation.navController.popBackStack()
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Red,
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Xóa",
-                        fontSize = 18.sp
-                    )
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Red,
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Xóa",
+                            fontSize = 18.sp
+                        )
+                    }
                 }
             }
         }

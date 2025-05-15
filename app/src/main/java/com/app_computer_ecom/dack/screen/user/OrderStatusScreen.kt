@@ -29,6 +29,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -88,17 +89,20 @@ fun OrderStatusScreen(status: Int) {
         GlobalNavigation.navController.navigate("home/3")
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        TopBar(title = "Đơn hàng") {
-            GlobalNavigation.navController.navigate("home/3")
-        }
-        Column(modifier = Modifier.fillMaxWidth()) {
-            OrderListWithFilter(orderStatusList, orderStatus) {
-                orderStatus = it
+    Scaffold { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            TopBar(title = "Đơn hàng") {
+                GlobalNavigation.navController.navigate("home/3")
+            }
+            Column(modifier = Modifier.fillMaxWidth()) {
+                OrderListWithFilter(orderStatusList, orderStatus) {
+                    orderStatus = it
+                }
             }
         }
     }

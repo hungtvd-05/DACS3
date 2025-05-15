@@ -79,6 +79,6 @@ fun ContentAdminScreen(modifier: Modifier = Modifier, selectedIndex: Int) {
         1 -> Menu(modifier)
         2 -> OrderPage(modifier)
         3 -> RatingListPage(modifier)
-        4 -> InfoAppScreen()
+        4 -> InfoAppScreen(modifier)
     }
 }

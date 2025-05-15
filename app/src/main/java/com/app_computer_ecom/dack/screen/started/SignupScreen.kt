@@ -28,6 +28,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -52,15 +53,14 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.app_computer_ecom.dack.AppUtil
+import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.R
 import com.app_computer_ecom.dack.viewmodel.AuthViewModel
 
 @Composable
 fun SignupScreen(
     modifier: Modifier = Modifier,
-    navController: NavController,
     authViewModel: AuthViewModel = viewModel()
 ) {
     var email by remember { mutableStateOf("") }
@@ -74,262 +74,290 @@ fun SignupScreen(
     val activityContext = context as? Activity ?: context
     val focusManager = LocalFocusManager.current
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFF1A5CCC)),
-        contentAlignment = Alignment.TopCenter
-    ) {
-        Column(
-            modifier = modifier
-                .padding(horizontal = 32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+    Scaffold { paddingValues ->
+        Box(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+                .background(Color(0xFF1A5CCC)),
+            contentAlignment = Alignment.TopCenter
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.logo_teachbit),
-                contentDescription = "App Logo",
-                modifier = Modifier.size(128.dp)
-            )
-            Text(
-                text = "Hello there!",
-                modifier = Modifier.fillMaxWidth(),
-                style = TextStyle(
-                    fontSize = 18.sp,
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    color = Color.White
-                )
-            )
-            Text(
-                text = "Create your account",
-                modifier = Modifier.fillMaxWidth(),
-                style = TextStyle(
-                    fontSize = 10.sp,
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight.Light,
-                    textAlign = TextAlign.Center,
-                    color = Color.White
-                )
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = { Text("Name", color = Color.White) },
-                placeholder = { Text("Enter your name", color = Color(0xFFB0C4DE)) },
-                modifier = Modifier.fillMaxWidth(),
-                textStyle = TextStyle(color = Color.White),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    textColor = Color.White,
-                    focusedBorderColor = Color.White,
-                    unfocusedBorderColor = Color(0xFFB0C4DE),
-                    cursorColor = Color.White,
-                    focusedLabelColor = Color.White,
-                    unfocusedLabelColor = Color(0xFFB0C4DE),
-                    placeholderColor = Color(0xFFB0C4DE)
-                ),
-                singleLine = true,
-                shape = RoundedCornerShape(10.dp),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
-                )
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            OutlinedTextField(
-                value = username,
-                onValueChange = { username = it },
-                label = { Text("Username", color = Color.White) },
-                placeholder = { Text("Enter your username", color = Color(0xFFB0C4DE)) },
-                modifier = Modifier.fillMaxWidth(),
-                textStyle = TextStyle(color = Color.White),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    textColor = Color.White,
-                    focusedBorderColor = Color.White,
-                    unfocusedBorderColor = Color(0xFFB0C4DE),
-                    cursorColor = Color.White,
-                    focusedLabelColor = Color.White,
-                    unfocusedLabelColor = Color(0xFFB0C4DE),
-                    placeholderColor = Color(0xFFB0C4DE)
-                ),
-                singleLine = true,
-                shape = RoundedCornerShape(10.dp),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
-                )
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
-                label = { Text("Email address", color = Color.White) },
-                placeholder = { Text("Enter your email address", color = Color(0xFFB0C4DE)) },
-                modifier = Modifier.fillMaxWidth(),
-                textStyle = TextStyle(color = Color.White),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    textColor = Color.White,
-                    focusedBorderColor = Color.White,
-                    unfocusedBorderColor = Color(0xFFB0C4DE),
-                    cursorColor = Color.White,
-                    focusedLabelColor = Color.White,
-                    unfocusedLabelColor = Color(0xFFB0C4DE),
-                    placeholderColor = Color(0xFFB0C4DE)
-                ),
-                singleLine = true,
-                shape = RoundedCornerShape(10.dp),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
-                )
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
-                label = { Text("Password", color = Color.White) },
-                placeholder = { Text("Enter your password", color = Color(0xFFB0C4DE)) },
-                modifier = Modifier.fillMaxWidth(),
-                textStyle = TextStyle(color = Color.White),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    textColor = Color.White,
-                    focusedBorderColor = Color.White,
-                    unfocusedBorderColor = Color(0xFFB0C4DE),
-                    cursorColor = Color.White,
-                    focusedLabelColor = Color.White,
-                    unfocusedLabelColor = Color(0xFFB0C4DE),
-                    placeholderColor = Color(0xFFB0C4DE)
-                ),
-                singleLine = true,
-                shape = RoundedCornerShape(10.dp),
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                trailingIcon = {
-                    val image =
-                        if (passwordVisible) R.drawable.eye_svgrepo_com else R.drawable.eye_slash_svgrepo_com
-                    IconButton(
-                        onClick = { passwordVisible = !passwordVisible },
-                        modifier = Modifier.size(24.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(image),
-                            contentDescription = "Toggle password visibility",
-                            tint = Color.White
-                        )
-                    }
-                },
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(
-                    onDone = { focusManager.clearFocus() }
-                )
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-        }
-
-        Column(
-            modifier = modifier
-                .padding(horizontal = 32.dp)
-                .align(Alignment.BottomCenter)
-                .offset(0.dp, (-32).dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Button(
-                onClick = {
-                    isLoading = true
-                    authViewModel.signup(name, username, email, password) { success, errorMessage ->
-                        if (success) {
-                            isLoading = false
-                            AppUtil.showToast(
-                                context,
-                                "Tài khoản đã được đăng ký. Vui lòng kiểm tra email của bạn để xác thực tài khoản!!!"
-                            )
-                            navController.navigate("login")
-                        } else {
-                            isLoading = false
-                            AppUtil.showToast(context, errorMessage ?: "Something went wrong")
-                        }
-                    }
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
-                    contentColor = Color(0xFF1A5CCC)
-                ),
-                enabled = !isLoading,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(55.dp),
-                shape = RoundedCornerShape(10.dp)
+            Column(
+                modifier = modifier
+                    .padding(horizontal = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = if (isLoading) "Creating account" else "Sign Up", fontSize = 16.sp)
+                Image(
+                    painter = painterResource(id = R.drawable.logo_teachbit),
+                    contentDescription = "App Logo",
+                    modifier = Modifier.size(128.dp)
+                )
+                Text(
+                    text = "Hello there!",
+                    modifier = Modifier.fillMaxWidth(),
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        color = Color.White
+                    )
+                )
+                Text(
+                    text = "Create your account",
+                    modifier = Modifier.fillMaxWidth(),
+                    style = TextStyle(
+                        fontSize = 10.sp,
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight.Light,
+                        textAlign = TextAlign.Center,
+                        color = Color.White
+                    )
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Name", color = Color.White) },
+                    placeholder = { Text("Enter your name", color = Color(0xFFB0C4DE)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    textStyle = TextStyle(color = Color.White),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        textColor = Color.White,
+                        focusedBorderColor = Color.White,
+                        unfocusedBorderColor = Color(0xFFB0C4DE),
+                        cursorColor = Color.White,
+                        focusedLabelColor = Color.White,
+                        unfocusedLabelColor = Color(0xFFB0C4DE),
+                        placeholderColor = Color(0xFFB0C4DE)
+                    ),
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp),
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                    )
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                OutlinedTextField(
+                    value = username,
+                    onValueChange = { username = it },
+                    label = { Text("Username", color = Color.White) },
+                    placeholder = { Text("Enter your username", color = Color(0xFFB0C4DE)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    textStyle = TextStyle(color = Color.White),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        textColor = Color.White,
+                        focusedBorderColor = Color.White,
+                        unfocusedBorderColor = Color(0xFFB0C4DE),
+                        cursorColor = Color.White,
+                        focusedLabelColor = Color.White,
+                        unfocusedLabelColor = Color(0xFFB0C4DE),
+                        placeholderColor = Color(0xFFB0C4DE)
+                    ),
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp),
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                    )
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = { Text("Email address", color = Color.White) },
+                    placeholder = { Text("Enter your email address", color = Color(0xFFB0C4DE)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    textStyle = TextStyle(color = Color.White),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        textColor = Color.White,
+                        focusedBorderColor = Color.White,
+                        unfocusedBorderColor = Color(0xFFB0C4DE),
+                        cursorColor = Color.White,
+                        focusedLabelColor = Color.White,
+                        unfocusedLabelColor = Color(0xFFB0C4DE),
+                        placeholderColor = Color(0xFFB0C4DE)
+                    ),
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp),
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                    )
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text("Password", color = Color.White) },
+                    placeholder = { Text("Enter your password", color = Color(0xFFB0C4DE)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    textStyle = TextStyle(color = Color.White),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        textColor = Color.White,
+                        focusedBorderColor = Color.White,
+                        unfocusedBorderColor = Color(0xFFB0C4DE),
+                        cursorColor = Color.White,
+                        focusedLabelColor = Color.White,
+                        unfocusedLabelColor = Color(0xFFB0C4DE),
+                        placeholderColor = Color(0xFFB0C4DE)
+                    ),
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp),
+                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        val image =
+                            if (passwordVisible) R.drawable.eye_svgrepo_com else R.drawable.eye_slash_svgrepo_com
+                        IconButton(
+                            onClick = { passwordVisible = !passwordVisible },
+                            modifier = Modifier.size(24.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(image),
+                                contentDescription = "Toggle password visibility",
+                                tint = Color.White
+                            )
+                        }
+                    },
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(
+                        onDone = { focusManager.clearFocus() }
+                    )
+                )
+                Spacer(modifier = Modifier.height(10.dp))
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            OutlinedButton(
-                onClick = {
-                    isGoogleLoading = true
-                    authViewModel.loginWithGoogle(activityContext) { success, message ->
-                        isGoogleLoading = false
-                        if (!success) {
-                            Toast.makeText(
-                                context,
-                                message ?: "Lỗi đăng nhập Google",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        } else {
-                            if (authViewModel.userModel?.role == "user") {
-                                navController.navigate("home")
-                            } else if (authViewModel.userModel?.role == "admin") {
-                                navController.navigate("admin")
+
+            Column(
+                modifier = modifier
+                    .padding(horizontal = 32.dp)
+                    .align(Alignment.BottomCenter)
+                    .offset(0.dp, (-32).dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Button(
+                    onClick = {
+                        isLoading = true
+                        authViewModel.signup(name, username, email, password) { success, errorMessage ->
+                            if (success) {
+                                isLoading = false
+                                AppUtil.showToast(
+                                    context,
+                                    "Tài khoản đã được đăng ký. Vui lòng kiểm tra email của bạn để xác thực tài khoản!!!"
+                                )
+                                GlobalNavigation.navController.navigate("login") {
+                                    popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                                        inclusive = false
+                                    }
+                                    launchSingleTop = true
+                                }
                             } else {
-                                navController.navigate("loading")
+                                isLoading = false
+                                AppUtil.showToast(context, errorMessage ?: "Something went wrong")
                             }
                         }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.White,
+                        contentColor = Color(0xFF1A5CCC)
+                    ),
+                    enabled = !isLoading,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(55.dp),
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Text(text = if (isLoading) "Creating account" else "Sign Up", fontSize = 16.sp)
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                OutlinedButton(
+                    onClick = {
+                        isGoogleLoading = true
+                        authViewModel.loginWithGoogle(activityContext) { success, message ->
+                            isGoogleLoading = false
+                            if (!success) {
+                                Toast.makeText(
+                                    context,
+                                    message ?: "Lỗi đăng nhập Google",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                if (authViewModel.userModel?.role == "user") {
+                                    GlobalNavigation.navController.navigate("home") {
+                                        popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                                            inclusive = false
+                                        }
+                                        launchSingleTop = true
+                                    }
+                                } else if (authViewModel.userModel?.role == "admin") {
+                                    GlobalNavigation.navController.navigate("admin") {
+                                        popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                                            inclusive = false
+                                        }
+                                        launchSingleTop = true
+                                    }
+                                } else {
+                                    GlobalNavigation.navController.navigate("loading") {
+                                        popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                                            inclusive = false
+                                        }
+                                        launchSingleTop = true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    enabled = !isLoading && !isGoogleLoading,
+                    border = BorderStroke(1.dp, Color.White),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(55.dp),
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_google),
+                            contentDescription = "Google Icon",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = if (isGoogleLoading) "Signing in with Google..." else "Sign in with Google",
+                            color = Color.White,
+                            fontSize = 16.sp
+                        )
                     }
-                },
-                enabled = !isLoading && !isGoogleLoading,
-                border = BorderStroke(1.dp, Color.White),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(55.dp),
-                shape = RoundedCornerShape(10.dp)
-            ) {
+                }
+                Spacer(modifier = Modifier.height(20.dp))
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_google),
-                        contentDescription = "Google Icon",
-                        tint = Color.Unspecified,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = if (isGoogleLoading) "Signing in with Google..." else "Sign in with Google",
+                        text = "Already have an account? ",
                         color = Color.White,
-                        fontSize = 16.sp
+                        fontSize = 12.sp
+                    )
+                    Text(
+                        text = "Login",
+                        color = Color(0xFF47D6EA),
+                        fontWeight = FontWeight.Bold,
+                        textDecoration = TextDecoration.Underline,
+                        modifier = Modifier.clickable {
+                            GlobalNavigation.navController.navigate("login") {
+                                popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                                    inclusive = false
+                                }
+                                launchSingleTop = true
+                            }
+                        },
+                        fontSize = 12.sp
                     )
                 }
-            }
-            Spacer(modifier = Modifier.height(20.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = "Already have an account? ",
-                    color = Color.White,
-                    fontSize = 12.sp
-                )
-                Text(
-                    text = "Login",
-                    color = Color(0xFF47D6EA),
-                    fontWeight = FontWeight.Bold,
-                    textDecoration = TextDecoration.Underline,
-                    modifier = Modifier.clickable {
-                        navController.navigate("login")
-                    },
-                    fontSize = 12.sp
-                )
             }
         }
     }

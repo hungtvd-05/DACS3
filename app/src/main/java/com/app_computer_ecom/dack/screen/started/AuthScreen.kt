@@ -18,6 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,62 +27,75 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
+import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.R
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AuthScreen(modifier: Modifier, navController: NavHostController) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color(0xFF1A5CCC))
-            .padding(32.dp),
-        contentAlignment = Alignment.TopCenter
-    ) {
-
-        Column {
-            Image(
-                painter = painterResource(id = R.drawable.logo_teachbit),
-                contentDescription = "App Logo"
-            )
-        }
-
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .offset(0.dp, (-64).dp),
-            verticalArrangement = Arrangement.spacedBy(32.dp)
+fun AuthScreen(modifier: Modifier) {
+    Scaffold { paddingValues ->
+        Box(
+            modifier = modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+                .background(Color(0xFF1A5CCC))
+                .padding(32.dp),
+            contentAlignment = Alignment.TopCenter
         ) {
-            Button(
-                onClick = {
-                    navController.navigate("login")
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
-                    contentColor = MaterialTheme.colorScheme.primary
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(55.dp),
-                shape = RoundedCornerShape(10.dp)
-            ) {
-                Text(text = "Login", fontSize = 16.sp)
+
+            Column {
+                Image(
+                    painter = painterResource(id = R.drawable.logo_teachbit),
+                    contentDescription = "App Logo"
+                )
             }
-            OutlinedButton(
-                onClick = {
-                    navController.navigate("signup")
-                },
+
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(55.dp),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = Color.White
-                ),
-                shape = RoundedCornerShape(10.dp),
-                border = BorderStroke(1.dp, Color.White),
+                    .align(Alignment.BottomCenter)
+                    .offset(0.dp, (-64).dp),
+                verticalArrangement = Arrangement.spacedBy(32.dp)
             ) {
-                Text(text = "Sign Up", fontSize = 16.sp)
+                Button(
+                    onClick = {
+                        GlobalNavigation.navController.navigate("login") {
+                            popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.White,
+                        contentColor = MaterialTheme.colorScheme.primary
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(55.dp),
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Text(text = "Login", fontSize = 16.sp)
+                }
+                OutlinedButton(
+                    onClick = {
+                        GlobalNavigation.navController.navigate("signup") {
+                            popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(55.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = Color.White
+                    ),
+                    shape = RoundedCornerShape(10.dp),
+                    border = BorderStroke(1.dp, Color.White),
+                ) {
+                    Text(text = "Sign Up", fontSize = 16.sp)
+                }
             }
         }
     }

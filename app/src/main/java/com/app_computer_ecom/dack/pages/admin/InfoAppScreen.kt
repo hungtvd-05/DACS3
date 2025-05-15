@@ -43,12 +43,12 @@ import com.app_computer_ecom.dack.ui.theme.ThemeManager
 import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
 
 @Composable
-fun InfoAppScreen() {
+fun InfoAppScreen(modifier: Modifier = Modifier) {
 
     val context = LocalContext.current
 
     LazyColumn(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {

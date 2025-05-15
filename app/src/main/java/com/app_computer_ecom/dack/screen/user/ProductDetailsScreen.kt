@@ -43,6 +43,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -90,7 +91,7 @@ import java.util.Locale
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun ProductDetailsScreen(productId: String, lastIndexPage: Int) {
+fun ProductDetailsScreen(productId: String, lastIndexPage: Int, modifier: Modifier = Modifier) {
     BackHandler(enabled = true) {
         if (lastIndexPage == -1) {
             GlobalNavigation.navController.popBackStack()
@@ -162,334 +163,339 @@ fun ProductDetailsScreen(productId: String, lastIndexPage: Int) {
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        Row(
+    Scaffold { paddingValues ->
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
+                .padding(paddingValues)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
         ) {
-            IconButton(onClick = {
-                GlobalNavigation.navController.popBackStack()
-            }) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
-            Spacer(modifier = Modifier.weight(1f))
             Row(
-                modifier = Modifier.padding(end = 4.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                IconButton(
-                    onClick = {
-                        GlobalNavigation.navController.navigate("home/2")
-                    }
-                ) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.size(30.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ShoppingCart,
-                            contentDescription = "Shopping Cart",
-                            modifier = Modifier.align(Alignment.Center),
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .size(16.dp)
-                                .background(Color(230, 81, 0), shape = CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = if (cartItemCount < 100) cartItemCount.toString() else "99+",
-                                color = Color.White,
-                                fontSize = 6.sp,
-                                fontWeight = FontWeight.Bold,
-                                lineHeight = 8.sp
-                            )
-                        }
-                    }
-                }
-
-                IconButton(
-                    onClick = {
-                        GlobalNavigation.navController.navigate("home/0")
-                    }
-                ) {
+                IconButton(onClick = {
+                    GlobalNavigation.navController.popBackStack()
+                }) {
                     Icon(
-                        imageVector = Icons.Default.Home,
-                        contentDescription = "Home",
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
                         tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
-            }
-        }
-
-        if (isLoading) {
-            LoadingScreen()
-        } else {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 16.dp)
-            ) {
-
-                item(span = { GridItemSpan(2) }) {
-                    Column(
-                    ) {
-                        val pagerState = rememberPagerState(0) {
-                            product!!.imageUrls.size
+                Spacer(modifier = Modifier.weight(1f))
+                Row(
+                    modifier = Modifier.padding(end = 4.dp)
+                ) {
+                    IconButton(
+                        onClick = {
+                            GlobalNavigation.navController.navigate("home/2")
                         }
-
-//                        Spacer(modifier = Modifier.height(16.dp))
-                        HorizontalPager(
-                            state = pagerState,
-                            pageSpacing = 24.dp,
-                        ) {
-                            AsyncImage(
-                                model = product!!.imageUrls.get(it).imageUrl,
-                                contentDescription = "Product images",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .heightIn(260.dp)
-                                    .clip(RoundedCornerShape(16.dp)),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        DotsIndicator(
-                            dotCount = product!!.imageUrls.size,
-                            type = ShiftIndicatorType(
-                                DotGraphic(
-                                    color = MaterialTheme.colorScheme.primary,
-                                    size = 6.dp
-                                )
-                            ),
-                            pagerState = pagerState
-                        )
-                    }
-                }
-
-                item(span = { GridItemSpan(2) }) {
-                    Text(
-                        text = product?.name.toString(),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-
-                item(span = { GridItemSpan(2) }) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = if (selectedPriceInfo == null && minPrice != maxPrice) "${
-                                formatter.format(
-                                    minPrice
-                                )
-                            } - ${
-                                formatter.format(
-                                    maxPrice
-                                )
-                            }" else if (selectedPriceInfo == null) formatter.format(minPrice) else formatter.format(
-                                selectedPriceInfo!!.price
-                            ),
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color(230, 81, 0)
-                        )
-                        Spacer(modifier = Modifier.weight(1f))
-                        IconButton(
-                            onClick = {
-                                scope.launch {
-                                    if (isFavorite) {
-                                        GlobalRepository.favoriteRepository.deleteFavorite(
-                                            context = context,
-                                            productId = productId
-                                        )
-
-                                    } else {
-                                        GlobalRepository.favoriteRepository.addToFavorite(
-                                            context = context,
-                                            productId = productId
-                                        )
-                                    }
-
-                                    isFavorite = !isFavorite
-
-                                }
-                            }
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.size(30.dp)
                         ) {
                             Icon(
-                                imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                contentDescription = null,
-                                tint = if (isFavorite) Color(
-                                    230,
-                                    81,
-                                    0
-                                ) else MaterialTheme.colorScheme.onBackground
+                                imageVector = Icons.Default.ShoppingCart,
+                                contentDescription = "Shopping Cart",
+                                modifier = Modifier.align(Alignment.Center),
+                                tint = MaterialTheme.colorScheme.onBackground
                             )
-                        }
-                    }
-                }
-                item(span = { GridItemSpan(2) }) {
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        product!!.prices.forEach { priceInfo ->
-                            OutlinedButton(
-                                onClick = {
-                                    selectedPriceInfo = priceInfo
-                                },
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    containerColor = if (selectedPriceInfo == priceInfo) MaterialTheme.colorScheme.primary else Color.Transparent
-                                )
+
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.BottomEnd)
+                                    .size(16.dp)
+                                    .background(Color(230, 81, 0), shape = CircleShape),
+                                contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = priceInfo.type,
-                                    color = if (selectedPriceInfo == priceInfo) Color.White else MaterialTheme.colorScheme.onBackground,
-                                    fontSize = 12.sp
+                                    text = if (cartItemCount < 100) cartItemCount.toString() else "99+",
+                                    color = Color.White,
+                                    fontSize = 6.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    lineHeight = 8.sp
                                 )
                             }
                         }
                     }
-                }
-                item(span = { GridItemSpan(2) }) {
-                    Spacer(modifier = Modifier.height(2.dp))
-                }
-                item(span = { GridItemSpan(2) }) {
-                    Button(
+
+                    IconButton(
                         onClick = {
-                            if (selectedPriceInfo != null) {
-                                scope.launch {
-                                    GlobalRepository.cartRepository.addToCart(
-                                        context,
-                                        productId,
-                                        selectedPriceInfo!!
-                                    )
-                                    cartItemCount += 1
-                                }
-                            } else {
-                                AppUtil.showToast(context, "Vui lòng chọn mẫu sản phẩm !!!")
-                            }
-                        }, modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                        )
+                            GlobalNavigation.navController.navigate("home/0")
+                        }
                     ) {
-                        Text(text = "Thêm vào giỏ hàng", fontSize = 14.sp, color = Color.White)
+                        Icon(
+                            imageVector = Icons.Default.Home,
+                            contentDescription = "Home",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
                     }
                 }
-                if (category != null) {
+            }
+
+            if (isLoading) {
+                LoadingScreen()
+            } else {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 16.dp)
+                ) {
+
                     item(span = { GridItemSpan(2) }) {
-                        Spacer(modifier = Modifier.height(10.dp))
-                    }
-                    item(span = { GridItemSpan(2) }) {
-                        Row {
-                            Text(
-                                text = "Danh mục : ",
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 14.sp,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
-                            Text(
-                                text = category!!.name,
-                                fontSize = 14.sp,
-                                color = MaterialTheme.colorScheme.onBackground
+                        Column(
+                        ) {
+                            val pagerState = rememberPagerState(0) {
+                                product!!.imageUrls.size
+                            }
+
+//                        Spacer(modifier = Modifier.height(16.dp))
+                            HorizontalPager(
+                                state = pagerState,
+                                pageSpacing = 24.dp,
+                            ) {
+                                AsyncImage(
+                                    model = product!!.imageUrls.get(it).imageUrl,
+                                    contentDescription = "Product images",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .heightIn(260.dp)
+                                        .clip(RoundedCornerShape(16.dp)),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(10.dp))
+
+                            DotsIndicator(
+                                dotCount = product!!.imageUrls.size,
+                                type = ShiftIndicatorType(
+                                    DotGraphic(
+                                        color = MaterialTheme.colorScheme.primary,
+                                        size = 6.dp
+                                    )
+                                ),
+                                pagerState = pagerState
                             )
                         }
                     }
-                }
-                if (brand != null) {
-                    item(span = { GridItemSpan(2) }) {
-                        Spacer(modifier = Modifier.height(10.dp))
-                    }
-                    item(span = { GridItemSpan(2) }) {
-                        Row {
-                            Text(
-                                text = "Thương hiệu : ",
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 14.sp,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
-                            Text(
-                                text = brand!!.name,
-                                fontSize = 14.sp,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
-                        }
-                    }
-                }
-                item(span = { GridItemSpan(2) }) {
-                    Spacer(modifier = Modifier.height(10.dp))
-                }
-                item(span = { GridItemSpan(2) }) {
-                    Text(
-                        text = "Mô tả sản phẩm : ",
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-                item(span = { GridItemSpan(2) }) {
-                    Text(
-                        text = product!!.description,
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-                if (ortherProducts.isNotEmpty()) {
-                    item(span = { GridItemSpan(2) }) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
+
                     item(span = { GridItemSpan(2) }) {
                         Text(
-                            text = "Sản phẩm liên quan : ",
-                            fontWeight = FontWeight.SemiBold,
+                            text = product?.name.toString(),
+                            fontWeight = FontWeight.Bold,
                             fontSize = 16.sp,
                             color = MaterialTheme.colorScheme.onBackground
                         )
                     }
-                    ortherProducts.forEach { product ->
-                        if (product.id != productId) {
-                            item {
-                                ProductItem(product = product, lastIndexPage = -1)
+
+                    item(span = { GridItemSpan(2) }) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = if (selectedPriceInfo == null && minPrice != maxPrice) "${
+                                    formatter.format(
+                                        minPrice
+                                    )
+                                } - ${
+                                    formatter.format(
+                                        maxPrice
+                                    )
+                                }" else if (selectedPriceInfo == null) formatter.format(minPrice) else formatter.format(
+                                    selectedPriceInfo!!.price
+                                ),
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color(230, 81, 0)
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            IconButton(
+                                onClick = {
+                                    scope.launch {
+                                        if (isFavorite) {
+                                            GlobalRepository.favoriteRepository.deleteFavorite(
+                                                context = context,
+                                                productId = productId
+                                            )
+
+                                        } else {
+                                            GlobalRepository.favoriteRepository.addToFavorite(
+                                                context = context,
+                                                productId = productId
+                                            )
+                                        }
+
+                                        isFavorite = !isFavorite
+
+                                    }
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                    contentDescription = null,
+                                    tint = if (isFavorite) Color(
+                                        230,
+                                        81,
+                                        0
+                                    ) else MaterialTheme.colorScheme.onBackground
+                                )
                             }
                         }
                     }
                     item(span = { GridItemSpan(2) }) {
-                        Spacer(modifier = Modifier.height(4.dp))
+                        FlowRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            product!!.prices.forEach { priceInfo ->
+                                OutlinedButton(
+                                    onClick = {
+                                        selectedPriceInfo = priceInfo
+                                    },
+                                    colors = ButtonDefaults.outlinedButtonColors(
+                                        containerColor = if (selectedPriceInfo == priceInfo) MaterialTheme.colorScheme.primary else Color.Transparent
+                                    )
+                                ) {
+                                    Text(
+                                        text = priceInfo.type,
+                                        color = if (selectedPriceInfo == priceInfo) Color.White else MaterialTheme.colorScheme.onBackground,
+                                        fontSize = 12.sp
+                                    )
+                                }
+                            }
+                        }
                     }
-                }
-
-                if (product!!.numOfReviews != 0) {
                     item(span = { GridItemSpan(2) }) {
-                        CommentSection(product!!)
+                        Spacer(modifier = Modifier.height(2.dp))
+                    }
+                    item(span = { GridItemSpan(2) }) {
+                        Button(
+                            onClick = {
+                                if (selectedPriceInfo != null) {
+                                    scope.launch {
+                                        GlobalRepository.cartRepository.addToCart(
+                                            context,
+                                            productId,
+                                            selectedPriceInfo!!
+                                        )
+                                        cartItemCount += 1
+                                    }
+                                } else {
+                                    AppUtil.showToast(context, "Vui lòng chọn mẫu sản phẩm !!!")
+                                }
+                            }, modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            )
+                        ) {
+                            Text(text = "Thêm vào giỏ hàng", fontSize = 14.sp, color = Color.White)
+                        }
+                    }
+                    if (category != null) {
+                        item(span = { GridItemSpan(2) }) {
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
+                        item(span = { GridItemSpan(2) }) {
+                            Row {
+                                Text(
+                                    text = "Danh mục : ",
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 14.sp,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                                Text(
+                                    text = category!!.name,
+                                    fontSize = 14.sp,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                            }
+                        }
+                    }
+                    if (brand != null) {
+                        item(span = { GridItemSpan(2) }) {
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
+                        item(span = { GridItemSpan(2) }) {
+                            Row {
+                                Text(
+                                    text = "Thương hiệu : ",
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 14.sp,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                                Text(
+                                    text = brand!!.name,
+                                    fontSize = 14.sp,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                            }
+                        }
+                    }
+                    item(span = { GridItemSpan(2) }) {
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
+                    item(span = { GridItemSpan(2) }) {
+                        Text(
+                            text = "Mô tả sản phẩm : ",
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                    item(span = { GridItemSpan(2) }) {
+                        Text(
+                            text = product!!.description,
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                    if (ortherProducts.isNotEmpty()) {
+                        item(span = { GridItemSpan(2) }) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                        item(span = { GridItemSpan(2) }) {
+                            Text(
+                                text = "Sản phẩm liên quan : ",
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 16.sp,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                        ortherProducts.forEach { product ->
+                            if (product.id != productId) {
+                                item {
+                                    ProductItem(product = product, lastIndexPage = -1)
+                                }
+                            }
+                        }
+                        item(span = { GridItemSpan(2) }) {
+                            Spacer(modifier = Modifier.height(4.dp))
+                        }
+                    }
+
+                    if (product!!.numOfReviews != 0) {
+                        item(span = { GridItemSpan(2) }) {
+                            CommentSection(product!!)
+                        }
                     }
                 }
             }
         }
     }
+
+
 }
 
 @Composable

@@ -57,6 +57,7 @@ import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
 
 @Composable
 fun ProfilePage(
+    modifier: Modifier = Modifier
 ) {
 
     var cartItemCount by remember { mutableIntStateOf(0) }
@@ -64,7 +65,7 @@ fun ProfilePage(
 
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
@@ -316,7 +317,12 @@ fun ProfileSettingsSection() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        GlobalNavigation.navController.navigate("account")
+                        GlobalNavigation.navController.navigate("account") {
+                            popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                        }
                     }
                     .padding(vertical = 8.dp, horizontal = 8.dp)
             ) {
@@ -341,7 +347,12 @@ fun ProfileSettingsSection() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        GlobalNavigation.navController.navigate("menuaddress")
+                        GlobalNavigation.navController.navigate("menuaddress/1") {
+                            popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                        }
                     }
                     .padding(vertical = 8.dp, horizontal = 8.dp)
             ) {

@@ -28,6 +28,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -97,48 +98,50 @@ fun SearchScreen(
         productModels = result
     }
 
-
-
-    Column {
-        SearchBar(
-            searchQuery = searchQuery,
-            onSearchQueryChange = { searchQuery = it },
-            onBack = {
-                GlobalNavigation.navController.popBackStack()
-            },
-            onSearch = {
-                viewModel.addSearchQueryWithLimit(searchQuery.text)
-                GlobalNavigation.navController.navigate(
-                    "listproduct/categoryId=&brandId=&searchQuery=${
-                        searchQuery.text.trim().lowercase()
-                    }"
-                )
-            },
-            isLoadingSearch = isLoadingSearch
-
-        )
-        LazyColumn(
-            modifier = modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+    Scaffold { paddingValues ->
+        Column(
+            modifier = Modifier.padding(paddingValues).fillMaxSize()
         ) {
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
-                SearchItemList(
-                    history = searchHistory,
-                    suggestions = suggestions,
-                    onClearSearchHistory = {
-                        viewModel.clearSearchHistory()
+            SearchBar(
+                searchQuery = searchQuery,
+                onSearchQueryChange = { searchQuery = it },
+                onBack = {
+                    GlobalNavigation.navController.popBackStack()
+                },
+                onSearch = {
+                    viewModel.addSearchQueryWithLimit(searchQuery.text)
+                    GlobalNavigation.navController.navigate(
+                        "listproduct/categoryId=&brandId=&searchQuery=${
+                            searchQuery.text.trim().lowercase()
+                        }"
+                    )
+                },
+                isLoadingSearch = isLoadingSearch
+
+            )
+            LazyColumn(
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    SearchItemList(
+                        history = searchHistory,
+                        suggestions = suggestions,
+                        onClearSearchHistory = {
+                            viewModel.clearSearchHistory()
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+                    ProductHistoryList(productModels) {
+                        viewModel.clearProductHistory()
                     }
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-                ProductHistoryList(productModels) {
-                    viewModel.clearProductHistory()
                 }
+
+
             }
-
-
         }
     }
 }

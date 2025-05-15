@@ -24,6 +24,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -90,220 +91,222 @@ fun EmployeeOrderDetailScreen(orderId: String) {
         isLoading = false
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
+    Scaffold { paddingValues ->
+        Column(
+            modifier = Modifier.padding(paddingValues).fillMaxSize().background(MaterialTheme.colorScheme.background)
         ) {
-            IconButton(
-                onClick = { GlobalNavigation.navController.navigate("employee/1") },
-                modifier = Modifier.align(Alignment.CenterStart)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
             ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
-                    tint = MaterialTheme.colorScheme.onBackground
+                IconButton(
+                    onClick = { GlobalNavigation.navController.navigate("employee/1") },
+                    modifier = Modifier.align(Alignment.CenterStart)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+
+                Text(
+                    text = "Chi tiết đơn hàng",
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.align(Alignment.Center),
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
 
-            Text(
-                text = "Chi tiết đơn hàng",
-                fontSize = 14.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.align(Alignment.Center),
-                color = MaterialTheme.colorScheme.onBackground
-            )
-        }
-
-        if (isLoading) {
-            LoadingScreen()
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(horizontal = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                item { }
-                item {
-                    Column (
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(MaterialTheme.colorScheme.surface)
-                    ) {
-                        Column(
+            if (isLoading) {
+                LoadingScreen()
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(horizontal = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    item { }
+                    item {
+                        Column (
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(40.dp)
-                                .background(
-                                    if (lastSelectedStatus == 3) Color(46, 125, 50)
-                                    else if (lastSelectedStatus == 4) Color(230, 81, 0)
-                                    else Color(255, 171, 0)
-                                ),
-                            verticalArrangement = Arrangement.Center
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(MaterialTheme.colorScheme.surface)
                         ) {
-                            Text(
-                                text = if (lastSelectedStatus == 3) "Đơn hàng đã hoàn thành"
-                                else if (lastSelectedStatus == 4) "Đơn hàng đã hủy"
-                                else "Đơn hàng chưa hoàn thành",
-                                modifier = Modifier.padding(8.dp),
-                                color = Color.White,
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 14.sp
-                            )
-                        }
-
-                        Row(
-                            modifier = Modifier
-                                .padding(horizontal = 8.dp)
-                                .padding(top = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                painter = painterResource(
-                                    if (lastSelectedStatus == 3) R.drawable.truck_tick_svgrepo_com__1_
-                                    else if (lastSelectedStatus == 4) R.drawable.truck_remove_svgrepo_com
-                                    else R.drawable.truck_time_svgrepo_com
-                                ),
-                                modifier = Modifier.height(30.dp),
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onBackground
-                            )
                             Column(
-                                modifier = Modifier.padding(start = 8.dp)
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(40.dp)
+                                    .background(
+                                        if (lastSelectedStatus == 3) Color(46, 125, 50)
+                                        else if (lastSelectedStatus == 4) Color(230, 81, 0)
+                                        else Color(255, 171, 0)
+                                    ),
+                                verticalArrangement = Arrangement.Center
                             ) {
                                 Text(
-                                    text = listStatus[lastSelectedStatus],
-                                    color = if (lastSelectedStatus == 3) Color(46, 125, 50)
-                                    else if (lastSelectedStatus == 4) Color(230, 81, 0)
-                                    else Color(255, 171, 0),
+                                    text = if (lastSelectedStatus == 3) "Đơn hàng đã hoàn thành"
+                                    else if (lastSelectedStatus == 4) "Đơn hàng đã hủy"
+                                    else "Đơn hàng chưa hoàn thành",
+                                    modifier = Modifier.padding(8.dp),
+                                    color = Color.White,
+                                    fontWeight = FontWeight.SemiBold,
                                     fontSize = 14.sp
                                 )
-                                Text(
-                                    text = formatterDate.format(
-                                        time.toDate()
-                                    ),
-                                    fontSize = 12.sp,
-                                    color = Color(158, 158, 158)
-                                )
                             }
-                        }
 
-                        Column(
-                            modifier = Modifier
-                                .padding(horizontal = 8.dp)
-                                .padding(bottom = 8.dp)
-                        ) {
-                            Text(
-                                text = "Mã đơn hàng: ${order!!.id}",
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
-                            Text(
-                                text = "Ngày tạo đơn: ${formatterDate.format(order!!.createdAt.toDate())}",
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
-                            Text(
-                                text = "Ngày hoàn thành: ${
-                                    if (lastSelectedStatus == 3 || lastSelectedStatus == 4) formatterDate.format(
-                                        time.toDate()
-                                    ) else ""
-                                }",
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
-                            Text(
-                                text = "Tên người nhận : ${order!!.address.name}",
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
-                            Text(
-                                text = "Số điện thoại : ${order!!.address.phoneNum}",
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
-                            Text(
-                                text = "Địa chỉ: ${order!!.address.street}, ${order!!.address.ward}, ${order!!.address.district}, ${order!!.address.province}",
-                                fontSize = 12.sp,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
-                        }
-                    }
-                }
-                item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(MaterialTheme.colorScheme.surface)
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .padding(horizontal = 8.dp)
-                                .padding(top = 8.dp)
-                        ) {
-                            order!!.listProduct.forEachIndexed { index, it ->
-                                ProductItemOrder(it)
-                            }
-                            Row {
-                                Spacer(modifier = Modifier.weight(1f))
-                                Text(
-                                    text = "Tổng số tiền (${order!!.listProduct.size} sản phẩm) : ",
-                                    fontSize = 12.sp,
-                                    color = MaterialTheme.colorScheme.onBackground
+                            Row(
+                                modifier = Modifier
+                                    .padding(horizontal = 8.dp)
+                                    .padding(top = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    painter = painterResource(
+                                        if (lastSelectedStatus == 3) R.drawable.truck_tick_svgrepo_com__1_
+                                        else if (lastSelectedStatus == 4) R.drawable.truck_remove_svgrepo_com
+                                        else R.drawable.truck_time_svgrepo_com
+                                    ),
+                                    modifier = Modifier.height(30.dp),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onBackground
                                 )
+                                Column(
+                                    modifier = Modifier.padding(start = 8.dp)
+                                ) {
+                                    Text(
+                                        text = listStatus[lastSelectedStatus],
+                                        color = if (lastSelectedStatus == 3) Color(46, 125, 50)
+                                        else if (lastSelectedStatus == 4) Color(230, 81, 0)
+                                        else Color(255, 171, 0),
+                                        fontSize = 14.sp
+                                    )
+                                    Text(
+                                        text = formatterDate.format(
+                                            time.toDate()
+                                        ),
+                                        fontSize = 12.sp,
+                                        color = Color(158, 158, 158)
+                                    )
+                                }
+                            }
+
+                            Column(
+                                modifier = Modifier
+                                    .padding(horizontal = 8.dp)
+                                    .padding(bottom = 8.dp)
+                            ) {
                                 Text(
-                                    text = "${formatter.format(order!!.totalPrice)}",
-                                    fontSize = 12.sp,
+                                    text = "Mã đơn hàng: ${order!!.id}",
+                                    fontSize = 14.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = MaterialTheme.colorScheme.onBackground
                                 )
+                                Text(
+                                    text = "Ngày tạo đơn: ${formatterDate.format(order!!.createdAt.toDate())}",
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                                Text(
+                                    text = "Ngày hoàn thành: ${
+                                        if (lastSelectedStatus == 3 || lastSelectedStatus == 4) formatterDate.format(
+                                            time.toDate()
+                                        ) else ""
+                                    }",
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                                Text(
+                                    text = "Tên người nhận : ${order!!.address.name}",
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                                Text(
+                                    text = "Số điện thoại : ${order!!.address.phoneNum}",
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                                Text(
+                                    text = "Địa chỉ: ${order!!.address.street}, ${order!!.address.ward}, ${order!!.address.district}, ${order!!.address.province}",
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
                             }
-                            Spacer(modifier = Modifier.height(4.dp))
                         }
                     }
-                }
-                item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(MaterialTheme.colorScheme.surface)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(vertical = 8.dp).padding(end = 8.dp)
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(MaterialTheme.colorScheme.surface)
                         ) {
-                            StatusDropDownFun(
-                                statusList = listStatus,
-                                selected = selectedStatus,
-                                lastSelected = lastSelectedStatus,
-                                onStatusSelected = {
-                                    selectedStatus = it
-                                }
-                            )
-                            Spacer(modifier = Modifier.weight(1f))
-                            Button(
-                                onClick = {
-                                    scope.launch {
-                                        if (selectedStatus != lastSelectedStatus) {
-                                            lastSelectedStatus = selectedStatus
-                                            time = Timestamp.now()
-                                            GlobalRepository.orderRepository.updateOrderStatus(order!!, lastSelectedStatus, finishedAt = time)
-                                        }
-                                    }
-                                },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.primary,
-                                )
+                            Column(
+                                modifier = Modifier
+                                    .padding(horizontal = 8.dp)
+                                    .padding(top = 8.dp)
                             ) {
-                                Text(text = "Cập nhật", color = Color.White, fontSize = 12.sp)
+                                order!!.listProduct.forEachIndexed { index, it ->
+                                    ProductItemOrder(it)
+                                }
+                                Row {
+                                    Spacer(modifier = Modifier.weight(1f))
+                                    Text(
+                                        text = "Tổng số tiền (${order!!.listProduct.size} sản phẩm) : ",
+                                        fontSize = 12.sp,
+                                        color = MaterialTheme.colorScheme.onBackground
+                                    )
+                                    Text(
+                                        text = "${formatter.format(order!!.totalPrice)}",
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = MaterialTheme.colorScheme.onBackground
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(4.dp))
+                            }
+                        }
+                    }
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(MaterialTheme.colorScheme.surface)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(vertical = 8.dp).padding(end = 8.dp)
+                            ) {
+                                StatusDropDownFun(
+                                    statusList = listStatus,
+                                    selected = selectedStatus,
+                                    lastSelected = lastSelectedStatus,
+                                    onStatusSelected = {
+                                        selectedStatus = it
+                                    }
+                                )
+                                Spacer(modifier = Modifier.weight(1f))
+                                Button(
+                                    onClick = {
+                                        scope.launch {
+                                            if (selectedStatus != lastSelectedStatus) {
+                                                lastSelectedStatus = selectedStatus
+                                                time = Timestamp.now()
+                                                GlobalRepository.orderRepository.updateOrderStatus(order!!, lastSelectedStatus, finishedAt = time)
+                                            }
+                                        }
+                                    },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.primary,
+                                    )
+                                ) {
+                                    Text(text = "Cập nhật", color = Color.White, fontSize = 12.sp)
+                                }
                             }
                         }
                     }

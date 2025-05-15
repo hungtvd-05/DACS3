@@ -89,7 +89,7 @@ fun ContentScreen(
         0 -> HomePage(modifier)
         1 -> FavoritePage(modifier)
         2 -> CartPage(modifier)
-        3 -> ProfilePage()
+        3 -> ProfilePage(modifier)
     }
 }
 
