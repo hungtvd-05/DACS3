@@ -26,6 +26,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -487,6 +488,8 @@ fun Items(
     var maxPrice by remember { mutableStateOf(0) }
     var showDialog by remember { mutableStateOf(false) }
 
+    var sold = product.prices.sumOf { it.sold }
+
 
     if (product.prices.size == 1) {
         minPrice = product.prices.first().price
@@ -575,7 +578,17 @@ fun Items(
                         overflow = TextOverflow.Ellipsis,
                         fontWeight = FontWeight.Bold
                     )
-
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            tint = Color(241, 179, 59, 255),
+                            contentDescription = "rating",
+                            modifier = Modifier.size(12.dp)
+                        )
+                        Text(String.format("%.1f", product.rating), fontSize = 8.sp, lineHeight = 8.sp)
+                        Text(" | ", fontSize = 8.sp, lineHeight = 8.sp, color = Color.LightGray)
+                        Text(text = "Đã bán ${sold}", fontSize = 8.sp, lineHeight = 8.sp)
+                    }
                 }
             }
             Row(
