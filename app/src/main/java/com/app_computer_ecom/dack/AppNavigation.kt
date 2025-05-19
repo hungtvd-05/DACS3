@@ -1,6 +1,7 @@
 package com.app_computer_ecom.dack
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,6 +38,7 @@ import com.app_computer_ecom.dack.screen.user.AddAddressScreen
 import com.app_computer_ecom.dack.screen.user.AddressMenuScreen
 import com.app_computer_ecom.dack.screen.user.CheckRatingAndCommentScreen
 import com.app_computer_ecom.dack.screen.user.CheckoutScreen
+import com.app_computer_ecom.dack.screen.user.EditAccountScreen
 import com.app_computer_ecom.dack.screen.user.EditAddressScreen
 import com.app_computer_ecom.dack.screen.user.HomeScreen
 import com.app_computer_ecom.dack.screen.user.ListProductScreen
@@ -66,6 +68,8 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         else if (userModel?.role == "user") "home/0"
         else if (userModel?.role == "employee") "employee/0"
         else "loading"
+
+        Log.d("AUTH", userModel.toString())
     }
 
     NavHost(navController = navController, startDestination = firstPage) {
@@ -108,7 +112,12 @@ fun AppNavigation(modifier: Modifier = Modifier) {
             var categoryId = it.arguments?.getString("categoryId").toString()
             var brandId = it.arguments?.getString("brandId").toString()
             var searchQuery = it.arguments?.getString("searchQuery").toString()
-            ListProductScreen(categoryId = categoryId, brandId = brandId, searchQuery = searchQuery, modifier)
+            ListProductScreen(
+                categoryId = categoryId,
+                brandId = brandId,
+                searchQuery = searchQuery,
+                modifier
+            )
         }
         composable("product-details/productId={productId}&lastIndexPage={lastIndexPage}") {
             var productId = it.arguments?.getString("productId").toString()
@@ -195,6 +204,10 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         composable("review/{productId}") {
             val productId = it.arguments?.getString("productId").toString()
             ReviewScreen(productId)
+        }
+        composable("edit-account/{fieldInt}") {
+            val fieldInt = it.arguments?.getString("fieldInt")?.toInt() ?: 0
+            EditAccountScreen(fieldInt)
         }
     }
 

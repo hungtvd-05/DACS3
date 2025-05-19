@@ -12,11 +12,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,8 +26,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -64,6 +66,8 @@ import com.app_computer_ecom.dack.model.UserModel
 import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
 import com.app_computer_ecom.dack.viewmodel.ImageCloudinary
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun AccountScreen() {
@@ -88,94 +92,54 @@ fun AccountScreen() {
                 item {
                     AvatarPicker()
 
+                    InfoItem(
+                        label = "Tên người dùng",
+                        content = convert(userModel.username),
+                        isLock = true
+                    ) {}
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 2.dp)
-                            .background(MaterialTheme.colorScheme.surface)
-                            .padding(horizontal = 8.dp, vertical = 16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                    InfoItem(
+                        label = "Họ và tên",
+                        content = convert(userModel.name)
                     ) {
-                        Text(
-                            text = "Tên người dùng",
-                            fontSize = 12.sp,
-                            lineHeight = 14.sp,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Text(
-                            text = userModel.username,
-                            fontSize = 10.sp,
-                            lineHeight = 12.sp,
-                            fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface
-                        )
+                        GlobalNavigation.navController.navigate("edit-account/0")
                     }
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 2.dp)
-                            .background(MaterialTheme.colorScheme.surface)
-                            .padding(horizontal = 8.dp, vertical = 16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                    InfoItem(
+                        label = "Mail",
+                        content = convert(userModel.email),
+                        isLock = true
                     ) {
-                        Text(
-                            text = "Họ và tên",
-                            fontSize = 12.sp,
-                            lineHeight = 14.sp,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Text(
-                            text = userModel.name,
-                            fontSize = 10.sp,
-                            lineHeight = 12.sp,
-                            fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface
-                        )
                     }
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 2.dp)
-                            .background(MaterialTheme.colorScheme.surface)
-                            .padding(horizontal = 8.dp, vertical = 16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                    InfoItem(
+                        label = "Phone",
+                        content = convert(userModel.phoneNumber)
                     ) {
-                        Text(
-                            text = "Mail",
-                            fontSize = 12.sp,
-                            lineHeight = 14.sp,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Text(
-                            text = userModel.email,
-                            fontSize = 10.sp,
-                            lineHeight = 12.sp,
-                            fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface
-                        )
+                        GlobalNavigation.navController.navigate("edit-account/1")
                     }
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 2.dp)
-                            .clickable {
-                                showChangePassword = !showChangePassword
-                            }
-                            .background(MaterialTheme.colorScheme.surface)
-                            .padding(horizontal = 8.dp, vertical = 16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                    InfoItem(
+                        label = "Giới tính",
+                        content = convert(userModel.sex)
                     ) {
-                        Text(text = "Đổi mật khẩu", fontSize = 12.sp, lineHeight = 14.sp)
-                        Icon(
-                            imageVector = if (showChangePassword) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowRight,
-                            contentDescription = "",
-                            tint = MaterialTheme.colorScheme.onSurface
+                        GlobalNavigation.navController.navigate("edit-account/2")
+                    }
+
+                    InfoItem(
+                        label = "Ngày sinh",
+                        content = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
+                            userModel.birthDate.toDate()
                         )
+                    ) {
+                        GlobalNavigation.navController.navigate("edit-account/3")
+                    }
+
+
+                    InfoItem(
+                        label = "Đổi mật khẩu"
+                    ) {
+                        showChangePassword = !showChangePassword
                     }
 
                     if (showChangePassword) {
@@ -187,6 +151,50 @@ fun AccountScreen() {
             }
         }
     }
+}
+
+@Composable
+fun InfoItem(
+    label: String = "",
+    content: String = "",
+    isLock: Boolean = false,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 2.dp)
+            .clickable {
+                onClick()
+            }
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(horizontal = 8.dp, vertical = 16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            fontSize = 12.sp,
+            lineHeight = 14.sp,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight()) {
+            Text(
+                text = content,
+                fontSize = 10.sp,
+                lineHeight = 12.sp,
+                fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Icon(
+                imageVector = if (isLock) Icons.Default.Lock else Icons.Default.KeyboardArrowRight,
+                contentDescription = "",
+                modifier = Modifier.size(12.dp)
+            )
+
+        }
+    }
+
 }
 
 @Composable
@@ -414,4 +422,11 @@ fun ChangePasswordSection() {
             Text("Xác nhận đổi mật khẩu", fontSize = 14.sp)
         }
     }
+}
+
+fun convert(str: String): String {
+    if (str == "") {
+        return "Trống"
+    }
+    return str
 }
