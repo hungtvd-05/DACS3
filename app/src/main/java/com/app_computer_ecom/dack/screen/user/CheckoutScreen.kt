@@ -49,10 +49,9 @@ import com.app_computer_ecom.dack.AppUtil
 import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.components.CartItemViewOnCheckOut
 import com.app_computer_ecom.dack.model.AddressModel
-import com.app_computer_ecom.dack.model.CartModel
+import com.app_computer_ecom.dack.model.CartAndProductModel
 import com.app_computer_ecom.dack.model.OrderModel
 import com.app_computer_ecom.dack.model.ProductInfoModel
-import com.app_computer_ecom.dack.model.ProductModel
 import com.app_computer_ecom.dack.pages.user.Loading
 import com.app_computer_ecom.dack.repository.GlobalRepository
 import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
@@ -78,14 +77,12 @@ fun CheckoutScreen() {
     }
 
     var address: AddressModel? by remember { mutableStateOf(AddressModel()) }
-    var cartList by remember { mutableStateOf(emptyList<CartModel>()) }
+    var cartList by remember { mutableStateOf(emptyList<CartAndProductModel>()) }
     var totalPrice by remember { mutableStateOf(0) }
-    var data by remember { mutableStateOf<Pair<List<CartModel>, Int>?>(null) }
+    var data by remember { mutableStateOf<Pair<List<CartAndProductModel>, Int>?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
     val context = LocalContext.current
-    var tempProduct by remember { mutableStateOf<ProductModel?>(null) }
-    var listProduct by remember { mutableStateOf(emptyList<ProductModel>()) }
     val scope = rememberCoroutineScope()
 
     var selectPayment by remember { mutableStateOf(false) }
@@ -105,13 +102,6 @@ fun CheckoutScreen() {
         if (data != null) {
             cartList = data!!.first
             totalPrice = data!!.second
-        }
-        for (cart in cartList) {
-            tempProduct = GlobalRepository.productRepository.getProductById(cart.pid)
-            if (tempProduct != null) {
-                listProduct = listProduct + tempProduct!!
-                tempProduct = null
-            }
         }
         isLoading = false
     }
@@ -216,9 +206,9 @@ fun CheckoutScreen() {
                             ) {
                                 cartList.forEachIndexed { index, it ->
                                     CartItemViewOnCheckOut(
-                                        product = listProduct[index],
-                                        quantity = it.quantity,
-                                        selectType = it.selectType
+                                        product = it.productModel,
+                                        quantity = it.cartModel.quantity,
+                                        selectType = it.cartModel.selectType
                                     )
                                 }
                             }
@@ -339,14 +329,14 @@ fun CheckoutScreen() {
                                                                 )
                                                                 scope.launch {
                                                                     val newProductList = mutableListOf<ProductInfoModel>()
-                                                                    listProduct.forEachIndexed { index, it ->
+                                                                    cartList.forEachIndexed { index, it ->
                                                                         newProductList.add(
                                                                             ProductInfoModel.create(
-                                                                                id = it.id,
-                                                                                name = it.name,
-                                                                                imageUrl = it.imageUrls.firstOrNull()?.imageUrl ?: "",
-                                                                                selectType = cartList[index].selectType,
-                                                                                quantity = cartList[index].quantity
+                                                                                id = it.productModel.id,
+                                                                                name = it.productModel.name,
+                                                                                imageUrl = it.productModel.imageUrls.firstOrNull()?.imageUrl ?: "",
+                                                                                selectType = cartList[index].cartModel.selectType,
+                                                                                quantity = cartList[index].cartModel.quantity
                                                                             )
                                                                         )
                                                                     }
@@ -409,14 +399,14 @@ fun CheckoutScreen() {
                                         isLoading = true
                                         scope.launch {
                                             val newProductList = mutableListOf<ProductInfoModel>()
-                                            listProduct.forEachIndexed { index, it ->
+                                            cartList.forEachIndexed { index, it ->
                                                 newProductList.add(
                                                     ProductInfoModel.create(
-                                                        id = it.id,
-                                                        name = it.name,
-                                                        imageUrl = it.imageUrls.firstOrNull()!!.imageUrl,
-                                                        selectType = cartList.get(index).selectType,
-                                                        quantity = cartList.get(index).quantity
+                                                        id = it.productModel.id,
+                                                        name = it.productModel.name,
+                                                        imageUrl = it.productModel.imageUrls.firstOrNull()!!.imageUrl,
+                                                        selectType = cartList.get(index).cartModel.selectType,
+                                                        quantity = cartList.get(index).cartModel.quantity
                                                     )
                                                 )
                                             }

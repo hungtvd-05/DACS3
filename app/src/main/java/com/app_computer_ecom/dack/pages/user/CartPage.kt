@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.LoadingScreen
 import com.app_computer_ecom.dack.components.CartItemView
-import com.app_computer_ecom.dack.model.CartModel
+import com.app_computer_ecom.dack.model.CartAndProductModel
 import com.app_computer_ecom.dack.repository.GlobalRepository
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -38,10 +38,10 @@ import java.util.Locale
 
 @Composable
 fun CartPage(modifier: Modifier = Modifier) {
-    var cartList by remember { mutableStateOf(emptyList<CartModel>()) }
+    var cartList by remember { mutableStateOf(emptyList<CartAndProductModel>()) }
     var isLoading by remember { mutableStateOf(true) }
     var totalPrice by remember { mutableStateOf(0) }
-    var data by remember { mutableStateOf<Pair<List<CartModel>, Int>?>(null) }
+    var data by remember { mutableStateOf<Pair<List<CartAndProductModel>, Int>?>(null) }
     val context = LocalContext.current
     val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
 
@@ -75,52 +75,53 @@ fun CartPage(modifier: Modifier = Modifier) {
                 item {
                     Spacer(modifier = Modifier.height(4.dp))
                 }
-                items(cartList, key = { it.id }) { item ->
+                itemsIndexed(cartList, key = { _, item -> item.cartModel.id }) { index, item ->
                     CartItemView(
-                        pid = item.pid,
-                        quantity = item.quantity,
-                        selectType = item.selectType,
+                        cart = item.cartModel,
+                        product = item.productModel,
                         delete = {
                             scope.launch {
-                                GlobalRepository.cartRepository.deleteCart(context, item)
-                                data = GlobalRepository.cartRepository.getCartList()
-                                if (data != null) {
-                                    cartList = data!!.first
-                                    totalPrice = data!!.second
-                                }
+                                GlobalRepository.cartRepository.deleteCart(context, item.cartModel)
+                                totalPrice = GlobalRepository.cartRepository.totalPrices()
+                                cartList =
+                                    cartList.filter { it.cartModel.id != item.cartModel.id }
                             }
                         },
                         increse = {
                             scope.launch {
-                                val index = cartList.indexOfFirst { it.id == item.id }
-                                if (index != -1) {
-//                                    val updatedItem = cartList[index].copy(quantity = cartList[index].quantity + 1)
-//                                    cartList = cartList.toMutableList().apply {
-//                                        this[index] = updatedItem
-//                                    }
-                                    GlobalRepository.cartRepository.updateCart(context, cartList[index].copy(quantity = cartList[index].quantity + 1))
-                                    data = GlobalRepository.cartRepository.getCartList()
-                                    if (data != null) {
-                                        cartList = data!!.first
-                                        totalPrice = data!!.second
+                                var updateCartModel = item.cartModel.copy(quantity = item.cartModel.quantity + 1)
+
+                                if (updateCartModel.quantity < item.productModel.prices.find { it.id == item.cartModel.selectType.id }!!.quantity) {
+                                    GlobalRepository.cartRepository.updateCart(updateCartModel)
+
+                                    cartList = cartList.map {
+                                        if (it.cartModel.id == item.cartModel.id) {
+                                            it.copy(cartModel = updateCartModel)
+                                        } else {
+                                            it
+                                        }
                                     }
+
+                                    totalPrice = GlobalRepository.cartRepository.totalPrices()
                                 }
                             }
                         },
                         decrese = {
                             scope.launch {
-                                val index = cartList.indexOfFirst { it.id == item.id }
-                                if (index != -1) {
-//                                    val updatedItem = cartList[index].copy(quantity = if ((cartList[index].quantity - 1) > 1) cartList[index].quantity - 1 else 1)
-//                                    cartList = cartList.toMutableList().apply {
-//                                        this[index] = updatedItem
-//                                    }
-                                    GlobalRepository.cartRepository.updateCart(context, cartList[index].copy(quantity = if ((cartList[index].quantity - 1) > 1) cartList[index].quantity - 1 else 1))
-                                    data = GlobalRepository.cartRepository.getCartList()
-                                    if (data != null) {
-                                        cartList = data!!.first
-                                        totalPrice = data!!.second
+                                var updateCartModel = item.cartModel.copy(quantity = item.cartModel.quantity - 1)
+
+                                if (updateCartModel.quantity > 0) {
+                                    GlobalRepository.cartRepository.updateCart(updateCartModel)
+
+                                    cartList = cartList.map {
+                                        if (it.cartModel.id == item.cartModel.id) {
+                                            it.copy(cartModel = updateCartModel)
+                                        } else {
+                                            it
+                                        }
                                     }
+
+                                    totalPrice = GlobalRepository.cartRepository.totalPrices()
                                 }
                             }
                         }

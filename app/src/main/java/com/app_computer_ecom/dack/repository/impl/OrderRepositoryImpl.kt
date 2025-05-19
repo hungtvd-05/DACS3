@@ -191,13 +191,15 @@ class OrderRepositoryImpl : OrderRepository {
                 val doanhthudatduoc =
                     orders.filter { it.status == 3 }.sumOf { it.totalPrice.toDouble() / 1000000 }
                 val doanhthudukiendatthem =
-                    orders.sumOf { it.totalPrice.toDouble() / 1000000 } - doanhthudatduoc
+                    orders.filter { it.status != 4 }.sumOf { it.totalPrice.toDouble() / 1000000 } - doanhthudatduoc
                 val donhanhhoanthanh = orders.filter { it.status == 3 }.size.toDouble()
-                val donhangdangcho = orders.size.toDouble() - donhanhhoanthanh
+                val dondahuy = orders.filter { it.status == 4 }.size.toDouble()
+                val donhangdangcho = orders.size.toDouble() - donhanhhoanthanh - dondahuy
                 DailySales.create(
                     date,
                     donhangdangcho,
                     donhanhhoanthanh,
+                    dondahuy,
                     doanhthudukiendatthem,
                     doanhthudatduoc
                 )
@@ -213,6 +215,7 @@ class OrderRepositoryImpl : OrderRepository {
                     dateStr,
                     totalOrders = 0.0,
                     totalOrdersCompleted = 0.0,
+                    totalOrdersCanceled = 0.0,
                     totalExpectedSales = 0.0,
                     totalAchievedSales = 0.0
                 )
@@ -243,13 +246,15 @@ class OrderRepositoryImpl : OrderRepository {
             val doanhthudatduoc =
                 orders.filter { it.status == 3 }.sumOf { it.totalPrice.toDouble() / 1000000 }
             val doanhthudukiendatthem =
-                orders.sumOf { it.totalPrice.toDouble() / 1000000 } - doanhthudatduoc
+                orders.filter { it.status != 4 }.sumOf { it.totalPrice.toDouble() / 1000000 } - doanhthudatduoc
             val donhanhhoanthanh = orders.filter { it.status == 3 }.size.toDouble()
-            val donhangdangcho = orders.size.toDouble() - donhanhhoanthanh
+            val dondahuy = orders.filter { it.status == 4 }.size.toDouble()
+            val donhangdangcho = orders.size.toDouble() - donhanhhoanthanh - dondahuy
             MonthlySales.create(
                 month = month,
                 totalOrders = donhangdangcho,
                 totalOrdersCompleted = donhanhhoanthanh,
+                totalOrdersCanceled = dondahuy,
                 totalExpectedSales = doanhthudukiendatthem,
                 totalAchievedSales = doanhthudatduoc
             )
@@ -265,6 +270,7 @@ class OrderRepositoryImpl : OrderRepository {
                     month = monthStr,
                     totalOrders = 0.0,
                     totalOrdersCompleted = 0.0,
+                    totalOrdersCanceled = 0.0,
                     totalExpectedSales = 0.0,
                     totalAchievedSales = 0.0
                 )

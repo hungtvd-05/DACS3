@@ -4,6 +4,7 @@ data class DailySales private constructor(
     val date: String,
     val totalOrders: Double,
     val totalOrdersCompleted: Double,
+    val totalOrdersCanceled: Double,
     val totalExpectedSales: Double,
     val totalAchievedSales: Double
 ) {
@@ -12,6 +13,7 @@ data class DailySales private constructor(
             date: String,
             totalOrders: Double,
             totalOrdersCompleted: Double,
+            totalOrdersCanceled: Double,
             totalExpectedSales: Double,
             totalAchievedSales: Double
             ): DailySales {
@@ -19,11 +21,12 @@ data class DailySales private constructor(
                 date = date,
                 totalOrders = totalOrders,
                 totalOrdersCompleted = totalOrdersCompleted,
+                totalOrdersCanceled = totalOrdersCanceled,
                 totalExpectedSales = totalExpectedSales,
                 totalAchievedSales = totalAchievedSales
             )
         }
     }
 
-    constructor(): this("",0.0,0.0,0.0,0.0)
+    constructor(): this("", 0.0, 0.0, 0.0, 0.0, 0.0)
 }

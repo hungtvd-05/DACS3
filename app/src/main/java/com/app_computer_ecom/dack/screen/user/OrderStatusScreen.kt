@@ -128,7 +128,7 @@ fun OrderListWithFilter(
         orderModels = GlobalRepository.orderRepository.getOrdersByUidAndStatus(
             uid = GLobalAuthViewModel.getAuthViewModel().userModel!!.uid,
             status = orderStatus
-        )
+        ).sortedByDescending { it.createdAt.seconds }
 
 //        orderProductInfoModels = orderModels.flatMap { order ->
 //            order.listProduct.map { product ->

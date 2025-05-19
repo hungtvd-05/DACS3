@@ -36,14 +36,8 @@ fun CartItemViewOnCheckOut(
     quantity: Int,
     selectType: PriceInfo
 ) {
-//    var isLoading by remember { mutableStateOf(true) }
 
     val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
-
-//    LaunchedEffect(Unit) {
-//        product = GlobalRepository.productRepository.getProductById(pid)
-//        isLoading = false
-//    }
 
     Card(
         shape = RoundedCornerShape(12.dp),

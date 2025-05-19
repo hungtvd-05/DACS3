@@ -4,6 +4,7 @@ data class MonthlySales private constructor(
     val month: String, // Định dạng: "Tháng 1"
     val totalOrders: Double,
     val totalOrdersCompleted: Double,
+    val totalOrdersCanceled: Double,
     val totalExpectedSales: Double,
     val totalAchievedSales: Double
 ) {
@@ -12,12 +13,13 @@ data class MonthlySales private constructor(
             month: String,
             totalOrders: Double,
             totalOrdersCompleted: Double,
+            totalOrdersCanceled: Double,
             totalExpectedSales: Double,
             totalAchievedSales: Double
         ): MonthlySales {
-            return MonthlySales(month, totalOrders, totalOrdersCompleted, totalExpectedSales, totalAchievedSales)
+            return MonthlySales(month, totalOrders, totalOrdersCompleted, totalOrdersCanceled, totalExpectedSales, totalAchievedSales)
         }
     }
 
-    constructor() : this("", 0.0, 0.0, 0.0, 0.0)
+    constructor() : this("", 0.0, 0.0, 0.0, 0.0, 0.0)
 }

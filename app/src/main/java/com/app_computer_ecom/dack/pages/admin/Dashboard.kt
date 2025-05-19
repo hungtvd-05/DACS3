@@ -109,8 +109,9 @@ fun Dashboard(modifier: Modifier) {
         }
 
         orders = mapOf(
-            "Đơn hàng hoàn thành" to dailySales.map { it.totalOrdersCompleted },
-            "Đơn hàng đang chờ" to dailySales.map { it.totalOrders },
+            "Đơn hoàn thành" to dailySales.map { it.totalOrdersCompleted },
+            "Đơn chờ" to dailySales.map { it.totalOrders },
+            "Đơn đã hủy" to dailySales.map { it.totalOrdersCanceled },
         )
         modelOrder.runTransaction {
             columnSeries { orders.values.forEach { series(labelSales, it) } }
@@ -133,8 +134,9 @@ fun Dashboard(modifier: Modifier) {
                     "Doanh thu dự kiến đạt thêm" to dailySales.map { it.totalExpectedSales },
                 )
                 orders = mapOf(
-                    "Đơn hàng hoàn thành" to dailySales.map { it.totalOrdersCompleted },
-                    "Đơn hàng đang chờ" to dailySales.map { it.totalOrders },
+                    "Đơn hoàn thành" to dailySales.map { it.totalOrdersCompleted },
+                    "Đơn chờ" to dailySales.map { it.totalOrders },
+                    "Đơn đã hủy" to dailySales.map { it.totalOrdersCanceled },
                 )
                 modelOrder.runTransaction {
                     columnSeries { orders.values.forEach { series(labelSales, it) } }
@@ -399,7 +401,7 @@ fun OrderChart(
     val StartAxisItemPlacer = VerticalAxis.ItemPlacer.step({ 1.0 })
     val MarkerValueFormatter = DefaultCartesianMarker.ValueFormatter.default(YDecimalFormat)
 
-    val columnColors = listOf(Color(0xff6438a7), Color(0xff3490de), Color(0xff73e8dc))
+    val columnColors = listOf(Color(0xff6438a7), Color(0xff3490de), Color(230, 81, 0))
     val legendItemLabelComponent = rememberTextComponent(color = MaterialTheme.colorScheme.onBackground, textSize = 12.sp)
     CartesianChartHost(
         chart =

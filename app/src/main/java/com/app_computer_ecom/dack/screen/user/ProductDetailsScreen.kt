@@ -111,6 +111,8 @@ fun ProductDetailsScreen(productId: String, lastIndexPage: Int, modifier: Modifi
     var isLoading by remember { mutableStateOf(true) }
     var selectedPriceInfo by remember { mutableStateOf<PriceInfo?>(null) }
 
+    var isHaveQuantity by remember { mutableStateOf(false) }
+
     var ortherProducts by remember {
         mutableStateOf(emptyList<ProductModel>())
     }
@@ -364,7 +366,8 @@ fun ProductDetailsScreen(productId: String, lastIndexPage: Int, modifier: Modifi
                                     },
                                     colors = ButtonDefaults.outlinedButtonColors(
                                         containerColor = if (selectedPriceInfo == priceInfo) MaterialTheme.colorScheme.primary else Color.Transparent
-                                    )
+                                    ),
+                                    enabled = priceInfo.quantity > 0
                                 ) {
                                     Text(
                                         text = priceInfo.type,
@@ -372,6 +375,8 @@ fun ProductDetailsScreen(productId: String, lastIndexPage: Int, modifier: Modifi
                                         fontSize = 12.sp
                                     )
                                 }
+                                isHaveQuantity = priceInfo.quantity > 0
+
                             }
                         }
                     }
@@ -398,9 +403,10 @@ fun ProductDetailsScreen(productId: String, lastIndexPage: Int, modifier: Modifi
                                 .height(50.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.primary,
-                            )
+                            ),
+                            enabled = isHaveQuantity
                         ) {
-                            Text(text = "Thêm vào giỏ hàng", fontSize = 14.sp, color = Color.White)
+                            Text(text = if (isHaveQuantity) "Thêm vào giỏ hàng" else "Hết hàng", fontSize = 14.sp, color = Color.White)
                         }
                     }
                     if (category != null) {
