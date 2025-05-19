@@ -54,7 +54,7 @@ class CartRepositoryImpl : CartRepository {
                     if (product != null && product.prices.find { it.id == cart.selectType.id }?.quantity?.let { it >= cart.quantity } == true) {
                         validCarts.add(CartAndProductModel.create(cart, product))
                     } else {
-                        docIdsToDelete.add(cart.pid)
+                        docIdsToDelete.add(cart.id)
                     }
                 }
             }
