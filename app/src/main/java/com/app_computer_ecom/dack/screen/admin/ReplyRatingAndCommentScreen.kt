@@ -398,6 +398,7 @@ fun ProductItemRating(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         fontSize = 10.sp, lineHeight = 12.sp,
+                        color = Color.Black
                     )
                 }
 
