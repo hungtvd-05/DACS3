@@ -1,7 +1,6 @@
 package com.app_computer_ecom.dack
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -156,6 +155,12 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         }
         composable("account") {
             AccountScreen()
+        }
+        composable("admin/account") {
+            AccountScreen(backnav = "admin/4")
+        }
+        composable("employee/account") {
+            AccountScreen(backnav = "employee/3")
         }
         composable("admin/users") {
             ListUserPage()

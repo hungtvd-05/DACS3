@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.R
 import com.app_computer_ecom.dack.ui.theme.ThemeManager
 import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
@@ -122,6 +123,8 @@ fun UserProfileHeader(
 @Composable
 fun ProfileSettingsSection() {
 
+    val role by remember { mutableStateOf(GLobalAuthViewModel.getAuthViewModel().userModel?.role) }
+
     var isDarkModeEnabled by remember { mutableStateOf(ThemeManager.isDarkTheme) }
     var showLogoutDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -140,6 +143,12 @@ fun ProfileSettingsSection() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
+                        GlobalNavigation.navController.navigate(if (role == "admin") "admin/account" else "employee/account") {
+                            popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                        }
                     }
                     .padding(vertical = 8.dp, horizontal = 8.dp)
             ) {

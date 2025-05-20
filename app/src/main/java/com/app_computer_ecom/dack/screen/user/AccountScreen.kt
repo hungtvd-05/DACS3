@@ -26,7 +26,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
@@ -71,7 +70,9 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun AccountScreen() {
+fun AccountScreen(
+    backnav: String = "home/3"
+) {
 
     var userModel = GLobalAuthViewModel.getAuthViewModel().userModel ?: UserModel()
     var showChangePassword by remember { mutableStateOf(false) }
@@ -84,7 +85,12 @@ fun AccountScreen() {
                 .background(MaterialTheme.colorScheme.background)
         ) {
             TopBar(isShowCard = false) {
-                GlobalNavigation.navController.navigate("home/3")
+                GlobalNavigation.navController.navigate(backnav) {
+                    popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                        inclusive = false
+                    }
+                    launchSingleTop = true
+                }
             }
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
@@ -103,7 +109,12 @@ fun AccountScreen() {
                         label = "Họ và tên",
                         content = convert(userModel.name)
                     ) {
-                        GlobalNavigation.navController.navigate("edit-account/0")
+                        GlobalNavigation.navController.navigate("edit-account/0") {
+                            popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                        }
                     }
 
                     InfoItem(
@@ -117,14 +128,24 @@ fun AccountScreen() {
                         label = "Phone",
                         content = convert(userModel.phoneNumber)
                     ) {
-                        GlobalNavigation.navController.navigate("edit-account/1")
+                        GlobalNavigation.navController.navigate("edit-account/1") {
+                            popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                        }
                     }
 
                     InfoItem(
                         label = "Giới tính",
                         content = convert(userModel.sex)
                     ) {
-                        GlobalNavigation.navController.navigate("edit-account/2")
+                        GlobalNavigation.navController.navigate("edit-account/2") {
+                            popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                        }
                     }
 
                     InfoItem(
@@ -133,7 +154,12 @@ fun AccountScreen() {
                             userModel.birthDate.toDate()
                         )
                     ) {
-                        GlobalNavigation.navController.navigate("edit-account/3")
+                        GlobalNavigation.navController.navigate("edit-account/3") {
+                            popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                        }
                     }
 
 

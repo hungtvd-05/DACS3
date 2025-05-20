@@ -31,9 +31,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.repository.GlobalRepository
+import com.app_computer_ecom.dack.viewmodel.GLobalAuthViewModel
 
 @Composable
 fun TopBar(title: String = "", isShowCard: Boolean = true, onBack: () -> Unit) {
+
+    val role by remember { mutableStateOf(GLobalAuthViewModel.getAuthViewModel().userModel?.role) }
 
     BackHandler {
         onBack()
@@ -116,7 +119,7 @@ fun TopBar(title: String = "", isShowCard: Boolean = true, onBack: () -> Unit) {
 
             IconButton(
                 onClick = {
-                    GlobalNavigation.navController.navigate("home/0") {
+                    GlobalNavigation.navController.navigate(if (role == "admin") "admin/0" else if (role == "employee") "employee/0" else "home/0") {
                         popUpTo(GlobalNavigation.navController.graph.startDestinationId) {
                             inclusive = false
                         }
