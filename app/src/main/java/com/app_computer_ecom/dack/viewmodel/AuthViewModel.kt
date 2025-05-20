@@ -89,7 +89,8 @@ class AuthViewModel(private val application: Application) : AndroidViewModel(app
             viewModelScope.launch {
                 try {
                     // Xác thực lại người dùng với mật khẩu hiện tại
-                    val credential = EmailAuthProvider.getCredential(user!!.email!!, currentPassword)
+                    val credential =
+                        EmailAuthProvider.getCredential(user!!.email!!, currentPassword)
                     user!!.reauthenticate(credential).await()
 
                     // Đổi mật khẩu
@@ -99,11 +100,16 @@ class AuthViewModel(private val application: Application) : AndroidViewModel(app
                 } catch (e: Exception) {
                     when (e) {
                         is FirebaseAuthWeakPasswordException -> {
-                            onResult(false, "Mật khẩu mới quá yếu. Vui lòng chọn mật khẩu mạnh hơn.")
+                            onResult(
+                                false,
+                                "Mật khẩu mới quá yếu. Vui lòng chọn mật khẩu mạnh hơn."
+                            )
                         }
+
                         is FirebaseAuthInvalidCredentialsException -> {
                             onResult(false, "Mật khẩu hiện tại không đúng.")
                         }
+
                         else -> {
                             onResult(false, e.localizedMessage ?: "Lỗi khi đổi mật khẩu.")
                         }
@@ -321,6 +327,36 @@ class AuthViewModel(private val application: Application) : AndroidViewModel(app
             } catch (e: Exception) {
                 Log.e("updateAvatar", "Lỗi khi cập nhật avatar: ${e.localizedMessage}")
             }
+        }
+    }
+
+    suspend fun updateUserInfo(data: Map<String, Any>) {
+        val currentUser = auth.currentUser ?: return
+
+        val updateData = mutableMapOf<String, Any>()
+        data["name"]?.let { updateData["name"] = it }
+        data["phoneNumber"]?.let { updateData["phoneNumber"] = it }
+        data["sex"]?.let { updateData["sex"] = it }
+        data["birthDate"]?.let { updateData["birthDate"] = it }
+
+        try {
+            withContext(Dispatchers.IO) {
+                firestore.collection("users")
+                    .document(currentUser.uid)
+                    .update(updateData)
+                    .await()
+            }
+
+            val snapshot = firestore.collection("users")
+                .document(currentUser.uid)
+                .get()
+                .await()
+            val updatedUser = snapshot.toObject(UserModel::class.java)
+            userModel = updatedUser
+
+            Log.d("updateUserInfo", "Cập nhật thông tin thành công")
+        } catch (e: Exception) {
+            Log.e("updateUserInfo", "Lỗi khi cập nhật: ${e.message}", e)
         }
     }
 
