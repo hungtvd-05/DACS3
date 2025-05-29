@@ -3,6 +3,7 @@ package com.app_computer_ecom.dack.pages.admin
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,8 +13,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -29,10 +32,14 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -52,11 +59,13 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.app_computer_ecom.dack.AppUtil
 import com.app_computer_ecom.dack.GlobalNavigation
 import com.app_computer_ecom.dack.LoadingScreen
 import com.app_computer_ecom.dack.R
 import com.app_computer_ecom.dack.model.OrderModel
 import com.app_computer_ecom.dack.repository.GlobalRepository
+import com.app_computer_ecom.dack.screen.user.OrderStatus
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -68,10 +77,49 @@ fun OrderPage(modifier: Modifier = Modifier) {
     var orderList by remember { mutableStateOf(emptyList<OrderModel>()) }
     var isLoading by remember { mutableStateOf(true) }
     var listStatus = listOf("Chờ xác nhận", "Chờ lấy hàng", "Chờ giao hàng", "Đã giao", "Đã hủy")
+    val snackbarHostState = remember { SnackbarHostState() }
+    var previousOrderList by remember { mutableStateOf(emptyList<OrderModel>()) }
+    val scope = rememberCoroutineScope()
+    val notifiedOrderIds by remember { mutableStateOf(mutableSetOf<String>()) }
+
+    var orderStatus by remember { mutableIntStateOf(AppUtil.pageNumberOrder) }
+
+    val orderStatusList = listOf(
+        OrderStatus(0, "Chờ xác nhận"),
+        OrderStatus(1, "Chờ lấy hàng"),
+        OrderStatus(2, "Chờ giao hàng"),
+        OrderStatus(3, "Đã giao"),
+        OrderStatus(4, "Đã huỷ"),
+    )
+
+    var orderListByStatus by remember { mutableStateOf(emptyList<OrderModel>()) }
 
     LaunchedEffect(Unit) {
+//        GlobalRepository.orderRepository.getOrdersOnAdmin().collectLatest { orders ->
+//            orderList = orders
+//            isLoading = false
+//        }
+
         GlobalRepository.orderRepository.getOrdersOnAdmin().collectLatest { orders ->
+            val currentOrderList = orderList
             orderList = orders
+
+            val newOrders = orders.filterNot { newOrder ->
+                currentOrderList.any { it.id == newOrder.id } || notifiedOrderIds.contains(newOrder.id)
+            }
+
+            if (newOrders.isNotEmpty()) {
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = "${newOrders.size} đơn hàng mới được thêm!",
+                        duration = SnackbarDuration.Short
+                    )
+                    newOrders.forEach { notifiedOrderIds.add(it.id) }
+                }
+            }
+
+            previousOrderList = currentOrderList
+            orderListByStatus = orderList.filter { it.status == orderStatus }
             isLoading = false
         }
     }
@@ -80,24 +128,70 @@ fun OrderPage(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 8.dp)
-            .padding(top = 16.dp)
     ) {
-        Text(text = "Đơn hàng", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
-        Spacer(modifier = Modifier.height(10.dp))
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(top = 8.dp),
+        ) {
+            items(orderStatusList.size) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .clickable {
+                            AppUtil.pageNumberOrder = it
+                            orderStatus = AppUtil.pageNumberOrder
+                            orderListByStatus = orderList.filter { it.status == orderStatus }
+                        }
+                        .padding(bottom = 4.dp)
+                ) {
+                    Text(
+                        text = orderStatusList[it].title,
+                        fontSize = 12.sp,
+                        color = if (orderStatus == it)
+                            MaterialTheme.colorScheme.primary
+                        else
+                            MaterialTheme.colorScheme.onBackground,
+                        fontWeight = if (orderStatus == it)
+                            FontWeight.Bold
+                        else
+                            FontWeight.Normal,
+                    )
+
+                    if (orderStatus == it) {
+                        Box(
+                            modifier = Modifier
+                                .padding(top = 4.dp)
+                                .height(2.dp)
+                                .width(32.dp)
+                                .background(
+                                    MaterialTheme.colorScheme.primary,
+                                    shape = RoundedCornerShape(1.dp)
+                                )
+                        )
+                    }
+                }
+            }
+        }
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.CenterHorizontally).padding(bottom = 8.dp)
+        )
         if (isLoading) {
             LoadingScreen()
         } else {
-            if (orderList.isEmpty()) {
+            if (orderListByStatus.isEmpty()) {
                 Text(text = "Không có đơn hàng nào !!", fontSize = 14.sp)
             } else {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    item {  }
-                    items(orderList.size, key = { index -> orderList[index].id }) { index ->
-                        ItemOrder(order = orderList[index], listStatus = listStatus)
+                    items(orderListByStatus.size, key = { index -> orderListByStatus[index].id }) { index ->
+                        ItemOrder(order = orderListByStatus[index], listStatus = listStatus)
                     }
-                    item {  }
+                    item {}
                 }
             }
         }

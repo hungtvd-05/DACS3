@@ -240,7 +240,7 @@ fun OrderListWithFilter(
                     OrderProductItem(
                         orderModel = item,
                         onClick = {
-                            if (item.status != 4) {
+                            if (item.status < 3) {
                                 scope.launch {
                                     orderModels = orderModels.filter { it.id != item.id }
                                     var time = Timestamp.now()
@@ -528,7 +528,7 @@ fun OrderProductItem(orderModel: OrderModel, onClick: () -> Unit = {}) {
                     text = "Huỷ đơn",
                     fontSize = 12.sp,
                     lineHeight = 14.sp,
-                    color = if (orderModel.status == 4) Color.Gray else Color(230, 81, 0),
+                    color = if (orderModel.status >= 3) Color.Gray else Color(230, 81, 0),
                     fontWeight = FontWeight.Normal
                 )
             }

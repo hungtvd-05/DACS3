@@ -200,29 +200,6 @@ fun ProfileSettingsSection() {
 
         }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { }
-                    .padding(vertical = 8.dp, horizontal = 8.dp)
-            ) {
-                Text(text = "Giới thiệu", fontSize = 12.sp)
-            }
-
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomStart),
-                color = MaterialTheme.colorScheme.background
-            )
-
-
-        }
-
 
         Box(
             modifier = Modifier

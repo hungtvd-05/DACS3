@@ -18,6 +18,9 @@ import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
 
 object AppUtil {
+
+    var pageNumberOrder: Int = 0
+
     fun showToast(context: Context, message: String) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
